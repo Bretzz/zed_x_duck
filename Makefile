@@ -82,8 +82,8 @@ $(EXE):
 	@echo "${LIGHT_GREEN}DONE${RESET}"
 
 tar:
-	@ls | grep -q "print_zed.tar" && rm -f print_zed.tar
-	@tar -cf print_zed.tar ./*
+	@ls | grep -q "$(NAME).tar" && rm -f $(NAME).tar
+	@tar -cf $(NAME).tar ./*
 
 .gitignore:
 	@touch .gitignore
@@ -100,7 +100,7 @@ show:
 	@printf "OBJS		:\n	$(OBJS)\n"
 
 clean:
-	@rm -rf $(OBJ_DIR) $(MINILX_DIR).tgz
+	@rm -rf $(OBJ_DIR) $(MINILX_DIR).tgz $(NAME).tar
 	@$(MAKE) clean -C $(LIBFT_DIR) --quiet
 
 fclean: clean
