@@ -41,7 +41,7 @@ GIDEF =	"""$\
 		**/tester.c\n$\
 		\n$\
 		\#added rules\n$\
-		$(NAME)\n$\
+		$(NAME)*\n$\
 		$(MINILX_DIR)*\n$\
 		data$\
 		"""
@@ -81,6 +81,9 @@ $(EXE):
 	@$(CC) main.c $(ARS) -L$(MINILX_DIR) -lmlx_Linux -L/usr/lib -I$(MINILX_DIR) -I$(LIBFT_DIR) -lXext -lX11 -lm -lz -o $(EXE)
 	@echo "${LIGHT_GREEN}DONE${RESET}"
 
+tar:
+	@ls | grep -q "print_zed.tar" && rm -f print_zed.tar
+	@tar -cf print_zed.tar ./*
 
 .gitignore:
 	@touch .gitignore
@@ -106,4 +109,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re nyaa $(LIBFT_DIR) $(MINILX_DIR) .gitignore show
+.PHONY: all clean fclean re nyaa $(LIBFT_DIR) $(MINILX_DIR) data tar .gitignore show
