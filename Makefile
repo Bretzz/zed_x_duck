@@ -7,6 +7,7 @@ LIGHT_CYAN 	:= \033[96m
 RESET 		:= \033[0m
 
 DIR := $(shell pwd)
+OS := $(shell uname)
 NAME := print_zed
 CC := cc
 CFLAGS := -Wall -Wextra -Werror
@@ -50,11 +51,13 @@ all: $(NAME)
 
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(OBJ_DIR)
-	@uname -a | grep -q "Linux" \
-	&& $(CC) $(CFLAGS) -I/usr/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3 -c $< -o $(OBJ_DIR)/$(notdir $@) \
-	|| uname -a | grep -q "Darwin Kernel" \
-	&& $(CC) $(CFLAGS) -I/usr/include -I/usr/X11/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3 -c $< -o $(OBJ_DIR)/$(notdir $@) \
-	|| true
+	@if [ $(OS) = "Darwin" ]; then\
+		$(CC) $(CFLAGS) -I/usr/include -I/usr/X11/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3 -c $< -o $(OBJ_DIR)/$(notdir $@);\
+	elif [ $(OS) = "Linux" ]; then\
+		$(CC) $(CFLAGS) -I/usr/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3 -c $< -o $(OBJ_DIR)/$(notdir $@);\
+    else \
+		echo "Error, incompatible OS." && false;\
+	fi
 
 data:
 	@echo "${BOLD}extracting data...${RESET}"
@@ -80,14 +83,15 @@ $(LIBFT_DIR):
 
 $(NAME): $(MINILX_DIR) $(LIBFT_DIR) $(OBJS) data
 	@echo "${BOLD}compiling $(NAME)...${RESET}"
-	@uname -a | grep -q "Linux" \
-	&& $(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) -L$(MINILX_DIR) -lmlx_Linux -L/usr/lib -I$(MINILX_DIR) -lXext -lX11 -lm -lz -o $(NAME) \
-	&& echo "${LIGHT_GREEN}DONE${RESET}" \
-	|| uname -a | grep -q "Darwin Kernel" \
-	&& $(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) -L$(MINILX_DIR) -L/usr/lib -I$(MINILX_DIR) -lm -lz -o $(NAME) \
-	&& echo "${LIGHT_GREEN}DONE${RESET}" \
-	|| true
-#	@echo "${LIGHT_GREEN}DONE${RESET}"
+	@if [ $(OS) = "Darwin" ]; then\
+		$(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) -L$(MINILX_DIR) -L/usr/lib -I$(MINILX_DIR) -lm -lz -o $(NAME) \
+		&& echo "${LIGHT_GREEN}DONE${RESET}";\
+	elif [ $(OS) = "Linux" ]; then\
+		$(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) -L$(MINILX_DIR) -lmlx_Linux -L/usr/lib -I$(MINILX_DIR) -lXext -lX11 -lm -lz -o $(NAME) \
+		&& echo "${LIGHT_GREEN}DONE${RESET}";\
+    else \
+		echo "Error, incompatible OS." && false;\
+	fi
 
 $(EXE):
 	@echo "${BOLD}compiling main.c...${RESET}"
@@ -96,7 +100,11 @@ $(EXE):
 
 tar:
 	@ls | grep -q "$(NAME).tar" && rm -f $(NAME).tar || true
-	@tar -cf $(NAME).tar ./*
+	@tar -cf $(NAME).tar --exclude ".git/ $(NAME) $(MINILX_DIR) data/" ./*
+
+#test commands
+#make tar && mkdir ../test && cd ../test && mv ../print_zed/print_zed.tar . && tar -xf print_zed.tar && ls -a
+#cd .. && rm -rf test/ && cd print_zed 
 
 .gitignore:
 	@touch .gitignore
