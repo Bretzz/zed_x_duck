@@ -18,6 +18,8 @@
 # include "mlx.h"
 # include <math.h>
 # include "libft.h"
+//# include <sys/stat.h>
+# include <fcntl.h>
 
 # include <stdio.h>
 
@@ -56,8 +58,9 @@ int			clean_exit(t_mlx *mlx);
 int			handle_mouse(int keysym, int x, int y, t_mlx *mlx);
 int			handle_keypress(int keysym, t_mlx *mlx);
 
-int			ft_isfloat(const char *s);
 int			ft_isuint(const char *s);
+int			ft_isfloat(const char *s);
+int			ft_isfloat_space(const char *s);
 
 //checky_functions.c
 float		ft_atof(const char *nptr);

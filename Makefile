@@ -27,7 +27,7 @@ VPATH =
 EXE = nyaa
 OBJS = $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(SRCS)))
 OBJ_DIR := $(DIR)/obj
-LIBFT_DIR = libft
+LIBFT_DIR := libft
 MINILX_DIR := minilibx-linux
 GIDEF =	"""$\
 		\#default rules\n$\
@@ -42,7 +42,8 @@ GIDEF =	"""$\
 		**/tester.c\n$\
 		\n$\
 		\#added rules\n$\
-		$(NAME)*\n$\
+		$(NAME)\n$\
+		$(NAME).tar\n$\
 		$(MINILX_DIR)*\n$\
 		data$\
 		"""

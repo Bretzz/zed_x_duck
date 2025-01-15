@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:51:09 by topiana-          #+#    #+#             */
-/*   Updated: 2024/12/21 19:40:32 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/15 13:44:24 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ int			ft_isdigit(int c);
 int			ft_isalnum(int c);
 int			ft_isascii(int c);
 int			ft_isprint(int c);
+int			ft_isspace(int c);
 int			ft_toupper(int c);
 int			ft_tolower(int c);
 int			ft_atoi(const char *nptr);

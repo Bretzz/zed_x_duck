@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 10:18:50 by topiana-          #+#    #+#             */
-/*   Updated: 2024/12/21 22:21:02 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/15 15:23:58 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ static char	*his_sidekick(int fd, char *line, t_list_fd *trubbish,
 {
 	char	*new_line;
 
-	if (!ft_strichr(line, '\n') || !line[ft_strichr(line, '\n') + 1])
+	if (!ft_strichr(line, '\n') || !line[ft_strichr(line, '\n')])
 	{
 		ft_lstclear_fd(fd, leftovers, &free);
 		return (line);
