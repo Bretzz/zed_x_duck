@@ -100,7 +100,7 @@ $(EXE):
 
 tar:
 	@ls | grep -q "$(NAME).tar" && rm -f $(NAME).tar || true
-	@tar -cf $(NAME).tar --exclude ".git/ $(NAME) $(MINILX_DIR) data/" ./*
+	@tar -cf $(NAME).tar --exclude=".git" --exclude="$(NAME)" --exclude="$(MINILX_DIR)" --exclude="obj" --exclude="$(LIBFT_DIR)/obj" --exclude="data" ./*
 
 #test commands
 #make tar && mkdir ../test && cd ../test && mv ../print_zed/print_zed.tar . && tar -xf print_zed.tar && ls -a
