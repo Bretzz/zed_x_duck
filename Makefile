@@ -50,31 +50,44 @@ all: $(NAME)
 
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(OBJ_DIR)
-	@$(CC) $(CFLAGS) -I/usr/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3 -c $< -o $(OBJ_DIR)/$(notdir $@)
+	@uname -a | grep -q "Linux" \
+	&& $(CC) $(CFLAGS) -I/usr/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3 -c $< -o $(OBJ_DIR)/$(notdir $@) \
+	|| uname -a | grep -q "Darwin Kernel" \
+	&& $(CC) $(CFLAGS) -I/usr/include -I/usr/X11/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3 -c $< -o $(OBJ_DIR)/$(notdir $@) \
+	|| true
 
 data:
 	@echo "${BOLD}extracting data...${RESET}"
 	@ls -F | grep -q "data/" \
-	|| mkdir data; \
-	unzip -q Archive.zip -d data
+	&& echo "${YELLOW}data already exctracted.${RESET}" \
+	|| (mkdir data \
+	&& unzip -q Archive.zip -d data)
 
 $(MINILX_DIR):
 	@echo "${BOLD}creating $(MINILX_DIR)...${RESET}"
-	@ls | grep -q "minilibx-linux.tgz" \
-	|| curl https://cdn.intra.42.fr/document/document/28085/minilibx-linux.tgz --output minilibx-linux.tgz; \
-	tar -xf $(MINILX_DIR).tgz; \
-	$(MAKE) -C $(MINILX_DIR) --quiet
+	@ls | grep -q "$(MINILX_DIR)" \
+	&& echo "${YELLOW}$(MINILX_DIR) is up to date.${RESET}" \
+	|| (curl https://cdn.intra.42.fr/document/document/28085/$(MINILX_DIR).tgz --output $(MINILX_DIR).tgz \
+	&& tar -xf $(MINILX_DIR).tgz \
+	&& rm -f $(MINILX_DIR).tgz \
+	&& $(MAKE) -C $(MINILX_DIR) --quiet)
 
 $(LIBFT_DIR):
 	@echo "${BOLD}creating libft...${RESET}"
-	@$(MAKE) -C $(LIBFT_DIR) | grep -q "Nothing to be done for 'all'." \
+	@$(MAKE) -C $(LIBFT_DIR) | grep -q "Nothing to be done for" \
 		&& echo "${YELLOW}libft is up to date.${RESET}" \
 		|| true
 
 $(NAME): $(MINILX_DIR) $(LIBFT_DIR) $(OBJS) data
 	@echo "${BOLD}compiling $(NAME)...${RESET}"
-	@$(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) -L$(MINILX_DIR) -lmlx_Linux -L/usr/lib -I$(MINILX_DIR) -lXext -lX11 -lm -lz -o $(NAME)
-	@echo "${LIGHT_GREEN}DONE${RESET}"
+	@uname -a | grep -q "Linux" \
+	&& $(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) -L$(MINILX_DIR) -lmlx_Linux -L/usr/lib -I$(MINILX_DIR) -lXext -lX11 -lm -lz -o $(NAME) \
+	&& echo "${LIGHT_GREEN}DONE${RESET}" \
+	|| uname -a | grep -q "Darwin Kernel" \
+	&& $(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) -L$(MINILX_DIR) -L/usr/lib -I$(MINILX_DIR) -lm -lz -o $(NAME) \
+	&& echo "${LIGHT_GREEN}DONE${RESET}" \
+	|| true
+#	@echo "${LIGHT_GREEN}DONE${RESET}"
 
 $(EXE):
 	@echo "${BOLD}compiling main.c...${RESET}"
@@ -82,7 +95,7 @@ $(EXE):
 	@echo "${LIGHT_GREEN}DONE${RESET}"
 
 tar:
-	@ls | grep -q "$(NAME).tar" && rm -f $(NAME).tar
+	@ls | grep -q "$(NAME).tar" && rm -f $(NAME).tar || true
 	@tar -cf $(NAME).tar ./*
 
 .gitignore:
@@ -100,12 +113,14 @@ show:
 	@printf "OBJS		:\n	$(OBJS)\n"
 
 clean:
-	@rm -rf $(OBJ_DIR) $(MINILX_DIR).tgz $(NAME).tar
+	@rm -rf $(OBJ_DIR) $(NAME).tar
 	@$(MAKE) clean -C $(LIBFT_DIR) --quiet
+	@echo "${BOLD}removed:${RESET}\n\tobjects (.o) and archives (.tar)"
 
 fclean: clean
 	@rm -rf $(NAME) $(EXE) $(MINILX_DIR) data
 	@$(MAKE) fclean -C $(LIBFT_DIR) --quiet
+	@echo "\texecutable ($(NAME), $(EXE)),\n\t$(MINILX_DIR),\n\tdata extracted,\n\tarchives (.a)"
 
 re: fclean all
 
