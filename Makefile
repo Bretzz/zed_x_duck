@@ -61,7 +61,7 @@ all: $(NAME)
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(OBJ_DIR)
 	@if [ $(OS) = "Darwin" ]; then\
-		$(CC) $(CFLAGS) -D ESC_KEY=53 -I/usr/include -I/usr/X11/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3 -c $< -o $(OBJ_DIR)/$(notdir $@);\
+		$(CC) $(CFLAGS) -D ESC_KEY=53 -D MAX_WIN_X=1440 -D MAX_WIN_Y=840 -I/usr/include -I/usr/X11/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3 -c $< -o $(OBJ_DIR)/$(notdir $@);\
 	elif [ $(OS) = "Linux" ]; then\
 		$(CC) $(CFLAGS) -I/usr/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3 -c $< -o $(OBJ_DIR)/$(notdir $@);\
     else \
@@ -139,7 +139,7 @@ show:
 
 clean:
 	@rm -rf $(OBJ_DIR) $(NAME).tar $(MINILX_DIR).tgz
-	@$(MAKE) clean -C $(LIBFT_DIR) --quiet
+#	@$(MAKE) clean -C $(LIBFT_DIR) --quiet
 	@echo "${BOLD}removed:${RESET}\n\tobjects (.o) and archives (.tar, .tgz)"
 
 fclean: clean
@@ -147,6 +147,8 @@ fclean: clean
 	@$(MAKE) fclean -C $(LIBFT_DIR) --quiet
 	@echo "\texecutable ($(NAME), $(EXE)),\n\t$(MINILX_DIR),\n\tdata extracted,\n\tarchives (.a)"
 
+lre: clean all
+
 re: fclean all
 
-.PHONY: all clean fclean re nyaa $(LIBFT_DIR) $(MINILX_DIR) data tar .gitignore show
+.PHONY: all clean fclean re lre nyaa $(LIBFT_DIR) $(MINILX_DIR) data tar .gitignore show

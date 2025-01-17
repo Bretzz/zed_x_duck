@@ -17,6 +17,14 @@
 #  define ESC_KEY 65307
 # endif
 
+# ifndef MAX_WIN_X
+#  define MAX_WIN_X 1920
+# endif
+
+# ifndef MAX_WIN_Y
+#  define MAX_WIN_Y 1080
+# endif
+
 # define UNUSED(x) (void)(x)
 
 # include "mlx.h"

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   easy_startup_functions.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 18:32:01 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/14 23:19:17 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/17 06:12:32 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ int	juice_the_pc(t_mlx *mlx)
 	mlx->mlx = mlx_init();
 	if (!mlx->mlx)
 		return (1);
-	mlx->win_x = 1920;
-	mlx->win_y = 1080;
+	mlx->win_x = MAX_WIN_X;
+	mlx->win_y = MAX_WIN_Y;
 	mlx->win = mlx_new_window(mlx->mlx, mlx->win_x, mlx->win_y, "print_zed");
 	if (!mlx->win)
 	{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 14:54:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/15 15:20:41 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/17 06:07:43 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,6 +226,7 @@ int	main(void)
 		return (1);
 	}
 	close(fd);
+	plot_data(mlx);
 	mlx_mouse_hook(mlx->win, &handle_mouse, mlx);
 	mlx_hook(mlx->win, KeyPress, KeyPressMask, &handle_keypress, mlx);
 	mlx_hook(mlx->win, DestroyNotify, StructureNotifyMask, &clean_exit, mlx);
