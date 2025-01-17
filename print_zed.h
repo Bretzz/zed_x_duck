@@ -13,8 +13,8 @@
 #ifndef PRINT_ZED_H
 # define PRINT_ZED_H
 
-# ifndef ESK_KEY
-#  define ESK_KEY 65307
+# ifndef ESC_KEY
+#  define ESC_KEY 65307
 # endif
 
 # define UNUSED(x) (void)(x)

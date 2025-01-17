@@ -61,7 +61,7 @@ all: $(NAME)
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(OBJ_DIR)
 	@if [ $(OS) = "Darwin" ]; then\
-		$(CC) $(CFLAGS) -I/usr/include -I/usr/X11/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3 -c $< -o $(OBJ_DIR)/$(notdir $@);\
+		$(CC) $(CFLAGS) -D ESC_KEY=53 -I/usr/include -I/usr/X11/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3 -c $< -o $(OBJ_DIR)/$(notdir $@);\
 	elif [ $(OS) = "Linux" ]; then\
 		$(CC) $(CFLAGS) -I/usr/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3 -c $< -o $(OBJ_DIR)/$(notdir $@);\
     else \
@@ -99,12 +99,12 @@ $(LIBFT_DIR):
 
 $(NAME): $(MINILX_DIR) $(LIBFT_DIR) $(OBJS) data
 	@echo "${BOLD}compiling $(NAME)...${RESET}"
-	@if [ $(OS) = "Darwin" ]; then\
-		$(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) -D ESC_KEY=53 -I$(MINILX_DIR) -I$(DIR) -I/opt/homebrew/include -I/usr/X11/include -L$(MINILX_DIR) -L/usr/lib -L/usr/X11/lib -lX11 -lXext -lm -lz -framework OpenGL -framework AppKit -o $(NAME) \
-		&& echo "${LIGHT_GREEN}DONE${RESET}";\
-	elif [ $(OS) = "Linux" ]; then\
+	@if [ "$(OS)" = "Darwin" ]; then\
+		$(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) -I$(MINILX_DIR) -I$(DIR) -I/opt/homebrew/include -I/usr/X11/include -L$(MINILX_DIR) -L/usr/lib -L/usr/X11/lib -lX11 -lXext -lm -lz -framework OpenGL -framework AppKit -o $(NAME) \
+		&& echo "${LIGHT_GREEN}DONE macOS${RESET}";\
+	elif [ "$(OS)" = "Linux" ]; then\
 		$(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) -L$(MINILX_DIR) -lmlx_Linux -L/usr/lib -I$(MINILX_DIR) -lXext -lX11 -lm -lz -o $(NAME) \
-		&& echo "${LIGHT_GREEN}DONE${RESET}";\
+		&& echo "${LIGHT_GREEN}DONE Linux${RESET}";\
     else \
 		echo "Error, incompatible OS." && false;\
 	fi

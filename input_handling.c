@@ -6,7 +6,7 @@
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 14:47:59 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/16 17:28:44 by totommi          ###   ########.fr       */
+/*   Updated: 2025/01/17 01:19:16 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,8 @@ int	handle_mouse(int keysym, int x, int y, t_mlx *mlx)
 
 int	handle_keypress(int keysym, t_mlx *mlx)
 {
-	ft_printf("ESK_KEY=%i\n", ESK_KEY);
-	if (keysym == ESK_KEY)
+//	ft_printf("ESC_KEY=%i\n", ESC_KEY);
+	if (keysym == ESC_KEY)
 	{
 		clean_exit(mlx);
 		return (0);
