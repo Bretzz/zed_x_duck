@@ -127,15 +127,15 @@ show:
 	@printf "CFLAGS		: $(CFLAGS)\n"
 	@printf "LINKS		: $(LINKS)\n"
 	@printf "INCLUDES	: $(INK)\n"
-	@printf "SRCS		:\n	$(SRCS)\n"
-	@printf "OBJS		:\n	$(OBJS)\n"
+	@printf "SRCS		: $(SRCS)\n"
+	@printf "OBJS		:\n$(OBJS)\n"
 
 clean:
 	@rm -rf $(OBJ_DIR) $(NAME).tar $(MINILX_DIR).tgz
 	@echo "${BOLD}removed:${RESET}\vobjects (.o) and archives (.tar, .tgz)"
 
 fclean: clean
-	@rm -rf $(NAME) $(EXE) $(MINILX_DIR)* data
+	@rm -rf $(NAME) $(EXE) $(MINILX_DIR) data
 	@$(MAKE) fclean -C $(LIBFT_DIR) --quiet
 	@echo "\texecutable ($(NAME), $(EXE)),\n\t$(MINILX_DIR),\n\tdata extracted,\n\tarchives (.a)"
 
