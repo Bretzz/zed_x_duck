@@ -13,6 +13,23 @@ CC := cc
 CFLAGS := -Wall -Wextra -Werror
 
 #LINKS = -I /opt/homebrew/include -I /usr/X11/include -L /opt/homebrew/lib -L /usr/X11/lib -lX11 -Lmlx -lXext -framework OpenGL -framework AppKit
+ifeq ($(OS),Darwin)
+	MINILX_DIR :=  minilibx_opengl
+	URL = https://cdn.intra.42.fr/document/document/28086/minilibx_opengl.tgz
+	INK = -D ESC_KEY=53 -D MAX_WIN_X=1440 -D MAX_WIN_Y=840 -I/usr/include -I/usr/X11/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3
+	LINKS = -I$(MINILX_DIR) -I$(DIR) -I/opt/homebrew/include -I/usr/X11/include -L$(MINILX_DIR) -L/usr/lib -L/usr/X11/lib -lX11 -lXext -lm -lz -framework OpenGL -framework AppKit
+else ifeq ($(OS),Linux)
+	MINILX_DIR := minilibx-linux
+	URL = https://cdn.intra.42.fr/document/document/28085/minilibx-linux.tgz
+	INK = -I/usr/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3
+	LINKS = -L$(MINILX_DIR) -lmlx_Linux -L/usr/lib -I$(MINILX_DIR) -lXext -lX11 -lm -lz
+else
+	MINILX_DIR = 
+	URL = 
+	INK = 
+	LINKS = 
+	@echo "Error, incompatible OS." && false;
+endif
 
 #source files (full path optional)
 SRCS := main.c input_handling.c \
@@ -21,7 +38,7 @@ SRCS := main.c input_handling.c \
 		checky_funtions.c
 
 #archive file names
-ARS	:= libft/libft.a minilibx_opengl*/libmlx.a #libmlx_Linux.a
+ARS	= $(LIBFT_DIR)/libft.a $(MINILX_DIR)/libmlx.a #libmlx_Linux.a
 
 #folders containing source files [*.c] 
 VPATH =
@@ -30,13 +47,6 @@ EXE = nyaa
 OBJS = $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(SRCS)))
 OBJ_DIR := $(DIR)/obj
 LIBFT_DIR := libft
-ifeq ($(OS),Darwin)
-	MINILX_DIR =  minilibx_opengl
-else ifeq ($(OS),Linux)
-	MINILX_DIR = minilibx-linux
-else
-	@echo "Error, incompatible OS." && false;
-endif
 GIDEF =	"""$\
 		\#default rules\n$\
 		.gitignore\n$\
@@ -60,13 +70,7 @@ all: $(NAME)
 
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(OBJ_DIR)
-	@if [ $(OS) = "Darwin" ]; then\
-		$(CC) $(CFLAGS) -D ESC_KEY=53 -D MAX_WIN_X=1440 -D MAX_WIN_Y=840 -I/usr/include -I/usr/X11/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3 -c $< -o $(OBJ_DIR)/$(notdir $@);\
-	elif [ $(OS) = "Linux" ]; then\
-		$(CC) $(CFLAGS) -I/usr/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3 -c $< -o $(OBJ_DIR)/$(notdir $@);\
-    else \
-		echo "Error, incompatible OS." && false;\
-	fi
+	@$(CC) $(CFLAGS) $(INK) -c $< -o $(OBJ_DIR)/$(notdir $@)
 
 data:
 	@echo "${BOLD}extracting data...${RESET}"
@@ -79,39 +83,26 @@ $(MINILX_DIR):
 	@echo "${BOLD}creating $(MINILX_DIR)...${RESET}"
 	@ls | grep -q "$(MINILX_DIR)" \
 	&& echo "${YELLOW}$(MINILX_DIR) is up to date.${RESET}" \
-	|| (if [ "$(OS)" = "Darwin" ]; then\
-			curl https://cdn.intra.42.fr/document/document/28086/$(MINILX_DIR).tgz --output $(MINILX_DIR).tgz; \
-		elif [ "$(OS)" = "Linux" ]; then\
-			curl https://cdn.intra.42.fr/document/document/28085/$(MINILX_DIR).tgz --output $(MINILX_DIR).tgz; \
-		else \
-			echo "Error, incompatible OS." && false;\
-		fi \
+	|| (curl $(URL) --output $(MINILX_DIR).tgz \
 	&& tar -xf $(MINILX_DIR).tgz \
 	&& rm -f $(MINILX_DIR).tgz \
-	&& mv `ls | grep $(MINILX_DIR)` $(MINILX_DIR) \
+	&& ls $(MINILX_DIR) || mv `ls | grep $(MINILX_DIR)` $(MINILX_DIR) \
 	&& $(MAKE) -C $(MINILX_DIR) --quiet)
 
 $(LIBFT_DIR):
 	@echo "${BOLD}creating libft...${RESET}"
 	@$(MAKE) -C $(LIBFT_DIR) | grep -q "Nothing to be done for" \
-		&& echo "${YELLOW}libft is up to date.${RESET}" \
-		|| true
+	&& echo "${YELLOW}libft is up to date.${RESET}" \
+	|| true
 
 $(NAME): $(MINILX_DIR) $(LIBFT_DIR) $(OBJS) data
 	@echo "${BOLD}compiling $(NAME)...${RESET}"
-	@if [ "$(OS)" = "Darwin" ]; then\
-		$(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) -I$(MINILX_DIR) -I$(DIR) -I/opt/homebrew/include -I/usr/X11/include -L$(MINILX_DIR) -L/usr/lib -L/usr/X11/lib -lX11 -lXext -lm -lz -framework OpenGL -framework AppKit -o $(NAME) \
-		&& echo "${LIGHT_GREEN}DONE macOS${RESET}";\
-	elif [ "$(OS)" = "Linux" ]; then\
-		$(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) -L$(MINILX_DIR) -lmlx_Linux -L/usr/lib -I$(MINILX_DIR) -lXext -lX11 -lm -lz -o $(NAME) \
-		&& echo "${LIGHT_GREEN}DONE Linux${RESET}";\
-    else \
-		echo "Error, incompatible OS." && false;\
-	fi
+	@$(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) $(LINKS) -o $(NAME) \
+	&& echo "${LIGHT_GREEN}DONE${RESET}"
 
 $(EXE):
 	@echo "${BOLD}compiling main.c...${RESET}"
-	@$(CC) main.c $(ARS) -L$(MINILX_DIR) -lmlx_Linux -L/usr/lib -I$(MINILX_DIR) -I$(LIBFT_DIR) -lXext -lX11 -lm -lz -o $(EXE)
+	@$(CC) main.c $(ARS) $(LINKS) -o $(EXE)
 	@echo "${LIGHT_GREEN}DONE${RESET}"
 
 tar:
@@ -129,18 +120,19 @@ tar:
 
 show:
 	@printf "NAME  		: $(NAME)\n"
-	@printf "OS  		: $(OS)\n"
-	@printf "LIBFT		: $(LIBFT_DIR)\n"
-	@printf "MINILX		: $(MINILX_DIR)\n"
+	@printf "OS		: $(OS)\n"
+	@printf "LIBFT		: $(DIR)/$(LIBFT_DIR)\n"
+	@printf "MINILIBX	: $(DIR)/$(MINILX_DIR)\n"
 	@printf "CC		: $(CC)\n"
 	@printf "CFLAGS		: $(CFLAGS)\n"
+	@printf "LINKS		: $(LINKS)\n"
+	@printf "INCLUDES	: $(INK)\n"
 	@printf "SRCS		:\n	$(SRCS)\n"
 	@printf "OBJS		:\n	$(OBJS)\n"
 
 clean:
 	@rm -rf $(OBJ_DIR) $(NAME).tar $(MINILX_DIR).tgz
-#	@$(MAKE) clean -C $(LIBFT_DIR) --quiet
-	@echo "${BOLD}removed:${RESET}\n\tobjects (.o) and archives (.tar, .tgz)"
+	@echo "${BOLD}removed:${RESET}\vobjects (.o) and archives (.tar, .tgz)"
 
 fclean: clean
 	@rm -rf $(NAME) $(EXE) $(MINILX_DIR)* data
