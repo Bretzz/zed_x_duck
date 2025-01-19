@@ -69,7 +69,6 @@ GIDEF =	"""$\
 all: $(NAME)
 
 $(OBJ_DIR)/%.o: %.c
-	@mkdir -p $(OBJ_DIR)
 	@$(CC) $(CFLAGS) $(INK) -c $< -o $(OBJ_DIR)/$(notdir $@)
 
 data:
@@ -78,6 +77,9 @@ data:
 	&& echo "${YELLOW}data already exctracted.${RESET}" \
 	|| (mkdir data \
 	&& unzip -q Archive.zip -d data)
+
+$(OBJ_DIR):
+	@mkdir -p $(OBJ_DIR)
 
 $(MINILX_DIR):
 	@echo "${BOLD}creating $(MINILX_DIR)...${RESET}"
@@ -97,8 +99,10 @@ $(LIBFT_DIR):
 
 $(NAME): $(MINILX_DIR) $(LIBFT_DIR) $(OBJS) data
 	@echo "${BOLD}compiling $(NAME)...${RESET}"
-	@$(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) $(LINKS) -o $(NAME) \
-	&& echo "${LIGHT_GREEN}DONE${RESET}"
+	@echo "$(shell stat -c %Z $(OBJ_DIR)/*)" | grep -q "$(shell date +%s)" \
+	&& ($(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) $(LINKS) -o $(NAME) \
+	&& echo "${LIGHT_GREEN}DONE${RESET}") \
+	|| echo "${YELLOW}$(NAME) is up to date.${RESET}"
 
 $(EXE):
 	@echo "${BOLD}compiling main.c...${RESET}"
