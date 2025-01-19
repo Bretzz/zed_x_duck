@@ -14,21 +14,19 @@ CFLAGS := -Wall -Wextra -Werror
 
 #LINKS = -I /opt/homebrew/include -I /usr/X11/include -L /opt/homebrew/lib -L /usr/X11/lib -lX11 -Lmlx -lXext -framework OpenGL -framework AppKit
 ifeq ($(OS),Darwin)
-	MINILX_DIR :=  minilibx_opengl
+	MINILX_DIR =  minilibx_opengl
 	URL = https://cdn.intra.42.fr/document/document/28086/minilibx_opengl.tgz
 	INK = -D ESC_KEY=53 -D MAX_WIN_X=1440 -D MAX_WIN_Y=840 -I/usr/include -I/usr/X11/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3
 	LINKS = -I$(MINILX_DIR) -I$(DIR) -I/opt/homebrew/include -I/usr/X11/include -L$(MINILX_DIR) -L/usr/lib -L/usr/X11/lib -lX11 -lXext -lm -lz -framework OpenGL -framework AppKit
+	STAT = stat -f %m
 else ifeq ($(OS),Linux)
-	MINILX_DIR := minilibx-linux
+	MINILX_DIR = minilibx-linux
 	URL = https://cdn.intra.42.fr/document/document/28085/minilibx-linux.tgz
 	INK = -I/usr/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3
 	LINKS = -L$(MINILX_DIR) -lmlx_Linux -L/usr/lib -I$(MINILX_DIR) -lXext -lX11 -lm -lz
+	STAT = stat -c %Z
 else
-	MINILX_DIR = 
-	URL = 
-	INK = 
-	LINKS = 
-	@echo "Error, incompatible OS." && false;
+	OS = Error
 endif
 
 #source files (full path optional)
@@ -43,10 +41,9 @@ ARS	= $(LIBFT_DIR)/libft.a $(MINILX_DIR)/libmlx.a #libmlx_Linux.a
 #folders containing source files [*.c] 
 VPATH =
 
-EXE = nyaa
-OBJS = $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(SRCS)))
-OBJ_DIR := $(DIR)/obj
 LIBFT_DIR := libft
+OBJ_DIR := $(DIR)/obj
+OBJS = $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(SRCS)))
 GIDEF =	"""$\
 		\#default rules\n$\
 		.gitignore\n$\
@@ -68,18 +65,25 @@ GIDEF =	"""$\
 
 all: $(NAME)
 
-$(OBJ_DIR)/%.o: %.c
+os:
+ifeq ($(OS),Error)
+	$(error inncompatible OS)
+endif
+
+$(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)
+
+$(OBJ_DIR)/%.o: %.c | $(OBJ_DIR)
 	@$(CC) $(CFLAGS) $(INK) -c $< -o $(OBJ_DIR)/$(notdir $@)
 
-data:
+data: os
 	@echo "${BOLD}extracting data...${RESET}"
 	@ls -F | grep -q "data/" \
 	&& echo "${YELLOW}data already exctracted.${RESET}" \
 	|| (mkdir data \
 	&& unzip -q Archive.zip -d data)
 
-$(MINILX_DIR):
+$(MINILX_DIR): os
 	@echo "${BOLD}creating $(MINILX_DIR)...${RESET}"
 	@ls | grep -q "$(MINILX_DIR)" \
 	&& echo "${YELLOW}$(MINILX_DIR) is up to date.${RESET}" \
@@ -89,23 +93,20 @@ $(MINILX_DIR):
 	&& ls $(MINILX_DIR) || mv `ls | grep $(MINILX_DIR)` $(MINILX_DIR) \
 	&& $(MAKE) -C $(MINILX_DIR) --quiet)
 
-$(LIBFT_DIR):
+$(LIBFT_DIR): os
 	@echo "${BOLD}creating libft...${RESET}"
 	@$(MAKE) -C $(LIBFT_DIR) | grep -q "Nothing to be done for" \
 	&& echo "${YELLOW}libft is up to date.${RESET}" \
 	|| true
 
-$(NAME): $(MINILX_DIR) $(LIBFT_DIR) $(OBJS) data
+$(NAME): os $(MINILX_DIR) $(LIBFT_DIR) $(OBJS) data
 	@echo "${BOLD}compiling $(NAME)...${RESET}"
-	@$(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) $(LINKS) -o $(NAME) \
-	&& echo "${LIGHT_GREEN}DONE${RESET}"
+	@$(STAT) $(OBJ_DIR)/* | grep -q $(shell date +%s) \
+	&& ($(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) $(LINKS) -o $(NAME) \
+	&& echo "${LIGHT_GREEN}DONE${RESET}") \
+	|| echo "${YELLOW}$(NAME) is up to date.${RESET}"
 
-$(EXE):
-	@echo "${BOLD}compiling main.c...${RESET}"
-	@$(CC) main.c $(ARS) $(LINKS) -o $(EXE)
-	@echo "${LIGHT_GREEN}DONE${RESET}"
-
-tar:
+tar: os
 	@ls | grep -q "$(NAME).tar" && rm -f $(NAME).tar || true
 	@tar -cf $(NAME).tar --exclude=".git" --exclude="$(NAME)" --exclude="$(MINILX_DIR)" --exclude="obj" --exclude="$(LIBFT_DIR)/obj" --exclude="data" ./*
 
@@ -137,10 +138,10 @@ clean:
 fclean: clean
 	@rm -rf $(NAME) $(EXE) $(MINILX_DIR) data
 	@$(MAKE) fclean -C $(LIBFT_DIR) --quiet
-	@echo "\texecutable ($(NAME), $(EXE)),\n\t$(MINILX_DIR),\n\tdata extracted,\n\tarchives (.a)"
+	@echo "\texecutable ($(NAME)),\n\t$(MINILX_DIR),\n\tdata extracted,\n\tarchives (.a)"
 
 lre: clean all
 
 re: fclean all
 
-.PHONY: all clean fclean re lre nyaa $(LIBFT_DIR) $(MINILX_DIR) data tar .gitignore show
+.PHONY: os all clean fclean re lre nyaa $(LIBFT_DIR) $(MINILX_DIR) data tar .gitignore show
