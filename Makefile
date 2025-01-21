@@ -65,9 +65,6 @@ GIDEF =	"""$\
 
 all: $(NAME)
 
-<<<<<<< HEAD
-$(OBJ_DIR)/%.o: %.c
-=======
 os:
 ifeq ($(OS),Error)
 	$(error inncompatible OS)
@@ -77,7 +74,6 @@ $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)
 
 $(OBJ_DIR)/%.o: %.c | $(OBJ_DIR)
->>>>>>> 3b300da8f721a6035ffac19e465bcfb537a2f43b
 	@$(CC) $(CFLAGS) $(INK) -c $< -o $(OBJ_DIR)/$(notdir $@)
 
 data: os
@@ -87,14 +83,7 @@ data: os
 	|| (mkdir data \
 	&& unzip -q Archive.zip -d data)
 
-<<<<<<< HEAD
-$(OBJ_DIR):
-	@mkdir -p $(OBJ_DIR)
-
-$(MINILX_DIR):
-=======
 $(MINILX_DIR): os
->>>>>>> 3b300da8f721a6035ffac19e465bcfb537a2f43b
 	@echo "${BOLD}creating $(MINILX_DIR)...${RESET}"
 	@ls | grep -q "$(MINILX_DIR)" \
 	&& echo "${YELLOW}$(MINILX_DIR) is up to date.${RESET}" \
@@ -112,22 +101,10 @@ $(LIBFT_DIR): os
 
 $(NAME): os $(MINILX_DIR) $(LIBFT_DIR) $(OBJS) data
 	@echo "${BOLD}compiling $(NAME)...${RESET}"
-<<<<<<< HEAD
-	@echo "$(shell stat -c %Z $(OBJ_DIR)/*)" | grep -q "$(shell date +%s)" \
-	&& ($(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) $(LINKS) -o $(NAME) \
-	&& echo "${LIGHT_GREEN}DONE${RESET}") \
-	|| echo "${YELLOW}$(NAME) is up to date.${RESET}"
-
-$(EXE):
-	@echo "${BOLD}compiling main.c...${RESET}"
-	@$(CC) main.c $(ARS) $(LINKS) -o $(EXE)
-	@echo "${LIGHT_GREEN}DONE${RESET}"
-=======
 	@$(STAT) $(OBJ_DIR)/* | grep -q $(shell date +%s) \
 	&& ($(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) $(LINKS) -o $(NAME) \
 	&& echo "${LIGHT_GREEN}DONE${RESET}") \
 	|| echo "${YELLOW}$(NAME) is up to date.${RESET}"
->>>>>>> 3b300da8f721a6035ffac19e465bcfb537a2f43b
 
 tar: os
 	@ls | grep -q "$(NAME).tar" && rm -f $(NAME).tar || true
