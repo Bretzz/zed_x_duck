@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:51:09 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/15 13:44:24 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/21 12:25:50 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,29 +38,36 @@ typedef struct s_list_fd
 }			t_list_fd;
 
 //get_next_line.c
+
 char		*get_next_line(int fd);
 
 //get_next_line_utils.c
 //char		*get_substr(char const *s, unsigned int start, size_t len);
+
 int			ft_strichr(const char *s, int c);
 t_list_fd	*ft_lstnew_add_back_ptr(int fd, t_list_fd *lst, void *content);
 void		ft_lstclear_fd(int fd, t_list_fd **lst, void (*del)(void*));
+
+//ft_printf.c
 
 int			ft_printf(const char *s, ...);
 
 //nlibft.h
 //char	*nest_addchar_front(char *str, char c);
+
 int			nest_putexa_fd(int fd, unsigned int nb, char x);
 int			nest_putptr_fd(int fd, void *ptr);
 int			nest_putput_fd(int fd);
 int			nest_putuns_fd(int fd, unsigned int nb);
 
 //wlibft.h
+
 int			west_putchar_fd(int fd, char c);
 int			west_putstr_fd(int fd, char *s);
 int			west_putnbr_fd(int fd, int nb);
 
 //libft.h
+
 int			ft_isalpha(int c);
 int			ft_isdigit(int c);
 int			ft_isalnum(int c);
@@ -106,5 +113,9 @@ void		ft_lstiter(t_list *lst, void (*f)(void *));
 t_list		*ft_lstlast(t_list *lst);
 t_list		*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 t_list		*ft_lstnew(void *content);
+
+//libft: helpers
+
+int			ft_wdcount(const char *s, int c);
 
 #endif

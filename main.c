@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 14:54:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/17 06:07:43 by totommi          ###   ########.fr       */
+/*   Updated: 2025/01/21 12:43:27 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,8 @@ int	line_parser(char *line)
 
 	if (!line)
 		return (0);
+	if (ft_wdcount(line, ' ') != 10)
+		return (0);
 	if (!is_date(line))
 		return (0);
 	line += 10;
@@ -100,12 +102,12 @@ int	line_parser(char *line)
 		return (0);
 	line += 8;
 	i = 0;
-	//ft_printf("date + time OK\n");
+//	ft_printf("date + time OK\n");
 	while (i < 8)
 	{
 		if (*line == '\0' || *line != ' ')
 			return (0);
-		//ft_printf("element close correctly\n");
+//		ft_printf("element close correctly\n");
 		while (*line && *line == ' ')
 			line++;
 		if (i > 0 && i <= 5 && i != 3)
@@ -115,7 +117,7 @@ int	line_parser(char *line)
 			if (!*line || *line != '.')
 				return (0);
 			line++;
-			//ft_printf("'digit.' element OK\n");
+//			ft_printf("'digit.' element OK\n");
 		}
 		else if (i == 3)
 		{
@@ -127,7 +129,7 @@ int	line_parser(char *line)
 			if (!*line || *line != '.')
 				return (0);
 			line++;
-			//ft_printf("'-digit.' element OK\n");
+//			ft_printf("'-digit.' element OK\n");
 		}
 		else if (i >= 6)
 		{
@@ -135,17 +137,19 @@ int	line_parser(char *line)
 				return (0);
 			while (*line && (ft_isdigit(*line) || *line == '.'))
 				line++;
-			//ft_printf("'float' element OK\n");
+//			ft_printf("'float' element OK\n");
 		}
 		else
 		{
 			while (*line && ft_isdigit(*line))
 				line++;
-			//ft_printf("'digit' element OK\n");
+//			ft_printf("'digit' element OK\n");
 		}
 		i++;
 		//if (i < 6 || (i > 16 && i < 23) || (i > 28 && i < 31) || (i > 36 && i < 39) || (i > 44 & i < 51) || ())
 	}
+	if (*line != '\n')
+		return (0);
 	return (1);
 }
 
@@ -203,8 +207,9 @@ void	plot_data(t_mlx *mlx)
 
 int	main(void)
 {
+	char	*itoa;
 	int		line;
-	int	fd;
+	int		fd;
 	t_mlx	*mlx;
 
 	mlx = (t_mlx *)malloc(1 * sizeof(t_mlx));
@@ -217,11 +222,18 @@ int	main(void)
 	//line_parser(NULL);
 	/* if (!is_date("2020/12/04 00:00:00      1607040000       6000.   4000.   -800.       5580.    430.    1.790    0.052"))
 		ft_printf("not a date"); */
+	if (ft_isfloat("1.790"))
+		ft_printf("FLOAT\n");
+	else
+		ft_printf("NOT FLOAT\n");
 	fd = open("data/2020_12_04_00.elastic_model", O_RDONLY);
 	if ((line = file_parser(fd)))
 	{
-		ft_printf("line [%i]: ", line);
-		write(2, "file parse Error\n", 18);
+		(void)!write(1, "line [", 6);
+		itoa = ft_itoa(line);
+		(void)!write(1, itoa, ft_strlen(itoa));
+		(void)!write(1, "]: file parse error\n", 21);
+		free(itoa);
 		clean_exit(mlx);
 		return (1);
 	}

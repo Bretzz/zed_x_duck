@@ -6,9 +6,10 @@ LIGHT_GREEN := \033[92m
 LIGHT_CYAN 	:= \033[96m
 RESET 		:= \033[0m
 
+NAME := print_zed
 DIR := $(shell pwd)
 OS := $(shell uname)
-NAME := print_zed
+DATE := $(shell date +%s)
 CC := cc
 CFLAGS := -Wall -Wextra -Werror
 
@@ -101,10 +102,18 @@ $(LIBFT_DIR): os
 
 $(NAME): os $(MINILX_DIR) $(LIBFT_DIR) $(OBJS) data
 	@echo "${BOLD}compiling $(NAME)...${RESET}"
-	@$(STAT) $(OBJ_DIR)/* | grep -q $(shell date +%s) \
-	&& ($(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) $(LINKS) -o $(NAME) \
+	@$(STAT) $(OBJ_DIR)/* | awk '{if ($$1 > $(shell date +%s)) echo "lexicographically"}' | grep "lexicographically" \
+	|| ($(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) $(LINKS) -o $(NAME) \
 	&& echo "${LIGHT_GREEN}DONE${RESET}") \
 	|| echo "${YELLOW}$(NAME) is up to date.${RESET}"
+
+date:
+	@sleep 1
+	@$(STAT) $(OBJ_DIR)/*; echo "\n===\n"; echo $(DATE); echo "\n===\n"
+	@touch obj/a; $(STAT) $(OBJ_DIR)/* | awk '{if ($$1 > $(DATE)) echo "lexicographically"}' | grep "lexicographically" \
+	&& echo "new files" || true
+	@echo $(shell date +%s)
+	@echo $$(date +%s)
 
 tar: os
 	@ls | grep -q "$(NAME).tar" && rm -f $(NAME).tar || true
