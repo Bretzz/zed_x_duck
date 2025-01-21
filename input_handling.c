@@ -6,7 +6,7 @@
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 14:47:59 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/17 06:12:00 by totommi          ###   ########.fr       */
+/*   Updated: 2025/01/19 13:58:26 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	clean_exit(t_mlx *mlx)
 	return (0);
 }
 
-/* 4 = UP, 5 = DOWN*/
+/* XK_Up XK_Right XK_Down, XK_Left */
 int	handle_mouse(int keysym, int x, int y, t_mlx *mlx)
 {
 	UNUSED(x); UNUSED(y); UNUSED(mlx);
@@ -37,7 +37,15 @@ int	handle_mouse(int keysym, int x, int y, t_mlx *mlx)
 
 int	handle_keypress(int keysym, t_mlx *mlx)
 {
-//	ft_printf("ESC_KEY=%i\n", ESC_KEY);
+	ft_printf("XK_Up=%i\n", XK_Up);
+	if (keysym == XK_Up)
+		ft_printf("going up! %i\n", keysym);
+	if (keysym == XK_Down)
+		ft_printf("going down! %i\n", keysym);
+	if (keysym == XK_Right)
+		ft_printf("going right! %i\n", keysym);
+	if (keysym == XK_Left)
+		ft_printf("going left! %i\n", keysym);
 	if (keysym == ESC_KEY)
 	{
 		clean_exit(mlx);

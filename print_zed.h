@@ -28,8 +28,10 @@
 # define UNUSED(x) (void)(x)
 
 # include "mlx.h"
-# include <math.h>
 # include "libft.h"
+# include <X11/X.h>
+# include <X11/keysym.h>
+# include <math.h>
 //# include <sys/stat.h>
 # include <fcntl.h>
 

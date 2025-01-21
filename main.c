@@ -6,12 +6,11 @@
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 14:54:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/17 06:07:43 by totommi          ###   ########.fr       */
+/*   Updated: 2025/01/19 13:44:56 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "print_zed.h"
-#include <X11/X.h>
 
 void	my_pixel_put(t_img *data, int x, int y, int color)
 {
