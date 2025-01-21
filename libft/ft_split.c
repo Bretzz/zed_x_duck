@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 15:58:00 by topiana-          #+#    #+#             */
-/*   Updated: 2024/12/21 19:46:08 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/21 12:42:49 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static void		ft_free_arr(char **arr);
 static size_t	ft_wdlen(const char *s, int c);
-static int		ft_wdcount(const char *s, int c);
+int				ft_wdcount(const char *s, int c);
 
 static void	ft_free_arr(char **arr)
 {
@@ -38,7 +38,7 @@ static size_t	ft_wdlen(const char *s, int c)
 	return (i);
 }
 
-static int	ft_wdcount(const char *s, int c)
+int	ft_wdcount(const char *s, int c)
 {
 	int	wd;
 	int	i;
@@ -47,7 +47,8 @@ static int	ft_wdcount(const char *s, int c)
 	i = 0;
 	while (s[i] != '\0')
 	{
-		if ((i == 0 && s[i] != c) || (s[i - 1] == c && s[i] != c))
+		if ((i == 0 && s[i] != c)
+			|| (s[i - 1] == c && s[i] != c && s[i] >= 32))
 			wd++;
 		i++;
 	}

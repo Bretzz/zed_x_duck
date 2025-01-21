@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 17:41:35 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/15 13:44:37 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/21 12:36:54 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,11 @@ int	ft_isuint(const char *s)
 	if (!s)
 		return (0);
 	i = 0;
+	if (s[i] == '+')
+		i++;
 	while (s[i] != '\0')
 	{
-		if (!ft_isdigit(s[i])
-			&& s[i] != '+')
+		if (!ft_isdigit(s[i]))
 			return (0);
 		i++;
 	}
@@ -32,14 +33,19 @@ int	ft_isuint(const char *s)
 int	ft_isfloat(const char *s)
 {
 	int	i;
+	int point;
 
 	if (!s)
 		return (0);
 	i = 0;
+	if (s[i] == '+' || s[i] == '-')
+		i++;
+	point = 0;
 	while (s[i] != '\0')
 	{
-		if (s[i] != '.' && !ft_isdigit(s[i])
-			&& !(s[i] == '-' || s[i] == '+'))
+		if (s[i] == '.' && point == 0)
+			point = 1;
+		else if (!ft_isdigit(s[i]))
 			return (0);
 		i++;
 	}
@@ -50,14 +56,19 @@ int	ft_isfloat(const char *s)
 int	ft_isfloat_space(const char *s)
 {
 	int	i;
+	int point;
 
 	if (!s)
 		return (0);
 	i = 0;
+	if (s[i] == '+' || s[i] == '-')
+		i++;
+	point = 0;
 	while (s[i] != '\0' && !ft_isspace(s[i]))
 	{
-		if (s[i] != '.' && !ft_isdigit(s[i])
-			&& !(s[i] == '-' || s[i] == '+'))
+		if (s[i] == '.' && point == 0)
+			point = 1;
+		else if (!ft_isdigit(s[i]))
 			return (0);
 		i++;
 	}
