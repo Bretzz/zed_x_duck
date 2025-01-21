@@ -9,7 +9,7 @@ RESET 		:= \033[0m
 NAME := print_zed
 DIR := $(shell pwd)
 OS := $(shell uname)
-DATE := $(shell date +%s)
+DATE := $(shell date +%Y-%m-%d\ %T)
 CC := cc
 CFLAGS := -Wall -Wextra -Werror
 
@@ -102,18 +102,19 @@ $(LIBFT_DIR): os
 
 $(NAME): os $(MINILX_DIR) $(LIBFT_DIR) $(OBJS) data
 	@echo "${BOLD}compiling $(NAME)...${RESET}"
-	@$(STAT) $(OBJ_DIR)/* | awk '{if ($$1 > $(shell date +%s)) echo "lexicographically"}' | grep "lexicographically" \
-	|| ($(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) $(LINKS) -o $(NAME) \
+	@find $(OBJ_DIR)/ -newermt "$(DATE)" -type f -print | grep -q / \
+	&& ($(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) $(LINKS) -o $(NAME) \
 	&& echo "${LIGHT_GREEN}DONE${RESET}") \
 	|| echo "${YELLOW}$(NAME) is up to date.${RESET}"
 
 date:
-	@sleep 1
-	@$(STAT) $(OBJ_DIR)/*; echo "\n===\n"; echo $(DATE); echo "\n===\n"
-	@touch obj/a; $(STAT) $(OBJ_DIR)/* | awk '{if ($$1 > $(DATE)) echo "lexicographically"}' | grep "lexicographically" \
-	&& echo "new files" || true
-	@echo $(shell date +%s)
-	@echo $$(date +%s)
+#	@sleep 1
+	@$(STAT) $(OBJ_DIR)/*; echo "\n===\n"; echo "DATE:\n$(DATE)"; echo "\n===\n"
+	@touch a b c; echo "stat di a b c\n";$(STAT) a b c; echo "\noutput:"; \
+	find . -newermt "$(DATE)" -type f -print || true
+	@echo "\n===\n"
+	@echo $(shell date +%Y-%m-%d\ %T)
+	@echo $$(date +%Y-%m-%d\ %T)
 
 tar: os
 	@ls | grep -q "$(NAME).tar" && rm -f $(NAME).tar || true
