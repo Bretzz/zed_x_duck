@@ -107,15 +107,6 @@ $(NAME): os $(MINILX_DIR) $(LIBFT_DIR) $(OBJS) data
 	&& echo "${LIGHT_GREEN}DONE${RESET}") \
 	|| echo "${YELLOW}$(NAME) is up to date.${RESET}"
 
-date:
-#	@sleep 1
-	@$(STAT) $(OBJ_DIR)/*; echo "\n===\n"; echo "DATE:\n$(DATE)"; echo "\n===\n"
-	@touch a b c; echo "stat di a b c\n";$(STAT) a b c; echo "\noutput:"; \
-	find . -newermt "$(DATE)" -type f -print || true
-	@echo "\n===\n"
-	@echo $(shell date +%Y-%m-%d\ %T)
-	@echo $$(date +%Y-%m-%d\ %T)
-
 tar: os
 	@ls | grep -q "$(NAME).tar" && rm -f $(NAME).tar || true
 	@tar -cf $(NAME).tar --exclude=".git" --exclude="$(NAME)" --exclude="$(MINILX_DIR)" --exclude="obj" --exclude="$(LIBFT_DIR)/obj" --exclude="data" ./*
