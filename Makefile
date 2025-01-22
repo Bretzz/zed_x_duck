@@ -9,7 +9,6 @@ RESET 		:= \033[0m
 NAME := print_zed
 DIR := $(shell pwd)
 OS := $(shell uname)
-DATE := $(shell date +%Y-%m-%d\ %T)
 CC := cc
 CFLAGS := -Wall -Wextra -Werror
 
@@ -20,19 +19,21 @@ ifeq ($(OS),Darwin)
 	INK = -D ESC_KEY=53 -D MAX_WIN_X=1440 -D MAX_WIN_Y=840 -I/usr/include -I/usr/X11/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3
 	LINKS = -I$(MINILX_DIR) -I$(DIR) -I/opt/homebrew/include -I/usr/X11/include -L$(MINILX_DIR) -L/usr/lib -L/usr/X11/lib -lX11 -lXext -lm -lz -framework OpenGL -framework AppKit
 	STAT = stat -f %m
+	DATE = date -v -1S +%Y-%m-%d\ %H:%M:%S
 else ifeq ($(OS),Linux)
 	MINILX_DIR = minilibx-linux
 	URL = https://cdn.intra.42.fr/document/document/28085/minilibx-linux.tgz
 	INK = -I/usr/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3
 	LINKS = -L$(MINILX_DIR) -lmlx_Linux -L/usr/lib -I$(MINILX_DIR) -lXext -lX11 -lm -lz
 	STAT = stat -c %Z
+	DATE = date --date "1 seconds ago" +%Y-%m-%d\ %H:%M:%S
 else
 	OS = Error
 endif
 
 #source files (full path optional)
 SRCS := main.c input_handling.c \
-		math_sidekicks.c \
+		parsing.c math_sidekicks.c \
 		easy_startup_functions.c \
 		checky_funtions.c
 
@@ -102,7 +103,7 @@ $(LIBFT_DIR): os
 
 $(NAME): os $(MINILX_DIR) $(LIBFT_DIR) $(OBJS) data
 	@echo "${BOLD}compiling $(NAME)...${RESET}"
-	@find $(OBJ_DIR)/ -newermt "$(DATE)" -type f -print | grep -q / \
+	@find $(OBJ_DIR)/ -newermt "$(shell $(DATE))" -type f -print | grep -q / \
 	&& ($(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) $(LINKS) -o $(NAME) \
 	&& echo "${LIGHT_GREEN}DONE${RESET}") \
 	|| echo "${YELLOW}$(NAME) is up to date.${RESET}"

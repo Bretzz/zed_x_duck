@@ -81,4 +81,11 @@ float		ft_atof(const char *nptr);
 void		ft_free_arr(char **arr);
 char		**back_trim_nl(char **arr);
 
+//parsing.c
+
+int		is_time(char *line);
+int		is_date(char *line);
+int		line_parser(char *line);
+int		file_parser(int fd);
+
 #endif
