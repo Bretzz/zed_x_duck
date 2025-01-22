@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checky_funtions.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 13:26:33 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/22 04:04:23 by totommi          ###   ########.fr       */
+/*   Updated: 2025/01/22 15:56:02 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ static float	ft_get_decimals(const char *nptr)
 	return (dec);
 }
 
+/* somehow adds a .000001 at the end of the number */
 float	ft_atof(const char *nptr)
 {
 	int				sign;

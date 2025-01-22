@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   easy_startup_functions.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 18:32:01 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/17 06:12:32 by totommi          ###   ########.fr       */
+/*   Updated: 2025/01/22 18:18:41 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,5 +34,12 @@ int	juice_the_pc(t_mlx *mlx)
 		free(mlx->mlx);
 		return (1);
 	}
+	mlx->plane.r_z = 0.0f; // the z axis orientation, 0 = towards the user
+	mlx->plane.r_x = 0.0f; // the z axis orientation, 0 = towards the user
+	mlx->plane.r_y = 0.0f; // the z axis orientation, 0 = towards the user
+	mlx->plane.origin.z = 0;
+	mlx->plane.origin.x = MAX_WIN_X / 2;
+	mlx->plane.origin.y = MAX_WIN_Y / 2;
+	mlx->plane.fov = 1.0f;
 	return (0);
 }

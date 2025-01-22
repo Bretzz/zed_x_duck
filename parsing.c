@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsinng.c                                         :+:      :+:    :+:   */
+/*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 02:15:55 by totommi           #+#    #+#             */
-/*   Updated: 2025/01/22 02:24:47 by totommi          ###   ########.fr       */
+/*   Updated: 2025/01/22 16:26:14 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,3 +191,26 @@ int	file_parser(int fd)
 	}
 	return (0);
 }
+
+/* takes the path of the folder as parameter.
+RETURNS: 1 if all the file contained respect the format, 0 if not. 
+REMEMBER TO CHECKARE IL FORMATEO DEL FILE (.*) */
+/* int	data_parse(char *path)
+{
+	int 	fd;
+	int		line;
+	char	*itoa;
+	
+	fd = open("data/2020_12_04_00.elastic_model", O_RDONLY);
+	if ((line = file_parser(fd)))
+	{
+		(void)!write(1, "line [", 6);
+		itoa = ft_itoa(line);
+		(void)!write(1, itoa, ft_strlen(itoa));
+		(void)!write(1, "]: file parse error\n", 21);
+		free(itoa);
+		//clean_exit(mlx);	do it in the main
+		//return (1);
+	}
+	close(fd);
+} */
