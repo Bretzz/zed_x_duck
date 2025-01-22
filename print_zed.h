@@ -103,6 +103,8 @@ char		**back_trim_nl(char **arr);
 int		is_time(char *line);
 int		is_date(char *line);
 int		line_parser(char *line);
+int		is_format(char *format, char *path);
 int		file_parser(int fd);
+int		data_parser(char *ls_out);
 
 #endif

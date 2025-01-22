@@ -108,6 +108,9 @@ $(NAME): os $(MINILX_DIR) $(LIBFT_DIR) $(OBJS) data
 	&& echo "${LIGHT_GREEN}DONE${RESET}") \
 	|| echo "${YELLOW}$(NAME) is up to date.${RESET}"
 
+rundata: $(NAME) data
+	@ARG="$(shell ls data | awk '{print "data/" $$0 }')"; ./$(NAME) "$$ARG"
+
 tar: os
 	@ls | grep -q "$(NAME).tar" && rm -f $(NAME).tar || true
 	@tar -cf $(NAME).tar --exclude=".git" --exclude="$(NAME)" --exclude="$(MINILX_DIR)" --exclude="obj" --exclude="$(LIBFT_DIR)/obj" --exclude="data" ./*

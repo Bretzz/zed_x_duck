@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 14:54:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/22 18:48:22 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/22 15:39:57 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int	main(int argc, char *argv[])
 	int		i;
 	t_mlx	*mlx;
 	
-	(void)argc; (void)argv;
+	(void)argc; /* (void)argv; */
 	mlx = (t_mlx *)malloc(1 * sizeof(t_mlx));
 	if (juice_the_pc(mlx))
 	{
@@ -108,10 +108,18 @@ int	main(int argc, char *argv[])
 		mlx->data[i].y = 0;
 		i++;
 	}
-	plot_data(mlx);
-	mlx_mouse_hook(mlx->win, &handle_mouse, mlx);
+//	plot_data(mlx);
+//	ft_printf("%s\n", argv[1]);
+	if (!data_parser(argv[1]))
+	{
+		clean_exit(mlx);
+		return (1);
+	}
+	else
+		ft_printf("ALL GOOD\n");
+/*	mlx_mouse_hook(mlx->win, &handle_mouse, mlx);
 	mlx_hook(mlx->win, KeyPress, KeyPressMask, &handle_keypress, mlx);
 	mlx_hook(mlx->win, DestroyNotify, StructureNotifyMask, &clean_exit, mlx);
-	mlx_loop(mlx->mlx);
+	mlx_loop(mlx->mlx); */
 	return (0);
 }

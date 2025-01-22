@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 02:15:55 by totommi           #+#    #+#             */
-/*   Updated: 2025/01/22 16:26:14 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/22 15:43:48 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,21 @@
 int	is_time(char *line);
 int	is_date(char *line);
 int	line_parser(char *line);
+int	is_format(char *format, char *path);
 int file_parser(int fd);
+int	data_parser(char *ls_out);
+
 
 
 /* takes a char pointer as a parameter
 RETURNS: 1 if the string begins with a 'date', 0 if it doesn't 
 date: yyyy/mm/dd */
+
+// Return true if year is a  
+// multiple of 4 and not  
+// multiple of 100. OR year 
+// is multiple of 400. 
+
 int	is_date(char *line)
 {
 	int	i;
@@ -56,25 +65,24 @@ int	is_time(char *line)
 {
 	int	i;
 
+	if (line == NULL)
+		return (0);
 	i = 0;
 	while (i < 8)
 	{
-		if (*line == '\0')
+		if (line[i] == '\0')
 			return (0);
-		if ((i == 2 || i == 5))
-		{
-			if (*line != ':')
-			{
-				ft_printf("time: colon [%i] strike OUT\n", i);
-				return (0);
-			}
-		}
-		else if (!ft_isdigit(*line))
-		{
-			ft_printf("time: digit [%i] strike OUT\n", i);
+		if (i == 0 && (!ft_isdigit(line[i]) || line[i] > '2'))
 			return (0);
-		}
-		line++;
+		else if (i == 1 && (!ft_isdigit(line[i]) || (line[0] == '2' && line[i] > '4')))
+			return (0);
+		else if ((i == 2 || i == 5) && line[i] != ':')
+			return (0);
+		else if ((i == 3 || i == 6) && (!ft_isdigit(line[i])
+			|| line[i] > '5'))
+			return (0);
+		else if ((i == 4 || i == 7 ) && !ft_isdigit(line[i]))
+			return (0);
 		i++;
 	}
 	return (1);
@@ -94,9 +102,8 @@ int	line_parser(char *line)
 	if (!is_date(line))
 		return (0);
 	line += 10;
-	if (*line != ' ')
+	if (*(line++) != ' ')
 		return (0);
-	line++;
 	if (!is_time(line))
 		return (0);
 	line += 8;
@@ -192,25 +199,60 @@ int	file_parser(int fd)
 	return (0);
 }
 
+/* takes a 'format' string and a 'path' string as parameters.
+checks if the file at the endd of the path is of the format specified.
+RETURNS: 1 if it is, 0 if it isn't. */
+int	is_format(char *format, char *path)
+{
+	int	i;
+
+	i = 0;
+	if (!format || !path)
+		return (0);
+	while (path[i] != '\0')
+		i++;
+	while (i >= 0 && path[i] != '/')
+		i--;
+	while (path[i] != '\0' && path[i] != '.')
+		i++;
+	if (ft_strncmp(format, &path[i], ft_strlen(format) + 1))
+		return (0);
+	return (1);
+}
+
 /* takes the path of the folder as parameter.
 RETURNS: 1 if all the file contained respect the format, 0 if not. 
 REMEMBER TO CHECKARE IL FORMATEO DEL FILE (.*) */
-/* int	data_parse(char *path)
+int	data_parser(char *ls_out)
 {
+	int		i;
 	int 	fd;
 	int		line;
 	char	*itoa;
+	char	**paths;
 	
-	fd = open("data/2020_12_04_00.elastic_model", O_RDONLY);
-	if ((line = file_parser(fd)))
+	paths = ft_split(ls_out, ' ');
+	if (!paths)
+		return (0);
+	i = 0;
+	while (paths[i] != NULL)
 	{
-		(void)!write(1, "line [", 6);
-		itoa = ft_itoa(line);
-		(void)!write(1, itoa, ft_strlen(itoa));
-		(void)!write(1, "]: file parse error\n", 21);
-		free(itoa);
-		//clean_exit(mlx);	do it in the main
-		//return (1);
+		ft_printf("parsing: %s ...\n", paths[i]);
+		fd = open(paths[i], O_RDONLY);
+		if ((line = file_parser(fd)))
+		{
+			write(2, &paths[i][5], ft_strlen(&paths[i][5]));
+			write(2, ": line [", 8);
+			itoa = ft_itoa(line);
+			write(2, itoa, ft_strlen(itoa));
+			write(2, "]: file parse error\n", 21);
+			free(itoa);
+			ft_free_arr(paths);
+			return (0);
+		}
+		close(fd);
+		i++;
 	}
-	close(fd);
-} */
+	ft_free_arr(paths);
+	return (1);
+}

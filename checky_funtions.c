@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checky_funtions.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 13:26:33 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/22 15:56:02 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/22 14:29:58 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,19 +60,19 @@ static float	ft_get_decimals(const char *nptr)
 	if (*nptr++ != '.')
 		return (0);
 	len = 0;
-	while (nptr[len] >= '0' && nptr[len] <= '9')
+	while (nptr[len + 1] >= '0' && nptr[len + 1] <= '9')
 		len++;
 	dec = 0;
-	while (*nptr >= '0' && *nptr <= '9')
+	while (nptr[len] >= '0' && nptr[len] <= '9')
 	{
-		dec = dec * 10 + (*nptr - '0');
-		nptr++;
+		dec = dec / 10 + (nptr[len] - '0');
+		printf("len=%zu: %f\n", len, dec);
+		len--;
 	}
-	dec /= powf(10, len);
-	return (dec);
+	return (dec / 10);
 }
 
-/* somehow adds a .000001 at the end of the number */
+/* somehow adds a 0.000001 at the end of the number */
 float	ft_atof(const char *nptr)
 {
 	int				sign;
