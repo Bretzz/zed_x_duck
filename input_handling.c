@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   input_handling.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 14:47:59 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/22 14:16:41 by totommi          ###   ########.fr       */
+/*   Updated: 2025/01/23 14:10:26 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,42 +44,51 @@ int	handle_keypress(int keysym, t_mlx *mlx)
 	if (keysym == XK_Up)
 	{
 		ft_printf("going up! %i\n", keysym);
-		mlx->plane.r_y -= (float)0.1;
+		mlx->plane.r_x -= (float)0.1;
+//		mlx->plane.r_z -= (float)10;
 	}
 	if (keysym == XK_Down)
 	{
 		ft_printf("going down! %i\n", keysym);
-		mlx->plane.r_y += (float)0.1;
+		mlx->plane.r_x += (float)0.1;
+//		mlx->plane.r_z += (float)10;
 	}
 	if (keysym == XK_Right)
 	{
 		ft_printf("going right! %i\n", keysym);
-		mlx->plane.r_x -= (float)0.1;
+		mlx->plane.r_y -= (float)0.1;
 	}
 	if (keysym == XK_Left)
 	{
 		ft_printf("going left! %i\n", keysym);
-		mlx->plane.r_x += (float)0.1;
-	}
-	if (keysym == XK_w)
-	{
-		ft_printf("going up(?) %i\n", keysym);
-		mlx->plane.r_z += (float)0.1;
-	}
-	if (keysym == XK_s)
-	{
-		ft_printf("going down(?) %i\n", keysym);
-		mlx->plane.r_z -= (float)0.1;
+		mlx->plane.r_y += (float)0.1;
 	}
 	if (keysym == XK_a)
 	{
 		ft_printf("going up(?) %i\n", keysym);
-		mlx->plane.fov += (float)1;
+		mlx->plane.fov += (float)0.1;
 	}
 	if (keysym == XK_d)
 	{
 		ft_printf("going down(?) %i\n", keysym);
-		mlx->plane.fov -= (float)1;
+		mlx->plane.fov -= (float)0.1;
+	}
+	if (keysym == XK_w)
+	{
+		ft_printf("going up(?) %i\n", keysym);
+		mlx->plane.r_z -= (float)10;
+	}
+	if (keysym == XK_s)
+	{
+		ft_printf("going down(?) %i\n", keysym);
+		mlx->plane.r_z += (float)10;
+	}
+	if (keysym == XK_r)
+	{
+		ft_printf("RESET %i\n", keysym);
+		mlx->plane.r_z = (float)0;
+		mlx->plane.r_x = (float)0;
+		mlx->plane.r_y = (float)0;
 	}
 	if (keysym == ESC_KEY)
 	{
