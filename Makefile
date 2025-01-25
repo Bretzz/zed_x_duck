@@ -19,19 +19,19 @@ ifeq ($(OS),Darwin)
 	INK = -D ESC_KEY=53 -D MAX_WIN_X=1440 -D MAX_WIN_Y=840 -I/usr/include -I/usr/X11/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3
 	LINKS = -I$(MINILX_DIR) -I$(DIR) -I/opt/homebrew/include -I/usr/X11/include -L$(MINILX_DIR) -L/usr/lib -L/usr/X11/lib -lX11 -lXext -lm -lz -framework OpenGL -framework AppKit
 	STAT = stat -f %m
-	DATE_CMD = date -v -1S +%Y-%m-%d\ %H:%M:%S
+	DATE = date +%Y-%m-%d\ %H:%M:%S
 else ifeq ($(OS),Linux)
 	MINILX_DIR = minilibx-linux
 	URL = https://cdn.intra.42.fr/document/document/28085/minilibx-linux.tgz
 	INK = -I/usr/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3
 	LINKS = -L$(MINILX_DIR) -lmlx_Linux -L/usr/lib -I$(MINILX_DIR) -lXext -lX11 -lm -lz
 	STAT = stat -c %Z
-	DATE_CMD = date --date "1 seconds ago" +%Y-%m-%d\ %H:%M:%S
+	DATE = date +%Y-%m-%d\ %H:%M:%S
 else
 	OS = Error
 endif
 
-DATE := $(shell $(DATE_CMD))
+#DATE := $(shell $(DATE_CMD))
 
 #source files (full path optional)
 SRCS := main.c input_handling.c \
@@ -46,6 +46,7 @@ ARS	= $(LIBFT_DIR)/libft.a $(MINILX_DIR)/libmlx.a #libmlx_Linux.a
 VPATH =
 
 LIBFT_DIR := libft
+LIBFT = $(LIBFT_DIR)/libft.a
 OBJ_DIR := $(DIR)/obj
 OBJS = $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(SRCS)))
 GIDEF =	"""$\
@@ -80,35 +81,29 @@ $(OBJ_DIR):
 $(OBJ_DIR)/%.o: %.c | $(OBJ_DIR)
 	@$(CC) $(CFLAGS) $(INK) -c $< -o $(OBJ_DIR)/$(notdir $@)
 
-data: os
+data:
 	@echo "${BOLD}extracting data...${RESET}"
 	@ls -F | grep -q "data/" \
 	&& echo "${YELLOW}data already exctracted.${RESET}" \
 	|| (mkdir data \
 	&& unzip -q Archive.zip -d data)
 
-$(MINILX_DIR): os
+$(MINILX_DIR):
 	@echo "${BOLD}creating $(MINILX_DIR)...${RESET}"
-	@ls | grep -q "$(MINILX_DIR)" \
-	&& echo "${YELLOW}$(MINILX_DIR) is up to date.${RESET}" \
-	|| (curl $(URL) --output $(MINILX_DIR).tgz \
+	@curl $(URL) --output $(MINILX_DIR).tgz \
 	&& tar -xf $(MINILX_DIR).tgz \
 	&& rm -f $(MINILX_DIR).tgz \
 	&& ls $(MINILX_DIR) || mv `ls | grep $(MINILX_DIR)` $(MINILX_DIR) \
-	&& $(MAKE) -C $(MINILX_DIR) --quiet)
+	&& $(MAKE) -C $(MINILX_DIR) --quiet
 
-$(LIBFT_DIR): os
+$(LIBFT):
 	@echo "${BOLD}creating libft...${RESET}"
-	@$(MAKE) -C $(LIBFT_DIR) | grep -q "Nothing to be done for" \
-	&& echo "${YELLOW}libft is up to date.${RESET}" \
-	|| true
+	@$(MAKE) -C $(LIBFT_DIR) --quiet
 
-$(NAME): os $(MINILX_DIR) $(LIBFT_DIR) $(OBJS) data
+$(NAME): $(MINILX_DIR) $(LIBFT) $(OBJS) data
 	@echo "${BOLD}compiling $(NAME)...${RESET}"
-	@find $(OBJ_DIR) -newermt "$(DATE)" -type f -print | grep -q / \
-	&& ($(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) $(LINKS) -o $(NAME) \
-	&& echo "${LIGHT_GREEN}DONE${RESET}") \
-	|| echo "${YELLOW}$(NAME) is up to date.${RESET}"
+	@$(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) $(LINKS) -o $(NAME) \
+	&& echo "${LIGHT_GREEN}DONE${RESET}" \
 
 rundata: $(NAME) data
 	@ARG="$(shell ls data | awk '{print "data/" $$0 }')"; ./$(NAME) "$$ARG"
@@ -129,7 +124,7 @@ tar: os
 show:
 	@printf "NAME  		: $(NAME)\n"
 	@printf "OS		: $(OS)\n"
-	@printf "LIBFT		: $(DIR)/$(LIBFT_DIR)\n"
+	@printf "LIBFT		: $(DIR)/$(LIBFT)\n"
 	@printf "MINILIBX	: $(DIR)/$(MINILX_DIR)\n"
 	@printf "CC		: $(CC)\n"
 	@printf "CFLAGS		: $(CFLAGS)\n"
@@ -151,4 +146,4 @@ lre: clean all
 
 re: fclean all
 
-.PHONY: os all clean fclean re lre nyaa $(LIBFT_DIR) $(MINILX_DIR) data tar .gitignore show
+.PHONY: os all clean fclean re lre nyaa tar .gitignore show

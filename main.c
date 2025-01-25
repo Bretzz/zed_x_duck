@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 14:54:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/23 15:16:08 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/24 17:16:01 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,139 @@ t_point	get_centre(t_point *data, int pt_num)
 	return (centre);
 }
 
-void	point_to_sphere(t_point p, int value, t_mlx *mlx)
+/* takes 2 points as paraemters,
+returns the one with smaller value on the z axis */
+t_point	minor_z(t_point a, t_point b)
+{
+	if(a.z < b.z)
+		return (a);
+	return (b);
+}
+
+/* takes 2 points as paraemters,
+returns the one with smaller value on the x axis */
+t_point	minor_x(t_point a, t_point b)
+{
+	if(a.x < b.x)
+		return (a);
+	return (b);
+}
+
+/* takes 2 points as paraemters,
+returns the one with smaller value on the y axis */
+t_point	minor_y(t_point a, t_point b)
+{
+	if(a.y < b.y)
+		return (a);
+	return (b);
+}
+
+/* takes 2 points as paraemters,
+returns the one with grater value on the z axis */
+t_point	major_z(t_point a, t_point b)
+{
+	if(a.z > b.z)
+		return (a);
+	return (b);
+}
+
+/* takes 2 points as paraemters,
+returns the one with grater value on the x axis */
+t_point	major_x(t_point a, t_point b)
+{
+	if(a.x > b.x)
+		return (a);
+	return (b);
+}
+
+/* takes 2 points as paraemters,
+returns the one with grater value on the y axis */
+t_point	major_y(t_point a, t_point b)
+{
+	if(a.y > b.y)
+		return (a);
+	return (b);
+}
+
+/* takes 2 3D points as parameters.
+returns the distance (float) between them. */
+float	ft_distf(t_point a, t_point b)
+{
+	return (sqrtf(((a.x - b.x) * (a.x - b.x)) + ((a.y - b.y) * (a.y - b.y)) + ((a.z - b.z) * (a.z - b.z))));
+}
+
+float	ft_absf(float f)
+{
+	if (f < 0)
+		return (f * -1.0f);
+	return (f);
+}
+
+/* ab x ac = modulo(ab) * modulo(ac) * cos(theta) */
+float	ft_areaf(t_point a, t_point b, t_point c)
+{
+	float angle;
+	
+	angle = acosf((((b.x - a.x) * (c.x - a.x) + (b.y - a.y) * (c.y - a.y) + (b.z - a.z) * (c.z - a.z))
+		/ (sqrtf((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y) + (b.z - a.z) * (b.z - a.z))
+		* sqrtf((c.x - a.x) * (c.x - a.x) + (c.y - a.y) * (c.y - a.y) + (c.z - a.z) * (c.z - a.z)))));
+	return ((ft_distf(a, b) * ft_distf(a, c) * sinf(angle) / 2.0f));
+}
+
+
+/* takes 4 3D space points as parameters.
+checks wether the first one is contained in the triangle
+fromed by the other 3.
+RETURNS: 1 if it's contained, 0 if it isn't. */
+int	is_inside(t_point p, t_point a, t_point b, t_point c)
+{
+	float	area;
+	float	alpha;
+	float	beta;
+	float	gamma;
+
+	area = ft_areaf(a, b, c);
+	alpha = ft_areaf(p, b, c) / area;
+	beta = ft_areaf(p, c, a) / area;
+	gamma = 1 - alpha - beta;
+	if ((!alpha && !beta) || (!alpha && !gamma) || (!beta && !gamma) && alpha + beta + gamma == 1)
+	if ((alpha >= 0 && alpha <= 1)
+		&& (beta >= 0 && beta <= 1)
+		&& (gamma >= 0 && gamma <= 1)
+		&& alpha + beta + gamma == 1)
+		return (1);
+	return (0);
+}
+
+/* takes 3 2D points as parameters and fill the area inbetween them */
+void	fill_area(t_point a, t_point b, t_point c, t_mlx *mlx)
+{
+	t_point p;
+	t_point	max_p;
+
+	max_p.z = major_z(a, major_z(b, c)).z;
+	max_p.x = major_x(a, major_x(b, c)).x;
+	max_p.y = major_y(a, major_y(b, c)).y;
+	p.y = minor_y(a, minor_y(b, c)).y;
+	while(p.y < max_p.y)
+	{
+		p.x = minor_x(a, minor_x(b, c)).x;
+		while (p.x < max_p.x)
+		{
+			p.z = minor_z(a, minor_z(b, c)).z;
+			while (p.z < max_p.z)
+			{
+				if (is_inside(p, a, b, c))
+					put_point(p, 0x00FF00, mlx);
+				p.z++;
+			}
+			p.x++;
+		}
+		p.y++;
+	}
+}
+
+void	point_to_square(t_point p, int value, t_mlx *mlx)
 {
 	int		j;
 	float	i;
@@ -142,6 +274,7 @@ void	plot_data(t_mlx *mlx)
 	int		i;
 	t_point	a;
 	t_point	b;
+	t_point	c;
 
 	(*mlx).img->img = mlx_new_image((*mlx).mlx, (*mlx).win_x, (*mlx).win_y);
 	(*mlx).img->addr = mlx_get_data_addr((*mlx).img->img, &(*mlx).img
@@ -149,13 +282,19 @@ void	plot_data(t_mlx *mlx)
 
 	a.x = 10;
 	a.y = 10;
-	a.z = 100;
+	a.z = 10;
 	b.x = -10;
 	b.y = -10;
-	b.z = -100;
+	b.z = -10;
+	c.x = 100;
+	c.y = -30;
+	c.z = 30;
 
 	i = 1;
-	point_to_sphere(mlx->data[i], 10, mlx);
+	printf("mod=%f\n", ft_distf(a, b));
+	printf("areaABC=%f\n", ft_areaf(a, b, c));
+	fill_area(a, b, c, mlx);
+//	point_to_sphere(mlx->data[i], 10, mlx);
 	/* put_point(a, 0x0000FF00, mlx); //GREEN
 	put_point(b, 0x0000FF00, mlx); //GREEN */
 //	point_to_sphere(a, 10, mlx); //GREEN
