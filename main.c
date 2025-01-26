@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 14:54:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/24 17:16:01 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/26 18:54:13 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ void	my_pixel_put(t_img *data, int x, int y, int color)
 /* takes an array of points and returns the coordinates of the centre */
 t_point	get_centre(t_point *data, int pt_num)
 {
+	int		i;
 	t_point	centre;
-	int	i;
 
 	centre.z = 0;
 	centre.x = 0;
@@ -127,7 +127,7 @@ float	ft_areaf(t_point a, t_point b, t_point c)
 	return ((ft_distf(a, b) * ft_distf(a, c) * sinf(angle) / 2.0f));
 }
 
-
+//https://math.stackexchange.com/questions/4322/check-whether-a-point-is-within-a-3d-triangle
 /* takes 4 3D space points as parameters.
 checks wether the first one is contained in the triangle
 fromed by the other 3.
@@ -140,47 +140,67 @@ int	is_inside(t_point p, t_point a, t_point b, t_point c)
 	float	gamma;
 
 	area = ft_areaf(a, b, c);
-	alpha = ft_areaf(p, b, c) / area;
+	alpha = ft_areaf(p, b, c);
+	beta = ft_areaf(p, a, c);
+	gamma = ft_areaf(p, b, a);
+	if (alpha + beta + gamma == area)
+		return (1);
+	/* alpha = ft_areaf(p, b, c) / area;
 	beta = ft_areaf(p, c, a) / area;
 	gamma = 1 - alpha - beta;
-	if ((!alpha && !beta) || (!alpha && !gamma) || (!beta && !gamma) && alpha + beta + gamma == 1)
+	if (alpha + beta + gamma == 1
+		&& (alpha >=0 && beta >= 0 && gamma >= 0)
+		&& (alpha == 1 || beta == 1 || gamma == 1))
+		{
+			printf("RET(3): aalpha=%f, beta=%f, gamma=%f\n", alpha, beta, gamma);
+			return (3);
+		}
 	if ((alpha >= 0 && alpha <= 1)
 		&& (beta >= 0 && beta <= 1)
 		&& (gamma >= 0 && gamma <= 1)
-		&& alpha + beta + gamma == 1)
-		return (1);
+		&& alpha + beta + gamma == 1.0f)
+		{
+			printf("RET(1): alpha=%f, beta=%f, gamma=%f\n", alpha, beta, gamma);
+			return (1);
+		} */
 	return (0);
 }
 
 /* takes 3 2D points as parameters and fill the area inbetween them */
 void	fill_area(t_point a, t_point b, t_point c, t_mlx *mlx)
 {
-	t_point p;
+	int		ret;
+	t_point	p;
 	t_point	max_p;
 
 	max_p.z = major_z(a, major_z(b, c)).z;
 	max_p.x = major_x(a, major_x(b, c)).x;
 	max_p.y = major_y(a, major_y(b, c)).y;
 	p.y = minor_y(a, minor_y(b, c)).y;
-	while(p.y < max_p.y)
+	while(p.y <= max_p.y)
 	{
 		p.x = minor_x(a, minor_x(b, c)).x;
-		while (p.x < max_p.x)
+		while (p.x <= max_p.x)
 		{
 			p.z = minor_z(a, minor_z(b, c)).z;
-			while (p.z < max_p.z)
+			while (p.z <= max_p.z)
 			{
-				if (is_inside(p, a, b, c))
+				ret = is_inside(p, a, b, c);
+				if (ret == 1)
 					put_point(p, 0x00FF00, mlx);
-				p.z++;
+				else
+					break ;
+				/* else if (ret == 3)
+					put_point(p, 0x50FF00, mlx); */
+				p.z += 0.75f;
 			}
-			p.x++;
+			p.x += 0.75f;
 		}
-		p.y++;
+		p.y += 0.75f;
 	}
 }
 
-void	point_to_square(t_point p, int value, t_mlx *mlx)
+/* void	point_to_square(t_point p, int value, t_mlx *mlx)
 {
 	int		j;
 	float	i;
@@ -201,7 +221,7 @@ void	point_to_square(t_point p, int value, t_mlx *mlx)
 			i += 0.01f;
 		}
 		j++;
-	}
+	} */
 
 
 	/* j = 0;
@@ -226,7 +246,7 @@ void	point_to_square(t_point p, int value, t_mlx *mlx)
 		put_point(runner, 0x0000FF00, mlx);
 		i += 0.1f;
 	} */
-}
+//}
 
 /* Takes a t_point as a parameter and plots it to the image */
 void	put_point(t_point p, int color, t_mlx *mlx)
@@ -269,6 +289,14 @@ void	put_point(t_point p, int color, t_mlx *mlx)
 	my_pixel_put((*mlx).img, x, y, color);
 }
 
+t_point	*to_zero(t_point *p)
+{
+	p->z = 0;
+	p->x = 0;
+	p->y = 0;
+	return (p);
+}
+
 void	plot_data(t_mlx *mlx)
 {
 	int		i;
@@ -280,19 +308,19 @@ void	plot_data(t_mlx *mlx)
 	(*mlx).img->addr = mlx_get_data_addr((*mlx).img->img, &(*mlx).img
 			->bits_per_pixel, &(*mlx).img->line_length, &(*mlx).img->endian);
 
-	a.x = 10;
-	a.y = 10;
-	a.z = 10;
-	b.x = -10;
-	b.y = -10;
-	b.z = -10;
-	c.x = 100;
-	c.y = -30;
-	c.z = 30;
+	a.x = 0;
+	a.y = 0;
+	a.z = 0;
+	b.x = 300;
+	b.y = 0;
+	b.z = 0;
+	c.x = 0;
+	c.y = -300;
+	c.z = 0;
 
 	i = 1;
-	printf("mod=%f\n", ft_distf(a, b));
-	printf("areaABC=%f\n", ft_areaf(a, b, c));
+	/* printf("mod=%f\n", ft_distf(a, b));
+	printf("areaABC=%f\n", ft_areaf(a, b, c)); */
 	fill_area(a, b, c, mlx);
 //	point_to_sphere(mlx->data[i], 10, mlx);
 	/* put_point(a, 0x0000FF00, mlx); //GREEN
@@ -301,8 +329,21 @@ void	plot_data(t_mlx *mlx)
 //	point_to_sphere(b, 10, mlx); //GREEN
 	/* while (i < 801)
 	{
-//		ft_printf("plotting (%i, %i, %i)\n", mlx->data[i].z, mlx->data[i].x, mlx->data[i].y);
-		point_to_sphere(mlx->data[i], 3, mlx);
+		if (i % 100 == 0 && !a.z && !a.x && !a.y)
+			a = mlx->data[i];
+		else if (i % 100 == 0 && !b.z && !b.x && !b.y)
+			b = mlx->data[i];
+		else if (i % 100 == 0 && !c.z && !c.x && !c.y)
+			c = mlx->data[i];
+		if (a.z && b.x && c.y)
+		{
+//			ft_printf("plotting (%i, %i, %i)\n", mlx->data[i].z, mlx->data[i].x, mlx->data[i].y);
+			fill_area(a, b, c, mlx);
+			to_zero(&a);
+			to_zero(&b);
+			to_zero(&c);
+		}
+		//point_to_sphere(mlx->data[i], 3, mlx);
 		//put_point(mlx->data[i], 0x0000FF00, mlx); //GREEN
 		i++;
 	} */

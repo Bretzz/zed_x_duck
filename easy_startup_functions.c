@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 18:32:01 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/22 18:18:41 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/26 18:22:09 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,8 @@ int	juice_the_pc(t_mlx *mlx)
 	mlx->plane.r_x = 0.0f; // the z axis orientation, 0 = towards the user
 	mlx->plane.r_y = 0.0f; // the z axis orientation, 0 = towards the user
 	mlx->plane.origin.z = 0;
-	mlx->plane.origin.x = MAX_WIN_X / 2;
-	mlx->plane.origin.y = MAX_WIN_Y / 2;
+	mlx->plane.origin.x = MAX_WIN_X / 2.0f;
+	mlx->plane.origin.y = MAX_WIN_Y / 2.0f;
 	mlx->plane.fov = 1.0f;
 	return (0);
 }

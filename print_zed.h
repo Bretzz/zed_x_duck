@@ -39,10 +39,17 @@
 
 typedef struct s_point
 {
+	float	z;
+	float	x;
+	float	y;
+}				t_point;
+
+typedef struct s_pixel
+{
 	int		z;
 	int		x;
 	int		y;
-}				t_point;
+}				t_pixel;
 
 typedef struct s_plane
 {
