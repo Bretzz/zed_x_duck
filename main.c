@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 14:54:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/26 18:54:13 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/26 15:45:37 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,15 +116,18 @@ float	ft_absf(float f)
 	return (f);
 }
 
+/* returns te angle formed by 3 3D points, OA^OB */
+float	ft_anglef(t_point a, t_point o, t_point b)
+{
+	return (acosf((((a.x - o.x) * (b.x - o.x) + (a.y - o.y) * (b.y - o.y) + (a.z - o.z) * (b.z - o.z))
+		/ (sqrtf((a.x - o.x) * (a.x - o.x) + (a.y - o.y) * (a.y - o.y) + (a.z - o.z) * (a.z - o.z))
+		* sqrtf((b.x - o.x) * (b.x - o.x) + (b.y - o.y) * (b.y - o.y) + (b.z - o.z) * (b.z - o.z))))));
+}
+
 /* ab x ac = modulo(ab) * modulo(ac) * cos(theta) */
 float	ft_areaf(t_point a, t_point b, t_point c)
 {
-	float angle;
-	
-	angle = acosf((((b.x - a.x) * (c.x - a.x) + (b.y - a.y) * (c.y - a.y) + (b.z - a.z) * (c.z - a.z))
-		/ (sqrtf((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y) + (b.z - a.z) * (b.z - a.z))
-		* sqrtf((c.x - a.x) * (c.x - a.x) + (c.y - a.y) * (c.y - a.y) + (c.z - a.z) * (c.z - a.z)))));
-	return ((ft_distf(a, b) * ft_distf(a, c) * sinf(angle) / 2.0f));
+	return ((ft_distf(a, b) * ft_distf(a, c) * sinf(ft_anglef(b, a, c)) / 2.0f));
 }
 
 //https://math.stackexchange.com/questions/4322/check-whether-a-point-is-within-a-3d-triangle
@@ -166,96 +169,124 @@ int	is_inside(t_point p, t_point a, t_point b, t_point c)
 	return (0);
 }
 
-/* takes 3 2D points as parameters and fill the area inbetween them */
-void	fill_area(t_point a, t_point b, t_point c, t_mlx *mlx)
+int	point_equal(t_point a, t_point b)
 {
-	int		ret;
-	t_point	p;
-	t_point	max_p;
-
-	max_p.z = major_z(a, major_z(b, c)).z;
-	max_p.x = major_x(a, major_x(b, c)).x;
-	max_p.y = major_y(a, major_y(b, c)).y;
-	p.y = minor_y(a, minor_y(b, c)).y;
-	while(p.y <= max_p.y)
-	{
-		p.x = minor_x(a, minor_x(b, c)).x;
-		while (p.x <= max_p.x)
-		{
-			p.z = minor_z(a, minor_z(b, c)).z;
-			while (p.z <= max_p.z)
-			{
-				ret = is_inside(p, a, b, c);
-				if (ret == 1)
-					put_point(p, 0x00FF00, mlx);
-				else
-					break ;
-				/* else if (ret == 3)
-					put_point(p, 0x50FF00, mlx); */
-				p.z += 0.75f;
-			}
-			p.x += 0.75f;
-		}
-		p.y += 0.75f;
-	}
+	if (a.x == b.x && a.y == b.y && a.z == b.z)
+		return (1);
+	return (0);
 }
 
-/* void	point_to_square(t_point p, int value, t_mlx *mlx)
+t_point	any_not_obtuse(t_point a, t_point b, t_point c)
 {
-	int		j;
-	float	i;
-	t_point	runner;
+	if (ft_anglef(b, a, c) < MY_PI / 2)
+		return (a);
+	if (ft_anglef(a, b, c) < MY_PI / 2)
+		return (b);
+	else
+		return (c);
+}
 
-	runner = p;
-
-	j = 0;
-	while (j < 2 * value)
+/* takes 3 2D points as parameters and fill the area inbetween them */
+void	fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx)
+{
+	int		ret;
+	float	incr[3];
+	float	dist[3];
+	t_point	p;
+	t_point	d;
+	t_point	t;
+	t_point	temp_p;
+	t_point	temp_t;
+	
+	p = any_not_obtuse(a, b, c); //point that moves along a side
+	d = any_not_obtuse(c, b, a); //point to move towards
+	t = a; //point that is neither p nor d
+	if (point_equal(t, p) || point_equal(t, d))
+		t = b;
+	if (point_equal(t, p) || point_equal(t, d))
+		t = c;
+	dist[0] = ft_distf(p, d);
+	incr[0] = dist[0] / 1000;
+	dist[1] = ft_distf(p, t);
+	incr[1] = dist[1] / 1000;
+	incr[2] = 1.0f;
+	temp_t = p;
+	ret = 0;
+	while (dist[1] > 1.0f)
 	{
-		i = 0.0f;
-		while (i < (2 * 3.1415f))
+		temp_p = p;
+		dist[2] = ft_distf(temp_p, temp_t);
+		while (dist[2] > 1.0f)
 		{
-			runner.z = value - j;
-			runner.x = p.x + j * cos(i);
-			runner.y = p.y + j * sin(i);
-			put_point(runner, 0x0000FF00, mlx);
-			i += 0.01f;
+//			ft_printf("gatto????\n");
+//			printf("dist3=%f\n", dist3);
+//			printf("temp_p = (%f, %f, %f)\n", temp_p.x, temp_p.y, temp_p.z);
+			put_point(temp_p, color, mlx);
+			ret++;
+//			ft_printf("micio????\n");
+			temp_p.z += incr[2] * ((temp_t.z - temp_p.z) / dist[2]);
+			temp_p.x += incr[2] * ((temp_t.x - temp_p.x) / dist[2]);
+			temp_p.y += incr[2]* ((temp_t.y - temp_p.y) / dist[2]);
+//			ft_printf("miaooooo!!!\n");
+			dist[2] -= incr[2];
+//			ft_printf("sacco?\n");
 		}
-		j++;
-	} */
+//		printf("dist2=%f\n", dist2);
+//		printf("p = (%f, %f, %f)\n", p.x, p.y, p.z);
+//		printf("temp_t = (%f, %f, %f)\n", temp_t.x, temp_t.y, temp_t.z);
+//		ft_printf("gatto?\n");
+		temp_t.z += incr[1] * ((t.z - temp_t.z) / dist[1]);
+		temp_t.x += incr[1] * ((t.x - temp_t.x) / dist[1]);
+		temp_t.y += incr[1] * ((t.y - temp_t.y) / dist[1]);
+		p.z += incr[0] * ((d.z - p.z) / dist[0]);
+		p.x += incr[0] * ((d.x - p.x) / dist[0]);
+		p.y += incr[0] * ((d.y - p.y) / dist[0]);
+		dist[0] -= incr[0];
+		dist[1] -= incr[1];
+	}
+	ft_printf("%i points plotted\n", ret);
+}
 
+ void	point_to_rombus(t_point p, int value, t_mlx *mlx)
+{
+	int		i;
+	t_point vertex[6];
 
-	/* j = 0;
-	while (j < 10)
+	i = 0;
+	while (i < 6)
 	{
-		i = 0.0f;
-		while (i < (2 * 3.1415f))
-		{
-//			runner.z = p.z * j + value * cos(i);
-			runner.x = p.x + value * cos(i);
-			runner.y = p.y + value * sin(i);
-			put_point(runner, 0x0000FF00, mlx);
-			i += 0.01f;
-		}
-		j++;
-	} */
-	/* i = 0.0f;
-	while (i < (2 * 3.1415f))
-	{
-		runner.x = p.x;
-		runner.y = p.y + value * sin(i);
-		put_point(runner, 0x0000FF00, mlx);
-		i += 0.1f;
-	} */
-//}
+		vertex[i] = p;
+		i++;
+	}
+	vertex[0].z += value;
+	vertex[1].z -= value;
+	vertex[2].x += value;
+	vertex[3].x -= value;
+	vertex[4].y += value;
+	vertex[5].y -= value;
+	fill_area(vertex[0], vertex[2], vertex[5], 0xFF0000, mlx);
+	fill_area(vertex[0], vertex[2], vertex[4], 0x2FFFA2, mlx);
+	fill_area(vertex[0], vertex[3], vertex[5], 0x0000FF, mlx);
+	fill_area(vertex[0], vertex[3], vertex[5], 0x00FFFF, mlx);
+	fill_area(vertex[1], vertex[2], vertex[4], 0xFF0000, mlx);
+	fill_area(vertex[1], vertex[2], vertex[5], 0xFFFF00, mlx);
+	fill_area(vertex[1], vertex[3], vertex[4], 0x0000FF, mlx);
+	fill_area(vertex[1], vertex[3], vertex[5], 0xD6108F, mlx);
+
+}
 
 /* Takes a t_point as a parameter and plots it to the image */
 void	put_point(t_point p, int color, t_mlx *mlx)
 {
-	int	x;
-	int	y;
+	int		x;
+	int		y;
 	t_point	plot;
-	int temp_x;
-	int	temp_y;
+	float	temp_x;
+	float	temp_y;
+
+	mlx->data[0].z = 0;
+	mlx->data[0].x = 0;
+	mlx->data[0].y = 0;
 
 	plot = p;
 	// Translate the object so that its center is at the origin
@@ -278,14 +309,16 @@ void	put_point(t_point p, int color, t_mlx *mlx)
 	plot.x += mlx->data[0].x;
 	plot.y += mlx->data[0].y;
 	
+//	ft_printf("micio sus????\n");
+	
 	// Apply the projection and translation to screen coordinates
 	x = mlx->plane.origin.x + plot.x;
 	y = mlx->plane.origin.y + plot.y + mlx->plane.r_z;
 	
 	// If the point is off-screen, do not draw it
-	if (x < 0 || y < 0 || x > mlx->win_x || y > mlx->win_y)
+	if (x < 0 || y < 0 || x >= mlx->win_x || y >= mlx->win_y)
 		return ;
-//	ft_printf("putting (%i, %i, %i) = [%i, %i]\n", p.z, p.x, p.y, x, y);
+//	printf("putting (%f, %f, %f) = [%i, %i]\n", p.z, p.x, p.y, x, y);
 	my_pixel_put((*mlx).img, x, y, color);
 }
 
@@ -299,7 +332,7 @@ t_point	*to_zero(t_point *p)
 
 void	plot_data(t_mlx *mlx)
 {
-	int		i;
+	//int		i;
 	t_point	a;
 	t_point	b;
 	t_point	c;
@@ -311,17 +344,23 @@ void	plot_data(t_mlx *mlx)
 	a.x = 0;
 	a.y = 0;
 	a.z = 0;
-	b.x = 300;
-	b.y = 0;
+	b.x = 200;
+	b.y = -79;
 	b.z = 0;
-	c.x = 0;
+	c.x = -100;
 	c.y = -300;
-	c.z = 0;
+	c.z = -123;
 
-	i = 1;
+	//i = 1;
 	/* printf("mod=%f\n", ft_distf(a, b));
 	printf("areaABC=%f\n", ft_areaf(a, b, c)); */
-	fill_area(a, b, c, mlx);
+/* 	printf("bac=%f\n", ft_anglef(a, b, c));
+	printf("cab=%f\n", ft_anglef(a, c, b));
+	printf("90=%f\n", MY_PI / 2); */
+
+	point_to_rombus(a, 356, mlx);
+	//fill_area(a, b, c, mlx);
+
 //	point_to_sphere(mlx->data[i], 10, mlx);
 	/* put_point(a, 0x0000FF00, mlx); //GREEN
 	put_point(b, 0x0000FF00, mlx); //GREEN */
@@ -348,7 +387,9 @@ void	plot_data(t_mlx *mlx)
 		i++;
 	} */
 	my_pixel_put((*mlx).img, mlx->plane.origin.x, mlx->plane.origin.y, 0xFF0000); //RED
-
+	put_point(a, 0x00FFFF, mlx); //YELLOW?
+	put_point(b, 0x00FFFF, mlx); //YELLOW?
+	put_point(c, 0x00FFFF, mlx); //YELLOW?
 	mlx_put_image_to_window((*mlx).mlx, (*mlx).win, (*mlx).img->img, 0, 0);
 	mlx_destroy_image((*mlx).mlx, (*mlx).img->img);
 }
@@ -466,6 +507,7 @@ int	main(int argc, char *argv[])
 		ft_printf("ALL GOOD\n"); */
 	mlx_mouse_hook(mlx->win, &handle_mouse, mlx);
 	mlx_hook(mlx->win, KeyPress, KeyPressMask, &handle_keypress, mlx);
+	mlx_hook(mlx->win, DestroyNotify, StructureNotifyMask, &clean_exit, mlx);
 	mlx_hook(mlx->win, DestroyNotify, StructureNotifyMask, &clean_exit, mlx);
 	mlx_loop(mlx->mlx);
 	return (0);

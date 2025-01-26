@@ -26,6 +26,7 @@
 # endif
 
 # define UNUSED(x) (void)(x)
+# define MY_PI 3.14159265359
 
 # include "mlx.h"
 # include "libft.h"
