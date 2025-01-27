@@ -6,7 +6,7 @@
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 14:54:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/27 01:00:05 by totommi          ###   ########.fr       */
+/*   Updated: 2025/01/26 23:29:15 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,7 +187,7 @@ t_point	any_not_obtuse(t_point a, t_point b, t_point c)
 }
 
 /* takes 3 2D points as parameters and fill the area inbetween them */
-void	fill_area(t_point a, t_point b, t_point c, t_list *plot_data, t_mlx *mlx)
+void	fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx)
 {
 	int		ret;
 	float	incr[3];
@@ -197,10 +197,7 @@ void	fill_area(t_point a, t_point b, t_point c, t_list *plot_data, t_mlx *mlx)
 	t_point	t;
 	t_point	temp_p;
 	t_point	temp_t;
-	t_point	*alloc;
-	t_list	*node;
 	
-	UNUSED(mlx);
 	p = any_not_obtuse(a, b, c); //point that moves along a side
 	d = any_not_obtuse(c, b, a); //point to move towards
 	t = a; //point that is neither p nor d
@@ -224,11 +221,7 @@ void	fill_area(t_point a, t_point b, t_point c, t_list *plot_data, t_mlx *mlx)
 //			ft_printf("gatto????\n");
 //			printf("dist3=%f\n", dist3);
 //			printf("temp_p = (%f, %f, %f)\n", temp_p.x, temp_p.y, temp_p.z);
-			alloc = (t_point *)malloc(1 * sizeof(t_point));
-			*alloc = temp_p;
-			node = ft_lstnew(alloc);
-			ft_lstadd_back(&plot_data, node);
-		//	put_point(temp_p, color, mlx);
+			put_point(temp_p, color, mlx);
 			ret++;
 //			ft_printf("micio????\n");
 			temp_p.z += incr[2] * ((temp_t.z - temp_p.z) / dist[2]);
@@ -254,19 +247,9 @@ void	fill_area(t_point a, t_point b, t_point c, t_list *plot_data, t_mlx *mlx)
 	ft_printf("%i points plotted\n", ret);
 }
 
-void	put_data(t_list *plot_data, int color, t_mlx *mlx)
-{
-	while (plot_data)
-	{
-		put_point(*(t_point *)plot_data->content, color, mlx);
-		plot_data = plot_data->next;
-	}
-}
-
  void	point_to_rombus(t_point p, int value, t_mlx *mlx)
 {
 	int		i;
-	t_list	plot_data;
 	t_point vertex[6];
 
 	i = 0;
@@ -281,23 +264,15 @@ void	put_data(t_list *plot_data, int color, t_mlx *mlx)
 	vertex[3].x -= value;
 	vertex[4].y += value;
 	vertex[5].y -= value;
-	fill_area(vertex[0], vertex[2], vertex[5], &plot_data, mlx);
-	fill_area(vertex[0], vertex[2], vertex[4], &plot_data, mlx);
-	fill_area(vertex[0], vertex[3], vertex[5], &plot_data, mlx);
-	fill_area(vertex[0], vertex[3], vertex[5], &plot_data, mlx);
-	fill_area(vertex[1], vertex[2], vertex[4], &plot_data, mlx);
-	fill_area(vertex[1], vertex[2], vertex[5], &plot_data, mlx);
-	fill_area(vertex[1], vertex[3], vertex[4], &plot_data, mlx);
-	fill_area(vertex[1], vertex[3], vertex[5], &plot_data, mlx);
-	/* fill_area(vertex[0], vertex[2], vertex[5], 0xFF0000, mlx);
+	fill_area(vertex[0], vertex[2], vertex[5], 0xFF0000, mlx);
 	fill_area(vertex[0], vertex[2], vertex[4], 0x2FFFA2, mlx);
 	fill_area(vertex[0], vertex[3], vertex[5], 0x0000FF, mlx);
 	fill_area(vertex[0], vertex[3], vertex[5], 0x00FFFF, mlx);
 	fill_area(vertex[1], vertex[2], vertex[4], 0xFF0000, mlx);
 	fill_area(vertex[1], vertex[2], vertex[5], 0xFFFF00, mlx);
 	fill_area(vertex[1], vertex[3], vertex[4], 0x0000FF, mlx);
-	fill_area(vertex[1], vertex[3], vertex[5], 0xD6108F, mlx); */
-	put_data(&plot_data, 0xD6108F, mlx);
+	fill_area(vertex[1], vertex[3], vertex[5], 0xD6108F, mlx);
+
 }
 
 /* Takes a t_point as a parameter and plots it to the image */
