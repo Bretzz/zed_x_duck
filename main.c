@@ -6,7 +6,7 @@
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 14:54:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/30 09:16:41 by totommi          ###   ########.fr       */
+/*   Updated: 2025/01/30 14:41:13 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ void	my_pixel_put(t_mlx *mlx, int x, int y, float z, int color)
 	
 	dst = mlx->img->addr + (y * mlx->img->line_length + x * (mlx->img->bits_per_pixel / sizeof(int *)));
 	z_dest = mlx->z_img + (y * mlx->img->line_length + x * (mlx->img->bits_per_pixel / sizeof(float *)));
-	/* if (*dst != 0x0 && *z_dest < z)
-		return ; */
+	if (*dst != 0x0 && *z_dest > z)
+		return ;
 	*(unsigned int *)dst = color;
 	*(float *)z_dest = z;
 }
@@ -85,17 +85,17 @@ void	fill_area(t_point a, t_point b, t_point c, t_mlx *mlx)
 	if (point_equal(t, p) || point_equal(t, d))
 		t = c;
 	dist[0] = ft_distf(p, d);
-	incr[0] = dist[0] / 100;
+	incr[0] = dist[0] / (1 * dist[0]);
 	dist[1] = ft_distf(p, t);
-	incr[1] = dist[1] / 100;
+	incr[1] = dist[1] / (1 * dist[1]);
 	temp_t = p;
 	ret = 0;
-	while (dist[1] > 1.0f)
+	while (dist[1] > 0.0f)
 	{
 		temp_p = p;
 		dist[2] = ft_distf(temp_p, temp_t);
-		incr[2] = dist[2] / 100;
-		while (dist[2] > 1.0f)
+		incr[2] = dist[2] / (1 * dist[2]);
+		while (dist[2] > 0.0f)
 		{
 			//ft_printf("gatto????\n");
 //			printf("dist3=%f\n", dist3);
@@ -148,11 +148,11 @@ void	fill_area(t_point a, t_point b, t_point c, t_mlx *mlx)
 	fill_area(vertex[0], vertex[2], vertex[5], mlx);
 	fill_area(vertex[0], vertex[2], vertex[4], mlx);
 	fill_area(vertex[0], vertex[3], vertex[5], mlx);
-	fill_area(vertex[0], vertex[3], vertex[5], mlx);
-	fill_area(vertex[1], vertex[2], vertex[4], mlx);
+	fill_area(vertex[0], vertex[3], vertex[4], mlx);
 	fill_area(vertex[1], vertex[2], vertex[5], mlx);
-	fill_area(vertex[1], vertex[3], vertex[4], mlx);
+	fill_area(vertex[1], vertex[2], vertex[4], mlx);
 	fill_area(vertex[1], vertex[3], vertex[5], mlx);
+	fill_area(vertex[1], vertex[3], vertex[4], mlx);
 	/* fill_area(vertex[0], vertex[2], vertex[5], 0xFF0000, mlx);
 	fill_area(vertex[0], vertex[2], vertex[4], 0x2FFFA2, mlx);
 	fill_area(vertex[0], vertex[3], vertex[5], 0x0000FF, mlx);
@@ -225,7 +225,7 @@ void	put_data(int color, t_mlx *mlx)
 	list = mlx->live_points;
 	while (list != NULL)
 	{
-		if (i % (9840 / 1) == 0)
+		if (i % (133757 / 1) == 0) //128=16649 //365=133757
 			color += 10000;
 		list->point = rotate_point(list->point, mlx);
 		//printf("putting: (%f, %f, %f)\n", list->point.x, list->point.y, list->point.z);
@@ -269,7 +269,7 @@ int	get_data(t_mlx *mlx)
 	a.z = 0;
 	b.x = 100;
 	b.y = 0;
-	b.z = 0;
+	b.z = -100;
 	c.x = 0;
 	c.y = -100;
 	c.z = 0;
@@ -277,6 +277,8 @@ int	get_data(t_mlx *mlx)
 	//fill_area(a, b, c, mlx);
 
 	point_to_rombus(a, 365, mlx);
+	//point_to_rombus(b, 128, mlx);
+
 
 	mlx->data = (t_point *)malloc(1 * sizeof(t_point));
 	ft_printf("centre=(%i, %i, %i)\n", mlx->data[0].z, mlx->data[0].x, mlx->data[0].y);
