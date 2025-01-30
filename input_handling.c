@@ -6,7 +6,7 @@
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 14:47:59 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/26 11:49:24 by totommi          ###   ########.fr       */
+/*   Updated: 2025/01/29 03:20:57 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,24 +44,26 @@ int	handle_keypress(int keysym, t_mlx *mlx)
 	if (keysym == XK_Up || keysym == 126)
 	{
 //		ft_printf("going up! %i\n", keysym);
-		mlx->plane.r_x -= (float)0.1;
-//		mlx->plane.r_z -= (float)10;
+		mlx->plane.r_x = (float)-0.1;
+		mlx->plane.r_y = (float)0;
 	}
 	else if (keysym == XK_Down || keysym == 125)
 	{
 //		ft_printf("going down! %i\n", keysym);
-		mlx->plane.r_x += (float)0.1;
-//		mlx->plane.r_z += (float)10;
+		mlx->plane.r_x = (float)0.1;
+		mlx->plane.r_y = (float)0;
 	}
 	else if (keysym == XK_Right || keysym == 124)
 	{
 //		ft_printf("going right! %i\n", keysym);
-		mlx->plane.r_y -= (float)0.1;
+		mlx->plane.r_y = (float)-0.1;
+		mlx->plane.r_x = (float)0;
 	}
 	else if (keysym == XK_Left || keysym == 123)
 	{
 //		ft_printf("going left! %i\n", keysym);
-		mlx->plane.r_y += (float)0.1;
+		mlx->plane.r_y = (float)0.1;
+		mlx->plane.r_x = (float)0;
 	}
 	else if (keysym == XK_a)
 	{

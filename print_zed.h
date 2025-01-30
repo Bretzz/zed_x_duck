@@ -45,6 +45,14 @@ typedef struct s_point
 	float	y;
 }				t_point;
 
+typedef struct s_point_list
+{
+	t_point 			point;
+	struct s_point_list *z_sorted_next;
+	struct s_point_list	*next;
+}				t_point_list;
+
+
 typedef struct s_pixel
 {
 	int		z;
@@ -72,19 +80,21 @@ typedef struct s_img
 
 typedef struct s_mlx
 {
-	int		win_x;
-	int		win_y;
-	void	*mlx;
-	void	*win;
-	t_point	*data;
-	t_plane	plane;
-	t_img	*img;
+	int			win_x;
+	int			win_y;
+	void		*mlx;
+	void		*win;
+	t_point		*data;
+	t_point_list *live_points;
+	t_plane		plane;
+	t_img		*img;
+	float		*z_img;
 }				t_mlx;
 
 
 //main.c
 
-void		my_pixel_put(t_img *data, int x, int y, int color);
+void	my_pixel_put(t_mlx *mlx, int x, int y, float z, int color);
 
 //easy_startup_functions.c
 
@@ -105,6 +115,7 @@ int			ft_isfloat_space(const char *s);
 float		ft_atof(const char *nptr);
 void		ft_free_arr(char **arr);
 char		**back_trim_nl(char **arr);
+int			ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, t_point point);
 
 //parsing.c
 
@@ -114,5 +125,28 @@ int		line_parser(char *line);
 int		is_format(char *format, char *path);
 int		file_parser(int fd);
 int		data_parser(char *ls_out);
+
+//math_stuff.c
+
+float	ft_anglef(t_point a, t_point o, t_point b);
+float	ft_areaf(t_point a, t_point b, t_point c);
+int	    is_inside(t_point p, t_point a, t_point b, t_point c);
+
+//math_utils.c
+
+int	    point_equal(t_point a, t_point b);
+t_point	any_not_obtuse(t_point a, t_point b, t_point c);
+float	ft_distf(t_point a, t_point b);
+float	ft_absf(float f);
+t_point	*to_zero(t_point *p);
+t_point	major_z(t_point a, t_point b);
+t_point	major_x(t_point a, t_point b);
+t_point	major_y(t_point a, t_point b);
+t_point	minor_z(t_point a, t_point b);
+t_point	minor_x(t_point a, t_point b);
+t_point	minor_y(t_point a, t_point b);
+
+/* t_point_list    *z_quick_sort(float min_z, float max_z, t_point_list *list);
+void			print_z_list(t_point_list *list); */
 
 #endif

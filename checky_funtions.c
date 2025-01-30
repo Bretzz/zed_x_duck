@@ -6,11 +6,17 @@
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 13:26:33 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/22 14:29:58 by totommi          ###   ########.fr       */
+/*   Updated: 2025/01/30 07:55:11 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "print_zed.h"
+
+void	ft_free_arr(char **arr);
+char	**back_trim_nl(char **arr);
+float	ft_get_decimals(const char *nptr);
+float	ft_atof(const char *nptr);
+int		ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, t_point point);
 
 void	ft_free_arr(char **arr)
 {
@@ -46,7 +52,7 @@ char	**back_trim_nl(char **arr)
 /*the functions returns the float value of the number
 written on the string after the dot (.). Initially skips all the blank spaces
 and numbers so you can use it also at the beginning of the cycle*/
-static float	ft_get_decimals(const char *nptr)
+float	ft_get_decimals(const char *nptr)
 {
 	float	dec;
 	size_t	len;
@@ -97,4 +103,30 @@ float	ft_atof(const char *nptr)
 	if (*nptr == '.')
 		nb += ft_get_decimals(nptr);
 	return (nb * sign);
+}
+
+/* takes a point_list and a point as parameters.
+allocate a new node with the data of the point,
+then adds the node to the end oof the list.
+RETURNS: 1 if the node was added correctly, 0 in case of error.
+NOTE: if list is NULL the new node is set as the head of the list.*/
+int	ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, t_point point)
+{
+	t_point_list	*node;
+
+	//printf("adding: (%f, %f, %f)\n", point.x, point.y, point.z);
+	node = (t_point_list *)malloc(1 * sizeof(t_point_list));
+	if (node == NULL)
+		return (0);
+	node->point = point;
+	if (*list == NULL)
+	{
+		*list = node;
+		*tail = node;
+		return (1);
+	}
+	(*tail)->next = node;
+	(*tail)->z_sorted_next = node;
+	*tail = (*tail)->next;
+	return (1);
 }

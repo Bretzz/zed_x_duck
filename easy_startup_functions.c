@@ -6,7 +6,7 @@
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 18:32:01 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/26 12:09:59 by totommi          ###   ########.fr       */
+/*   Updated: 2025/01/29 01:58:20 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,5 +41,6 @@ int	juice_the_pc(t_mlx *mlx)
 	mlx->plane.origin.x = MAX_WIN_X / 2.0f;
 	mlx->plane.origin.y = MAX_WIN_Y / 2.0f;
 	mlx->plane.fov = 1.0f;
+	mlx->live_points = NULL;
 	return (0);
 }

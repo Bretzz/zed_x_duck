@@ -34,8 +34,9 @@ endif
 #DATE := $(shell $(DATE_CMD))
 
 #source files (full path optional)
-SRCS := main.c input_handling.c \
-		parsing.c math_sidekicks.c \
+SRCS := parsing.c input_handling.c \
+		math_stuff.c math_utils.c math_sidekicks.c \
+		sort_list.c \
 		easy_startup_functions.c \
 		checky_funtions.c
 
@@ -102,8 +103,23 @@ $(LIBFT):
 
 $(NAME): $(MINILX_DIR) $(LIBFT) $(OBJS) data
 	@echo "${BOLD}compiling $(NAME)...${RESET}"
-	@$(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) $(LINKS) -o $(NAME) \
-	&& echo "${LIGHT_GREEN}DONE${RESET}" \
+#	=========== just for sowing different versions
+	@rm -f $(OBJ_DIR)/main*
+#	===========
+	@$(CC) $(CFLAGS) main.c -I$(LIBFT_DIR) $(OBJ_DIR)/* $(ARS) $(LINKS) -o $(NAME) \
+	&& echo "${LIGHT_GREEN}DONE${RESET}"
+
+v1: $(MINILX_DIR) $(LIBFT) $(OBJS) data
+	@echo "${BOLD}compiling $(NAME)_v1...${RESET}"
+	@rm -f $(OBJ_DIR)/main*
+	@$(CC) $(CFLAGS) main_v1.c -I$(LIBFT_DIR) $(OBJ_DIR)/* $(ARS) $(LINKS) -o $(NAME)_v1 \
+	&& echo "${LIGHT_GREEN}DONE${RESET}"
+
+v2: $(MINILX_DIR) $(LIBFT) $(OBJS) data
+	@echo "${BOLD}compiling $(NAME)_v2...${RESET}"
+	@rm -f $(OBJ_DIR)/main*
+	@$(CC) $(CFLAGS) main_v2.c -I$(LIBFT_DIR) $(OBJ_DIR)/* $(ARS) $(LINKS) -o $(NAME)_v2 \
+	&& echo "${LIGHT_GREEN}DONE${RESET}"
 
 rundata: $(NAME) data
 	@ARG="$(shell ls data | awk '{print "data/" $$0 }')"; ./$(NAME) "$$ARG"
