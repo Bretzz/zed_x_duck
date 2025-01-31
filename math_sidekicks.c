@@ -6,12 +6,18 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 17:41:35 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/21 12:36:54 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/31 18:38:28 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "print_zed.h"
 
+int	ft_isuint(const char *s);
+int	ft_isfloat(const char *s);
+
+/* checks weather the value written in the string
+can be converted in uint, pattern="[+][0-9]", with no whitespaces.
+RETURNS: 1 if respects the pattern, 0 if it doesn't. */
 int	ft_isuint(const char *s)
 {
 	int	i;
@@ -30,6 +36,9 @@ int	ft_isuint(const char *s)
 	return (1);
 }
 
+/* checks weather the value written in the string
+can be converted in float, pattern="[+-][0-9].[0-9]", with no whitespaces.
+RETURNS: 1 if respects the pattern, 0 if it doesn't. */
 int	ft_isfloat(const char *s)
 {
 	int	i;

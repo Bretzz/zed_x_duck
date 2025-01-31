@@ -67,6 +67,7 @@ typedef struct s_plane
 	float		r_x;
 	float		r_y;
 	float		fov;
+	int			y_shift;
 	t_point		origin; //origin's coordinate are pixel-based and z = 0;
 }				t_plane;
 
@@ -95,28 +96,24 @@ typedef struct s_mlx
 
 //main.c
 
-void		my_pixel_put(t_mlx *mlx, int x, int y, float z, int color);
+void	my_pixel_put(t_mlx *mlx, int x, int y, float z, int color);
 
 //easy_startup_functions.c
 
-int			juice_the_pc(t_mlx *mlx);
+int		juice_the_pc(t_mlx *mlx);
 
 //input_handling.c
 
-int			clean_exit(t_mlx *mlx);
-int			handle_mouse(int keysym, int x, int y, t_mlx *mlx);
-int			handle_keypress(int keysym, t_mlx *mlx);
-
-int			ft_isuint(const char *s);
-int			ft_isfloat(const char *s);
-int			ft_isfloat_space(const char *s);
+int		clean_exit(t_mlx *mlx);
+int		handle_mouse(int keysym, int x, int y, t_mlx *mlx);
+int		handle_keypress(int keysym, t_mlx *mlx);
 
 //checky_functions.c
 
-float		ft_atof(const char *nptr);
-void		ft_free_arr(char **arr);
-char		**back_trim_nl(char **arr);
-int			ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, int color, t_point point);
+float	ft_atof(const char *nptr);
+void	ft_free_arr(char **arr);
+char	**back_trim_nl(char **arr);
+int		ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, int color, t_point point);
 
 //parsing.c
 
@@ -140,12 +137,35 @@ t_point	any_not_obtuse(t_point a, t_point b, t_point c);
 float	ft_distf(t_point a, t_point b);
 float	ft_absf(float f);
 t_point	*to_zero(t_point *p);
+t_point	*to_one(t_point *p);
+
 t_point	major_z(t_point a, t_point b);
 t_point	major_x(t_point a, t_point b);
 t_point	major_y(t_point a, t_point b);
 t_point	minor_z(t_point a, t_point b);
 t_point	minor_x(t_point a, t_point b);
 t_point	minor_y(t_point a, t_point b);
+
+
+//math_sidekicks.c
+
+int			ft_isuint(const char *s);
+int			ft_isfloat(const char *s);
+int			ft_isfloat_space(const char *s);
+
+//shapemakers.c
+
+int		fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx);
+int		fill_line(t_point a, t_point b, int color, t_mlx *mlx);
+int		place_axis(float max_z, float max_x, float max_y, t_mlx *mlx);
+int		point_to_rombus(t_point p, int value, t_mlx *mlx);
+
+//point_masters.c
+
+void		put_point(t_point p, int color, t_mlx *mlx);
+t_point		rotate_point(t_point p, t_mlx *mlx);
+t_point		get_centre(t_point *data, int pt_num);
+t_point		get_list_centre(t_point_list *data, int pt_num);
 
 /* t_point_list    *z_quick_sort(float min_z, float max_z, t_point_list *list);
 void			print_z_list(t_point_list *list); */

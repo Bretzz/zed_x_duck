@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   math_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 02:11:16 by totommi           #+#    #+#             */
-/*   Updated: 2025/01/29 02:25:48 by totommi          ###   ########.fr       */
+/*   Updated: 2025/01/31 15:53:41 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,9 @@ int	    point_equal(t_point a, t_point b);
 t_point	any_not_obtuse(t_point a, t_point b, t_point c);
 float	ft_distf(t_point a, t_point b);
 float	ft_absf(float f);
+
 t_point	*to_zero(t_point *p);
+t_point	*to_one(t_point *p);
 
 t_point	major_z(t_point a, t_point b);
 t_point	major_x(t_point a, t_point b);
@@ -63,9 +65,18 @@ float	ft_absf(float f)
 /* sets a point's cordinate to zero */
 t_point	*to_zero(t_point *p)
 {
-	p->z = 0;
-	p->x = 0;
-	p->y = 0;
+	p->z = 0.0f;
+	p->x = 0.0f;
+	p->y = 0.0f;
+	return (p);
+}
+
+/* sets a point's cordinate to one */
+t_point	*to_one(t_point *p)
+{
+	p->z = 1;
+	p->x = 1;
+	p->y = 1;
 	return (p);
 }
 

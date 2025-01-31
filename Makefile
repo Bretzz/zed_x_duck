@@ -35,6 +35,7 @@ endif
 
 #source files (full path optional)
 SRCS := main.c parsing.c input_handling.c \
+		point_masters.c shapemakers.c \
 		math_stuff.c math_utils.c math_sidekicks.c \
 		easy_startup_functions.c \
 		checky_funtions.c
@@ -150,6 +151,7 @@ show:
 
 clean:
 	@rm -rf $(OBJ_DIR) $(NAME).tar $(MINILX_DIR).tgz
+	@$(MAKE) clean -C $(LIBFT_DIR) --quiet
 	@echo "${BOLD}removed:${RESET}\vobjects (.o) and archives (.tar, .tgz)"
 
 fclean: clean

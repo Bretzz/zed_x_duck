@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   easy_startup_functions.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 18:32:01 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/29 01:58:20 by totommi          ###   ########.fr       */
+/*   Updated: 2025/01/31 18:35:37 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "print_zed.h"
+
+int	juice_the_pc(t_mlx *mlx);
 
 /*set up the pc-side of the t_data (mlx) struct
 RETURNS: 0 all good, 1 error*/
@@ -34,12 +36,13 @@ int	juice_the_pc(t_mlx *mlx)
 		free(mlx->mlx);
 		return (1);
 	}
-	mlx->plane.r_z = 0.0f; // the z axis orientation, 0 = towards the user
-	mlx->plane.r_x = 0.0f; // the z axis orientation, 0 = towards the user
-	mlx->plane.r_y = 0.0f; // the z axis orientation, 0 = towards the user
-	mlx->plane.origin.z = 0;
-	mlx->plane.origin.x = MAX_WIN_X / 2.0f;
-	mlx->plane.origin.y = MAX_WIN_Y / 2.0f;
+	mlx->plane.r_z = -0.1 * MY_PI / 180; // the z axis orientation, 0 = towards the user
+	mlx->plane.r_x = -3 * MY_PI / 180; // the z axis orientation, 0 = towards the user
+	mlx->plane.r_y = -4 * MY_PI / 180;/* 60 * MY_PI / 180 */; // the z axis orientation, 0 = towards the user
+	mlx->plane.origin.z = -100.0f;
+	mlx->plane.origin.x = (MAX_WIN_X / 2.0f) - (MAX_WIN_X / 4.0f);
+	mlx->plane.origin.y = (MAX_WIN_Y / 2.0f) + (MAX_WIN_Y / 8.0f);
+	mlx->plane.y_shift = 0;
 	mlx->plane.fov = 1.0f;
 	mlx->live_points = NULL;
 	return (0);
