@@ -6,7 +6,7 @@
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 14:54:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/30 14:41:13 by totommi          ###   ########.fr       */
+/*   Updated: 2025/01/31 01:12:31 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -266,18 +266,18 @@ int	get_data(t_mlx *mlx)
 
 	a.x = 0;
 	a.y = 0;
-	a.z = 0;
-	b.x = 100;
-	b.y = 0;
-	b.z = -100;
+	a.z = 1000;
+	b.x = 23;
+	b.y = 157;
+	b.z = -10;
 	c.x = 0;
-	c.y = -100;
-	c.z = 0;
+	c.y = 0;
+	c.z = -1000;
 
 	//fill_area(a, b, c, mlx);
 
 	point_to_rombus(a, 365, mlx);
-	//point_to_rombus(b, 128, mlx);
+	point_to_rombus(c, 365, mlx);
 
 
 	mlx->data = (t_point *)malloc(1 * sizeof(t_point));
