@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 14:54:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/31 01:12:31 by totommi          ###   ########.fr       */
+/*   Updated: 2025/01/31 13:32:09 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ t_point	get_centre(t_point *data, int pt_num)
 }
 
 /* takes 3 2D points as parameters and fill the area inbetween them */
-void	fill_area(t_point a, t_point b, t_point c, t_mlx *mlx)
+void	fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx)
 {
 	int		ret;
 	float	incr[3];
@@ -90,17 +90,17 @@ void	fill_area(t_point a, t_point b, t_point c, t_mlx *mlx)
 	incr[1] = dist[1] / (1 * dist[1]);
 	temp_t = p;
 	ret = 0;
-	while (dist[1] > 0.0f)
+	while (dist[1] >= 0.0f)
 	{
 		temp_p = p;
 		dist[2] = ft_distf(temp_p, temp_t);
 		incr[2] = dist[2] / (1 * dist[2]);
-		while (dist[2] > 0.0f)
+		while (dist[2] >= 0.0f)
 		{
 			//ft_printf("gatto????\n");
 //			printf("dist3=%f\n", dist3);
 //			printf("temp_p = (%f, %f, %f)\n", temp_p.x, temp_p.y, temp_p.z);
-			ft_lstadd_point_tail(&mlx->live_points, &tail, temp_p);
+			ft_lstadd_point_tail(&mlx->live_points, &tail, color, temp_p);
 				//ft_printf("Error\n");	//PROTECT TE MALLOCC!!!
 		//	put_point(temp_p, color, mlx);
 			ret++;
@@ -145,23 +145,22 @@ void	fill_area(t_point a, t_point b, t_point c, t_mlx *mlx)
 	vertex[3].x -= value;
 	vertex[4].y += value;
 	vertex[5].y -= value;
-	fill_area(vertex[0], vertex[2], vertex[5], mlx);
+	/* fill_area(vertex[0], vertex[2], vertex[5], mlx);
 	fill_area(vertex[0], vertex[2], vertex[4], mlx);
 	fill_area(vertex[0], vertex[3], vertex[5], mlx);
 	fill_area(vertex[0], vertex[3], vertex[4], mlx);
 	fill_area(vertex[1], vertex[2], vertex[5], mlx);
 	fill_area(vertex[1], vertex[2], vertex[4], mlx);
 	fill_area(vertex[1], vertex[3], vertex[5], mlx);
-	fill_area(vertex[1], vertex[3], vertex[4], mlx);
-	/* fill_area(vertex[0], vertex[2], vertex[5], 0xFF0000, mlx);
+	fill_area(vertex[1], vertex[3], vertex[4], mlx); */
+	fill_area(vertex[0], vertex[2], vertex[5], 0xFF00Fc, mlx);
 	fill_area(vertex[0], vertex[2], vertex[4], 0x2FFFA2, mlx);
-	fill_area(vertex[0], vertex[3], vertex[5], 0x0000FF, mlx);
-	fill_area(vertex[0], vertex[3], vertex[5], 0x00FFFF, mlx);
-	fill_area(vertex[1], vertex[2], vertex[4], 0xFF0000, mlx);
-	fill_area(vertex[1], vertex[2], vertex[5], 0xFFFF00, mlx);
-	fill_area(vertex[1], vertex[3], vertex[4], 0x0000FF, mlx);
-	fill_area(vertex[1], vertex[3], vertex[5], 0xD6108F, mlx); */
-	//put_data(live_points, 0xD6108F, mlx);
+	fill_area(vertex[0], vertex[3], vertex[5], 0x00a2FF, mlx);
+	fill_area(vertex[0], vertex[3], vertex[4], 0x00FFFF, mlx);
+	fill_area(vertex[1], vertex[2], vertex[5], 0xFF0F01, mlx);
+	fill_area(vertex[1], vertex[2], vertex[4], 0xcdcd01, mlx);
+	fill_area(vertex[1], vertex[3], vertex[5], 0x0000FF, mlx);
+	fill_area(vertex[1], vertex[3], vertex[4], 0xD6108F, mlx);
 }
 
 t_point	rotate_point(t_point p, t_mlx *mlx)
@@ -216,8 +215,9 @@ void	put_point(t_point p, int color, t_mlx *mlx)
 	my_pixel_put(mlx, x, y, p.z, color);
 }
 
-void	put_data(int color, t_mlx *mlx)
+void	put_data(t_mlx *mlx)
 {
+	int				color = 0x0Fa23F;
 	int				i;
 	t_point_list	*list;
 
@@ -225,11 +225,12 @@ void	put_data(int color, t_mlx *mlx)
 	list = mlx->live_points;
 	while (list != NULL)
 	{
-		if (i % (133757 / 1) == 0) //128=16649 //365=133757
+		if (i % (16649 / 1) == 0) //128=16649 //365=133757
 			color += 10000;
+//		list->color = color;
 		list->point = rotate_point(list->point, mlx);
 		//printf("putting: (%f, %f, %f)\n", list->point.x, list->point.y, list->point.z);
-		put_point(list->point, color, mlx);
+		put_point(list->point, list->color, mlx);
 		list = list->next;
 		i++;
 	}
@@ -245,7 +246,7 @@ void	plot_data(t_mlx *mlx)
 		return ;
 
 	//point_to_rombus(a, 356, mlx);
-	put_data(0xD6108F, mlx);
+	put_data(mlx);
 
 	//printf("ORIGIN: (%f, %f, %f)\n", mlx->plane.origin.x, mlx->plane.origin.y, mlx->plane.origin.z);
 	my_pixel_put(mlx, mlx->plane.origin.x, mlx->plane.origin.y, mlx->plane.origin.z, 0xFF0000); //RED
@@ -266,18 +267,19 @@ int	get_data(t_mlx *mlx)
 
 	a.x = 0;
 	a.y = 0;
-	a.z = 1000;
+	a.z = 0;
 	b.x = 23;
 	b.y = 157;
 	b.z = -10;
 	c.x = 0;
 	c.y = 0;
-	c.z = -1000;
+	c.z = 1000;
 
-	//fill_area(a, b, c, mlx);
+	fill_area(a, b, c, 0xf77f01, mlx);
 
-	point_to_rombus(a, 365, mlx);
-	point_to_rombus(c, 365, mlx);
+	(void)b; (void)c;
+	point_to_rombus(a, 128, mlx);
+	point_to_rombus(b, 128, mlx);
 
 
 	mlx->data = (t_point *)malloc(1 * sizeof(t_point));

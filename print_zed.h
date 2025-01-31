@@ -48,6 +48,7 @@ typedef struct s_point
 typedef struct s_point_list
 {
 	t_point 			point;
+	unsigned int		color;
 	struct s_point_list *z_sorted_next;
 	struct s_point_list	*next;
 }				t_point_list;
@@ -94,7 +95,7 @@ typedef struct s_mlx
 
 //main.c
 
-void	my_pixel_put(t_mlx *mlx, int x, int y, float z, int color);
+void		my_pixel_put(t_mlx *mlx, int x, int y, float z, int color);
 
 //easy_startup_functions.c
 
@@ -115,7 +116,7 @@ int			ft_isfloat_space(const char *s);
 float		ft_atof(const char *nptr);
 void		ft_free_arr(char **arr);
 char		**back_trim_nl(char **arr);
-int			ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, t_point point);
+int			ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, int color, t_point point);
 
 //parsing.c
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checky_funtions.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 13:26:33 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/30 07:55:11 by totommi          ###   ########.fr       */
+/*   Updated: 2025/01/31 12:44:18 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	ft_free_arr(char **arr);
 char	**back_trim_nl(char **arr);
 float	ft_get_decimals(const char *nptr);
 float	ft_atof(const char *nptr);
-int		ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, t_point point);
+int		ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, int color, t_point point);
 
 void	ft_free_arr(char **arr)
 {
@@ -110,7 +110,7 @@ allocate a new node with the data of the point,
 then adds the node to the end oof the list.
 RETURNS: 1 if the node was added correctly, 0 in case of error.
 NOTE: if list is NULL the new node is set as the head of the list.*/
-int	ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, t_point point)
+int	ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, int color, t_point point)
 {
 	t_point_list	*node;
 
@@ -119,6 +119,7 @@ int	ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, t_point point
 	if (node == NULL)
 		return (0);
 	node->point = point;
+	node->color = color;
 	if (*list == NULL)
 	{
 		*list = node;

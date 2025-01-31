@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 02:15:55 by totommi           #+#    #+#             */
-/*   Updated: 2025/01/22 15:43:48 by totommi          ###   ########.fr       */
+/*   Updated: 2025/01/31 12:25:09 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,11 +241,11 @@ int	data_parser(char *ls_out)
 		fd = open(paths[i], O_RDONLY);
 		if ((line = file_parser(fd)))
 		{
-			write(2, &paths[i][5], ft_strlen(&paths[i][5]));
-			write(2, ": line [", 8);
+			(void)!write(2, &paths[i][5], ft_strlen(&paths[i][5]));
+			(void)!write(2, ": line [", 8);
 			itoa = ft_itoa(line);
-			write(2, itoa, ft_strlen(itoa));
-			write(2, "]: file parse error\n", 21);
+			(void)!write(2, itoa, ft_strlen(itoa));
+			(void)!write(2, "]: file parse error\n", 21);
 			free(itoa);
 			ft_free_arr(paths);
 			return (0);
