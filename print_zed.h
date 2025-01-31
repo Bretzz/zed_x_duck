@@ -56,6 +56,7 @@ typedef struct s_point_list
 {
 	t_point 		point;
 	unsigned int	color;
+	int				value;
 //	struct s_point_list *z_sorted_next;
 	struct s_point_list	*next;
 }				t_point_list;
@@ -77,6 +78,7 @@ typedef struct s_data
 	float			max_y;
 	t_point			centre;
 	t_point_list	*list;
+	t_point_list	*tail;
 }				t_data;
 
 typedef struct s_img
@@ -95,6 +97,7 @@ typedef struct s_mlx
 	t_data			data;
 	t_plane			plane;
 	t_point_list	*live_points;
+	t_point_list	*tail;
 	void			*mlx;
 	void			*win;
 	t_img			*img;
@@ -121,7 +124,7 @@ int		handle_keypress(int keysym, t_mlx *mlx);
 float	ft_atof(const char *nptr);
 void	ft_free_arr(char **arr);
 char	**back_trim_nl(char **arr);
-int		ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, int color, t_point point);
+int		ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, int color, int value, t_point point);
 
 //parsing.c
 
@@ -166,7 +169,7 @@ int		ft_isfloat_space(const char *s);
 int		fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx);
 int		fill_line(t_point a, t_point b, int color, t_mlx *mlx);
 int		place_axis(float max_z, float max_x, float max_y, t_mlx *mlx);
-int		point_to_rombus(t_point p, int value, t_mlx *mlx);
+int		point_to_rombus(t_point p, int value, int color, t_mlx *mlx);
 
 //point_masters.c
 

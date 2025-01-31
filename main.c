@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 14:54:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/31 22:06:05 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/01 00:05:18 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ int	data_birth(t_point_list *data, t_mlx *mlx)
 	while (data != NULL)
 	{
 //		printf("bbb[%i]=(%f, %f, %f)\n", i, data->point.x, data->point.y, data->point.z);
-		points += point_to_rombus(data->point, 1, mlx);
+		points += point_to_rombus(data->point, data->value, data->color, mlx);
 //		ft_printf("ccc\n");
 		data = data->next;
 		i++;
@@ -161,8 +161,8 @@ int	read_file(char *path, t_mlx *mlx)
 		p.x = ft_atof(split[3]);
 		p.y = ft_atof(split[5]);
 		p.z = ft_atof(split[4]);
-		//printf("adding: (%f, %f, %f)\n", p.x, p.y, p.z);
-		ft_lstadd_point_tail(&mlx->data.list, &tail, 0, norm(p));
+	//	printf("adding: (%f, %f, %f)\n", p.x, p.y, p.z);
+		ft_lstadd_point_tail(&mlx->data.list, &tail, 0xcc0000, (ft_atof(split[6]) -5600) / 100, norm(p));
 		ft_free_arr(split);
 		free(line);
 		points++;
@@ -182,19 +182,19 @@ int	get_data(char **argv, t_mlx *mlx)
 	UNUSED(argv); UNUSED(paths); UNUSED(tail); UNUSED(p); UNUSED(i);
 	/* to_zero(&p);
 	i = 0;
-	points = 1000;
+	points = 10;
 	while (i < points)
 	{
 		p.x = 6000 + (float)rand()/(float)(RAND_MAX/800);
 		p.y = (800 + (float)rand()/(float)(RAND_MAX/400)) * -1;
 		p.z = 2800 + (float)rand()/(float)(RAND_MAX/1200);
-		printf("rand: (%f,%f,%f)\n", p.x, p.y, p.z);
-		ft_lstadd_point_tail(&mlx->data.list, &tail, 0x0, norm(p));
+		printf("rand[%i]: (%f,%f,%f)\n", i, p.x, p.y, p.z);
+		ft_lstadd_point_tail(&mlx->data.list, &tail, 0xcc0000, 10, norm(p));
 		i++;
 	} */
 	//mlx->data.centre = get_list_centre(mlx->live_points, axis_pts, points);
 	paths = ft_split(argv[1], ' ');
-	points = read_file(paths[20], mlx);
+	points = read_file(paths[0], mlx);
 	if (!points)
 		ft_printf("no data found!!!\n");
 	ft_free_arr(paths);

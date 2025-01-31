@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 18:40:34 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/31 21:33:44 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/31 23:54:06 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx);
 int	fill_line(t_point a, t_point b, int color, t_mlx *mlx);
 int	place_axis(float max_z, float max_x, float max_y, t_mlx *mlx);
-int	point_to_rombus(t_point p, int value, t_mlx *mlx);
+int	point_to_rombus(t_point p, int value, int color, t_mlx *mlx);
 
 /* takes 3 3D points as parameters and fill the area inbetween them
 (appending each element to mlx->live_points, with the color given).
@@ -36,7 +36,7 @@ int	fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx)
 	t_point			t;
 	t_point			temp_p;
 	t_point			temp_t;
-	t_point_list	*tail;
+	/* t_point_list	*tail;
 
 	if (mlx->live_points != NULL)
 	{
@@ -47,7 +47,7 @@ int	fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx)
 //			printf("tailing: (%f, %f, %f)\n", tail->point.x, tail->point.y, tail->point.z);
 			tail = tail->next;
 		}
-	}
+	} */
 //	ft_printf("sss\n");
 	p = any_not_obtuse(a, b, c);	//point that moves along a side
 	d = any_not_obtuse(c, b, a);	//point p move towards
@@ -70,7 +70,7 @@ int	fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx)
 		incr[2] = dist[2] / (1 * dist[2]);
 		while (dist[2] >= 0.0f)
 		{
-			ft_lstadd_point_tail(&mlx->live_points, &tail, color, temp_p);
+			ft_lstadd_point_tail(&mlx->live_points, &mlx->tail, color, 0, temp_p);
 			//ft_printf("Error\n");	//PROTECT TE MALLOCC!!!
 			ret++;
 			temp_p.z += incr[2] * ((temp_t.z - temp_p.z) / dist[2]);
@@ -99,20 +99,20 @@ int	fill_line(t_point a, t_point b, int color, t_mlx *mlx)
 	int		ret;
 	float	incr;
 	float	dist;
-	t_point_list	*tail;
+	/* t_point_list	*tail;
 
 	if (mlx->live_points != NULL)
 	{
 		tail = mlx->live_points;
 		while (tail && tail->next)
 			tail = tail->next;
-	}
+	} */
 	dist = ft_distf(a, b);
 	incr = dist / (1 * dist);
 	ret = 0;
 	while (dist >= 0.0f)
 	{
-		ft_lstadd_point_tail(&mlx->live_points, &tail, color, a);
+		ft_lstadd_point_tail(&mlx->live_points, &mlx->tail, color, 0, a);
 		//ft_printf("Error\n");	//PROTECT TE MALLOCC!!!
 		ret++;
 		a.z += incr * ((b.z - a.z) / dist);
@@ -157,7 +157,7 @@ takes all the 6 points obtained by increasing or decreasing
 individually each coordinate of the point by the int passed as parameter.
 then fills al the areas forming the prysm.
 RETURNS: the number of points forming the areas.*/
-int	point_to_rombus(t_point p, int value, t_mlx *mlx)
+int	point_to_rombus(t_point p, int value, int color , t_mlx *mlx)
 {
 	int				i;
 	t_point 		vertex[6];
@@ -175,16 +175,22 @@ int	point_to_rombus(t_point p, int value, t_mlx *mlx)
 	vertex[4].y += value;
 	vertex[5].y -= value;
 	i = 0;
-//	ft_printf("ddd\n");
-	i += fill_area(vertex[0], vertex[2], vertex[5], 0xFF00Fc, mlx);
-//	ft_printf("eee\n");
+	i += fill_area(vertex[5], vertex[2], vertex[0], color, mlx);
+	i += fill_area(vertex[5], vertex[2], vertex[1], color, mlx);
+	i += fill_area(vertex[5], vertex[3], vertex[0], color, mlx);
+	i += fill_area(vertex[5], vertex[3], vertex[1], color, mlx);
+	color += 10000;
+	i += fill_area(vertex[4], vertex[2], vertex[0], color, mlx);
+	i += fill_area(vertex[4], vertex[2], vertex[1], color, mlx);
+	i += fill_area(vertex[4], vertex[3], vertex[0], color, mlx);
+	i += fill_area(vertex[4], vertex[3], vertex[1], color, mlx);
+	/* i += fill_area(vertex[0], vertex[2], vertex[5], 0xFF00Fc, mlx);
 	i += fill_area(vertex[0], vertex[2], vertex[4], 0x2FFFA2, mlx);
-//	ft_printf("fff\n");
 	i += fill_area(vertex[0], vertex[3], vertex[5], 0x00a2FF, mlx);
 	i += fill_area(vertex[0], vertex[3], vertex[4], 0x00FFFF, mlx);
 	i += fill_area(vertex[1], vertex[2], vertex[5], 0xFF0F01, mlx);
 	i += fill_area(vertex[1], vertex[2], vertex[4], 0xcdcd01, mlx);
 	i += fill_area(vertex[1], vertex[3], vertex[5], 0x0000FF, mlx);
-	i += fill_area(vertex[1], vertex[3], vertex[4], 0xD6108F, mlx);
+	i += fill_area(vertex[1], vertex[3], vertex[4], 0xD6108F, mlx); */
 	return (i);
 }

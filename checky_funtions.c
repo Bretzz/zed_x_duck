@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 13:26:33 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/31 21:33:00 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/31 23:39:50 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	ft_free_arr(char **arr);
 char	**back_trim_nl(char **arr);
 float	ft_get_decimals(const char *nptr);
 float	ft_atof(const char *nptr);
-int		ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, int color, t_point point);
+int		ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, int color, int value, t_point point);
 
 void	ft_free_arr(char **arr)
 {
@@ -110,7 +110,7 @@ allocate a new node with the data of the point,
 then adds the node to the end oof the list.
 RETURNS: 1 if the node was added correctly, 0 in case of error.
 NOTE: if list is NULL the new node is set as the head of the list.*/
-int	ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, int color, t_point point)
+int	ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, int color, int value, t_point point)
 {
 	t_point_list	*node;
 
@@ -119,6 +119,7 @@ int	ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, int color, t_
 	if (node == NULL)
 		return (0);
 	node->point = point;
+	node->value = value;
 	node->color = color;
 	node->next = NULL;
 	if (*list == NULL)

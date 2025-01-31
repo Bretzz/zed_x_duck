@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 18:32:01 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/31 20:45:59 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/01 00:06:53 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ int	juice_the_pc(t_mlx *mlx)
 	mlx->mlx = mlx_init();
 	if (!mlx->mlx)
 		return (1);
-	mlx->win_x = MAX_WIN_X - 100;
-	mlx->win_y = MAX_WIN_Y - 100;
+	mlx->win_x = MAX_WIN_X;
+	mlx->win_y = MAX_WIN_Y;
 	mlx->win = mlx_new_window(mlx->mlx, mlx->win_x, mlx->win_y, "print_zed");
 	if (!mlx->win)
 	{
