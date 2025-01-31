@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 18:40:34 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/31 19:13:55 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/31 21:33:44 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,14 +38,17 @@ int	fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx)
 	t_point			temp_t;
 	t_point_list	*tail;
 
-	if (mlx->live_points == NULL)
-		tail = NULL;
-	else
+	if (mlx->live_points != NULL)
 	{
 		tail = mlx->live_points;
+//		ft_printf("ppp\n");
 		while (tail && tail->next)
+		{
+//			printf("tailing: (%f, %f, %f)\n", tail->point.x, tail->point.y, tail->point.z);
 			tail = tail->next;
+		}
 	}
+//	ft_printf("sss\n");
 	p = any_not_obtuse(a, b, c);	//point that moves along a side
 	d = any_not_obtuse(c, b, a);	//point p move towards
 	t = a;							//point that is neither p nor d
@@ -59,6 +62,7 @@ int	fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx)
 	incr[1] = dist[1] / (1 * dist[1]);
 	temp_t = p;
 	ret = 0;
+//	ft_printf("ggg\n");
 	while (dist[1] >= 0.0f)
 	{
 		temp_p = p;
@@ -97,9 +101,7 @@ int	fill_line(t_point a, t_point b, int color, t_mlx *mlx)
 	float	dist;
 	t_point_list	*tail;
 
-	if (mlx->live_points == NULL)
-		tail = NULL;
-	else
+	if (mlx->live_points != NULL)
 	{
 		tail = mlx->live_points;
 		while (tail && tail->next)
@@ -173,8 +175,11 @@ int	point_to_rombus(t_point p, int value, t_mlx *mlx)
 	vertex[4].y += value;
 	vertex[5].y -= value;
 	i = 0;
+//	ft_printf("ddd\n");
 	i += fill_area(vertex[0], vertex[2], vertex[5], 0xFF00Fc, mlx);
+//	ft_printf("eee\n");
 	i += fill_area(vertex[0], vertex[2], vertex[4], 0x2FFFA2, mlx);
+//	ft_printf("fff\n");
 	i += fill_area(vertex[0], vertex[3], vertex[5], 0x00a2FF, mlx);
 	i += fill_area(vertex[0], vertex[3], vertex[4], 0x00FFFF, mlx);
 	i += fill_area(vertex[1], vertex[2], vertex[5], 0xFF0F01, mlx);

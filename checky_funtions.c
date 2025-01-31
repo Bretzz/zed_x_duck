@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 13:26:33 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/31 12:44:18 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/31 21:33:00 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,7 @@ int	ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, int color, t_
 		return (0);
 	node->point = point;
 	node->color = color;
+	node->next = NULL;
 	if (*list == NULL)
 	{
 		*list = node;
@@ -127,7 +128,7 @@ int	ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, int color, t_
 		return (1);
 	}
 	(*tail)->next = node;
-	(*tail)->z_sorted_next = node;
+	//(*tail)->z_sorted_next = node;
 	*tail = (*tail)->next;
 	return (1);
 }

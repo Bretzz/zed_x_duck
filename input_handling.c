@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 14:47:59 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/31 19:09:01 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/31 21:02:50 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	clean_exit(t_mlx *mlx)
 		free(mlx->img);
 	if (mlx->z_img)
 		free(mlx->z_img);
-	free(mlx->data);
+//	free both live_points and data.list
 	free(mlx->mlx);
 	free(mlx);
 	exit(EXIT_SUCCESS);
@@ -117,6 +117,7 @@ int	handle_keypress(int keysym, t_mlx *mlx)
 		mlx->plane.r_z = (float)r[0];
 		mlx->plane.r_x = (float)r[1];
 		mlx->plane.r_y = (float)r[2];
+		printf("r[0]=%f, r[1]=%f, r[2]=%f\n", r[0], r[1], r[2]);
 		r[0] = 0;
 		r[1] = 0;
 		r[2] = 0;

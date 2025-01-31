@@ -6,14 +6,14 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 18:56:34 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/31 19:05:48 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/31 20:09:21 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "print_zed.h"
 
 void	put_point(t_point p, int color, t_mlx *mlx);
-t_point	rotate_point(t_point p, t_mlx *mlx);
+t_point	rotate_point(t_point p, t_point c, t_mlx *mlx);
 t_point	get_centre(t_point *data, int pt_num);
 t_point	get_list_centre(t_point_list *data, int pt_num);
 
@@ -40,22 +40,20 @@ void	put_point(t_point p, int color, t_mlx *mlx)
 
 
 /* takes a point and a t_mlx struct as parameter
-NOTE: mlx->data[0] is the expected result of the get_centre()
-fnction called with each data point as parameters.
 The function rotate the point based on the angles.
 mlx_plane->r_* are the angle we want to rotate each point,
-and we are rotating the point around mlx->data[0].
+and we are rotating the point around c.
 RETURNS: the rotated point.*/
-t_point	rotate_point(t_point p, t_mlx *mlx)
+t_point	rotate_point(t_point p, t_point c, t_mlx *mlx)
 {
 	float	temp_x;
 	float	temp_y;
 	t_point	new_point;
 
 	new_point = p;
-	new_point.z -= mlx->data[0].z;
-	new_point.x -= mlx->data[0].x;
-	new_point.y -= mlx->data[0].y;
+	new_point.z -= c.z;
+	new_point.x -= c.x;
+	new_point.y -= c.y;
 	
 	// Apply rotation around the X-axis
 	temp_y = new_point.y;
@@ -73,9 +71,9 @@ t_point	rotate_point(t_point p, t_mlx *mlx)
     new_point.y = temp_x * sin(mlx->plane.r_z) + new_point.y * cos(mlx->plane.r_z);
 
 	// Translate the object so that its center is at the origin
-	new_point.z += mlx->data[0].z;
-	new_point.x += mlx->data[0].x;
-	new_point.y += mlx->data[0].y;
+	new_point.z += c.z;
+	new_point.x += c.x;
+	new_point.y += c.y;
 	return (new_point);
 }
 

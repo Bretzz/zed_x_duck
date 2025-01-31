@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 14:54:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/31 19:33:41 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/31 22:06:05 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,12 @@ void	my_pixel_put(t_mlx *mlx, int x, int y, float z, int color)
 	*(float *)z_dest = z;
 }
 
-void	rotate_list(t_point_list *list, t_mlx *mlx)
+void	rotate_list(t_point_list *list, t_point centre, t_mlx *mlx)
 {
 	while (list != NULL)
 	{
 		//printf("rotating (%f, %f, %f)\n", list->point.x, list->point.y, list->point.z);
-		list->point = rotate_point(list->point, mlx);
+		list->point = rotate_point(list->point, centre, mlx);
 		list = list->next;
 	}
 }
@@ -54,9 +54,9 @@ void	put_data(t_mlx *mlx)
 	{
 		if (i % (16649 / 1) == 0) //128=16649 //365=133757
 			color += 10000;
-//		list->color = color;
-		list->point = rotate_point(list->point, mlx);
-		//printf("putting: (%f, %f, %f)\n", list->point.x, list->point.y, list->point.z);
+		//list->color = color;
+		list->point = rotate_point(list->point, mlx->data.centre, mlx);
+//		printf("putting: (%f, %f, %f)\n", list->point.x, list->point.y, list->point.z);
 		put_point(list->point, list->color, mlx);
 		list = list->next;
 		i++;
@@ -93,90 +93,116 @@ void	plot_data(t_mlx *mlx)
 /* this function does the magic.
 if you pass a (1, 1, 1), it returns the equivalent in the axis we just plot
 (actually just swaps the y coordinate :D) */
+// VOLUME -- Xmin: 6000 -- Xmax: 6800
+// VOLUME -- Ymin: 2800 -- Ymax: 4000
+// VOLUME -- Zmin: -1400 -- Zmax: -800
 t_point	norm(t_point p)
 {
 	t_point	norm_p;
 
-	norm_p = p;
-	norm_p.y *= -1;
+	norm_p.x = p.x - 6000;
+	norm_p.y = (p.y + 1300) * -1;
+	norm_p.z = p.z - 2800;
 	return (norm_p);
 }
 
 /* takes an array of points as parameter.
 fills the mlx->live points list with the shape you want to make from the point
 RETURNS: the number of points added, -1 on error*/
-int	data_birth(t_point *data, t_mlx *mlx)
+int	data_birth(t_point_list *data, t_mlx *mlx)
 {
 	int	i;
 	int	points;
 
 	points = 0;
 	i = 0;
-	while (i < 1000)
+//	ft_printf("aaa\n");
+	while (data != NULL)
 	{
-		points += point_to_rombus(data[i], 2, mlx);
+//		printf("bbb[%i]=(%f, %f, %f)\n", i, data->point.x, data->point.y, data->point.z);
+		points += point_to_rombus(data->point, 1, mlx);
+//		ft_printf("ccc\n");
+		data = data->next;
 		i++;
 	}
 	points += place_axis(555.0f, 555.0f, -500.0f, mlx);
+	rotate_list(mlx->live_points, mlx->data.centre, mlx);
 	return (points);
 }
 
-int	get_data(t_mlx *mlx)
+/* Takes a path-string and mlx as parameters.
+reads the file and appens a point with the coordinates
+found in  "X       Y       Z" to mlx->data.list.*/
+int	read_file(char *path, t_mlx *mlx)
 {
-	int	i;
-	int	points;
-	int	axis_pts;
-	t_point	a;
-	t_point	b;
-	t_point	c;
-	t_point p;
+	int		points;
+	int		fd;
+	char	*line;
+	char	**split;
+	t_point	p;
+	t_point_list	*tail;
 
-	mlx->data = (t_point *)malloc(1001 * sizeof(t_point));
-	if (!mlx->data)
-		return (0);
-	to_zero(&p);
-	i = 1;
-	while (i < 1001)
+	fd = open(path, O_RDONLY);
+	while ((line = get_next_line(fd)))
 	{
-		p.z = (float)rand()/(float)(RAND_MAX/1000.0f);
-		p.x = (float)rand()/(float)(RAND_MAX/1000.0f);
-		p.y = (float)rand()/(float)(RAND_MAX/500.0f);
-		mlx->data[i] = norm(p);
-		i++;
+		if (!ft_strncmp("#DATE      HOUR          EPOCH               X       Y       Z         Vp     dVp     VpVs    dVpVs ", line, 100))
+		{
+			free(line);
+			break ;
+		}
+		free(line);
 	}
-	
-	a.x = 0;
-	a.y = 0;
-	a.z = 0;
-	b.x = 23;
-	b.y = 157;
-	b.z = -10;
-	c.x = 50;
-	c.y = 50;
-	c.z = 50;
-
-	a = norm(a); b = norm(b); c = norm(c);
-
 	points = 0;
-	//triangle
-	//points += fill_area(a, b, c, 0xf77f01, mlx);
+	while (points <= 11000 && (line = get_next_line(fd)))
+	{
+		split = ft_split(line, ' ');
+		if (!split)
+			return (0);
+		p.x = ft_atof(split[3]);
+		p.y = ft_atof(split[5]);
+		p.z = ft_atof(split[4]);
+		//printf("adding: (%f, %f, %f)\n", p.x, p.y, p.z);
+		ft_lstadd_point_tail(&mlx->data.list, &tail, 0, norm(p));
+		ft_free_arr(split);
+		free(line);
+		points++;
+		//break ;
+	}
+	return (points);
+}
 
-	(void)b; (void)c; (void)points; (void)axis_pts;
-	//points += point_to_rombus(a, 12, mlx);
-	//points += point_to_rombus(c, 5, mlx);
+int	get_data(char **argv, t_mlx *mlx)
+{
+	int		i;
+	int		points;
+	char	**paths;
+	t_point			p;
+	t_point_list	*tail;
 	
-	//must do
-	//axis_pts = place_axis(555.0f, 333.0f, -333.0f, mlx);
-	//ft_printf("%i total points added\n", axis_pts + points);
-	
-	/* to_zero(&mlx->data[0]);
-	rotate_list(mlx->live_points, mlx); */
-	//mlx->data[0] = get_list_centre(mlx->live_points, axis_pts, points);
-	mlx->data[0] = get_centre(&mlx->data[1], 100);
+	UNUSED(argv); UNUSED(paths); UNUSED(tail); UNUSED(p); UNUSED(i);
+	/* to_zero(&p);
+	i = 0;
+	points = 1000;
+	while (i < points)
+	{
+		p.x = 6000 + (float)rand()/(float)(RAND_MAX/800);
+		p.y = (800 + (float)rand()/(float)(RAND_MAX/400)) * -1;
+		p.z = 2800 + (float)rand()/(float)(RAND_MAX/1200);
+		printf("rand: (%f,%f,%f)\n", p.x, p.y, p.z);
+		ft_lstadd_point_tail(&mlx->data.list, &tail, 0x0, norm(p));
+		i++;
+	} */
+	//mlx->data.centre = get_list_centre(mlx->live_points, axis_pts, points);
+	paths = ft_split(argv[1], ' ');
+	points = read_file(paths[20], mlx);
+	if (!points)
+		ft_printf("no data found!!!\n");
+	ft_free_arr(paths);
+	mlx->data.centre = get_list_centre(mlx->data.list, points);
 
-	printf("centre=(%f, %f, %f)\n", mlx->data[0].x, mlx->data[0].y, mlx->data[0].z);
+	printf("centre=(%f, %f, %f)\n", mlx->data.centre.x, mlx->data.centre.y, mlx->data.centre.z);
 	ft_printf("data generation complete\n");
-	ft_printf("%i points added\n", data_birth(&mlx->data[1], mlx));
+	ft_printf("%i points added\n", data_birth(mlx->data.list, mlx));
 	return (1);
 }
 
@@ -191,7 +217,7 @@ int	main(int argc, char *argv[])
 		free(mlx);
 		return (1);
 	}
-	if (!get_data(mlx))
+	if (!get_data(argv, mlx))
 		return (1);
 	plot_data(mlx);
 //	ft_printf("%s\n", argv[1]);

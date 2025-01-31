@@ -38,6 +38,13 @@
 
 # include <stdio.h>
 
+typedef struct s_pixel
+{
+	int		z;
+	int		x;
+	int		y;
+}				t_pixel;
+
 typedef struct s_point
 {
 	float	z;
@@ -47,19 +54,11 @@ typedef struct s_point
 
 typedef struct s_point_list
 {
-	t_point 			point;
-	unsigned int		color;
-	struct s_point_list *z_sorted_next;
+	t_point 		point;
+	unsigned int	color;
+//	struct s_point_list *z_sorted_next;
 	struct s_point_list	*next;
 }				t_point_list;
-
-
-typedef struct s_pixel
-{
-	int		z;
-	int		x;
-	int		y;
-}				t_pixel;
 
 typedef struct s_plane
 {
@@ -68,8 +67,17 @@ typedef struct s_plane
 	float		r_y;
 	float		fov;
 	int			y_shift;
-	t_point		origin; //origin's coordinate are pixel-based and z = 0;
+	t_point		origin; //origin's coordinate are pixel-basedE
 }				t_plane;
+
+typedef struct s_data
+{
+	float			max_z;
+	float			max_x;
+	float			max_y;
+	t_point			centre;
+	t_point_list	*list;
+}				t_data;
 
 typedef struct s_img
 {
@@ -82,15 +90,15 @@ typedef struct s_img
 
 typedef struct s_mlx
 {
-	int			win_x;
-	int			win_y;
-	void		*mlx;
-	void		*win;
-	t_point		*data;
-	t_point_list *live_points;
-	t_plane		plane;
-	t_img		*img;
-	float		*z_img;
+	int				win_x;
+	int				win_y;
+	t_data			data;
+	t_plane			plane;
+	t_point_list	*live_points;
+	void			*mlx;
+	void			*win;
+	t_img			*img;
+	float			*z_img;
 }				t_mlx;
 
 
@@ -149,9 +157,9 @@ t_point	minor_y(t_point a, t_point b);
 
 //math_sidekicks.c
 
-int			ft_isuint(const char *s);
-int			ft_isfloat(const char *s);
-int			ft_isfloat_space(const char *s);
+int		ft_isuint(const char *s);
+int		ft_isfloat(const char *s);
+int		ft_isfloat_space(const char *s);
 
 //shapemakers.c
 
@@ -162,10 +170,10 @@ int		point_to_rombus(t_point p, int value, t_mlx *mlx);
 
 //point_masters.c
 
-void		put_point(t_point p, int color, t_mlx *mlx);
-t_point		rotate_point(t_point p, t_mlx *mlx);
-t_point		get_centre(t_point *data, int pt_num);
-t_point		get_list_centre(t_point_list *data, int pt_num);
+void	put_point(t_point p, int color, t_mlx *mlx);
+t_point	rotate_point(t_point p, t_point c, t_mlx *mlx);
+t_point	get_centre(t_point *data, int pt_num);
+t_point	get_list_centre(t_point_list *data, int pt_num);
 
 /* t_point_list    *z_quick_sort(float min_z, float max_z, t_point_list *list);
 void			print_z_list(t_point_list *list); */
