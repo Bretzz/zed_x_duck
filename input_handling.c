@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 14:47:59 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/01 21:25:53 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/01 22:04:52 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,46 +48,30 @@ int	handle_mouse(int keysym, int x, int y, t_mlx *mlx)
 
 int	handle_keypress(int keysym, t_mlx *mlx)
 {
-	static float	r[3];
 	float			angle;
-	int				file;
+	static int		file;
 
-	file = 0;
 	angle = 1.6 * MY_PI / 180;
 	if (keysym == XK_Up || keysym == 126)
-	{
-		mlx->plane.r_x = -angle;
-		r[0] += angle;
-	}
+		mlx->plane.r_x += -angle;
 	else if (keysym == XK_Down || keysym == 125)
-	{
-		mlx->plane.r_x = angle;
-		r[0] -= angle;
-	}
+		mlx->plane.r_x += angle;
 	else if (keysym == XK_Right || keysym == 124)
-	{
-		mlx->plane.r_y = -angle;
-		r[1] += angle;
-	}
+		mlx->plane.r_y += -angle;
 	else if (keysym == XK_Left || keysym == 123)
-	{
-		mlx->plane.r_y = angle;
-		r[1] -= angle;
-	}
+		mlx->plane.r_y += angle;
 	else if (keysym == XK_a)
-	{
-		mlx->plane.r_z = angle;
-		r[2] -= angle;
-	}
+		mlx->plane.r_z += angle;
 	else if (keysym == XK_d)
-	{
-		mlx->plane.r_z = -angle;
-		r[2] += angle;
-	}
+		mlx->plane.r_z += -angle;
 	else if (keysym == XK_w || keysym == 13)
 		mlx->plane.y_shift -= (float)10;
 	else if (keysym == XK_s || keysym == 1)
 		mlx->plane.y_shift += (float)10;
+	else if (keysym == XK_equal)
+		mlx->setty.mana += 0.1f;
+	else if (keysym == XK_minus)
+		mlx->setty.mana -= 0.1f;
 	else if (keysym == XK_i)
 	{
 		if (mlx->setty.sel_y > 0 || mlx->setty.sel_y <= -600)
@@ -108,13 +92,9 @@ int	handle_keypress(int keysym, t_mlx *mlx)
 	}
 	else if (keysym == XK_r || keysym == 15)
 	{
-		mlx->plane.r_x = (float)r[0];
-		mlx->plane.r_y = (float)r[1];
-		mlx->plane.r_z = (float)r[2];
-		printf("r[0]=%f, r[1]=%f, r[2]=%f\n", r[0], r[1], r[2]);
-		r[0] = 0;
-		r[1] = 0;
-		r[2] = 0;
+		mlx->plane.r_y = (float)0;
+		mlx->plane.r_x = (float)0;
+		mlx->plane.r_z = (float)0;
 		mlx->setty.sel_x = 1;
 		mlx->setty.sel_y = 1;
 		mlx->setty.sel_z = 1;
@@ -136,8 +116,5 @@ int	handle_keypress(int keysym, t_mlx *mlx)
 	else
 		ft_printf("Keypress: %d\n", keysym);
 	plot_data(mlx);
-	mlx->plane.r_y = (float)0;
-	mlx->plane.r_x = (float)0;
-	mlx->plane.r_z = (float)0;
 	return (0);
 }

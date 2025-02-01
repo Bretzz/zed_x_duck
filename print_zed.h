@@ -61,7 +61,7 @@ typedef struct s_point_list
 {
 	t_point 		point;
 	unsigned int	color;
-	int				value;
+	float			value;
 //	struct s_point_list *z_sorted_next;
 	struct s_point_list	*next;
 }				t_point_list;
@@ -69,6 +69,7 @@ typedef struct s_point_list
 typedef struct s_obj_list
 {
 	unsigned int	tag;
+	float			obj_value;
 	t_point			origin;
 	t_point_list	*points;
 	t_point_list	*points_tail;
@@ -110,6 +111,7 @@ typedef struct s_settings
 	int		sel_x;
 	int		sel_y;
 	int		sel_z;
+	float	mana;
 }				t_settings;
 
 typedef struct s_mlx
@@ -152,7 +154,7 @@ void	ft_free_arr(char **arr);
 void	ft_free_point_list(t_point_list *list);
 void	ft_free_obj_list(t_obj_list *obj);
 int		ft_lstadd_point_tail(t_point_list **list, t_point_list **tail,
-			int color, int value, t_point point);
+			int color, float value, t_point point);
 int		ft_lstadd_obj_tail(t_obj_list *obj_tail, t_point_list **points,
 			int color, int value, t_point point);
 int		ft_lstnew_obj(t_obj_list **obj);
@@ -166,11 +168,11 @@ int		data_parser(char *ls_out);
 
 //parse_minions.c
 
-int	is_leap(const char *s);
-int	is_thirty(int month);
-int	is_validay(int leap, int month, char *day);
-int	is_date(char *line);
-int	is_time(char *line);
+int		is_leap(const char *s);
+int		is_thirty(int month);
+int		is_validay(int leap, int month, char *day);
+int		is_date(char *line);
+int		is_time(char *line);
 
 //math_stuff.c
 
@@ -207,6 +209,7 @@ int		fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx);
 int		fill_line(t_point a, t_point b, int color, t_mlx *mlx);
 int		place_axis(float max_z, float max_x, float max_y, t_mlx *mlx);
 int		point_to_rombus(t_point p, float value, int color, t_mlx *mlx);
+int		point_to_cross(t_point p, float value, int color , t_mlx *mlx);
 
 unsigned int blend_colors(unsigned int src, unsigned int dest, unsigned char alpha);
 

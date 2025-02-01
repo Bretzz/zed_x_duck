@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 14:54:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/01 21:24:47 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/01 22:33:40 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,23 +46,31 @@ void	put_data(t_mlx *mlx)
 {
 	t_obj_list		*obj;
 	t_point_list	*list;
+	unsigned int	shaded;
 
 	obj = mlx->live_objs;
-//	ft_printf("sel_y=%i\n", mlx->setty.sel_y);
 	while (obj != NULL)
 	{
-		list = obj->points;
-		while (list != NULL)
+		shaded = blend_colors(mlx->live_objs->points->color, 0x000000, 32);
+		if ((obj->tag == DATA && ((mlx->setty.sel_y <= 0 && (obj->origin.y == mlx->setty.sel_y))
+			|| (mlx->setty.sel_x > 0 && mlx->setty.sel_y > 0 && mlx->setty.sel_z > 0))
+			&& (mlx->setty.mana <= 0 || obj->obj_value > mlx->setty.mana))
+			|| obj->tag != DATA)
 		{
-			list->point = rotate_point(list->point, mlx->data.centre, mlx);
-	//			printf("putting: (%f, %f, %f)\n", list->point.x, list->point.y, list->point.z);
-			if ((obj->tag == DATA && ((mlx->setty.sel_y <= 0 && (obj->origin.y == mlx->setty.sel_y))
-				|| (mlx->setty.sel_x > 0 && mlx->setty.sel_y > 0 && mlx->setty.sel_z > 0)))
-				|| obj->tag != DATA)
+			list = obj->points;
+			while (list != NULL)
+			{
+				//list->point = rotate_point(list->point, mlx->data.centre, mlx);
+		//		printf("putting: (%f, %f, %f)\n", list->point.x, list->point.y, list->point.z);
+				//printf("value=%f, setty.mana=%f\n", obj->obj_value, mlx->setty.mana);
+				/* if (mlx->setty.mana > 0 && obj->obj_value <= mlx->setty.mana)
+					put_point(list->point, shaded, mlx);
+				else if (mlx->setty.mana <= 0 || obj->obj_value > mlx->setty.mana) */
 				put_point(list->point, list->color, mlx);
-			/* else
-				put_point(list->point, blended, mlx); */
-			list = list->next;
+				/* else
+					put_point(list->point, blended, mlx); */
+				list = list->next;
+			}
 		}
 		obj = obj->next_obj;
 	}
@@ -123,7 +131,8 @@ int	data_birth(t_point_list *data, t_mlx *mlx)
 	while (data != NULL)
 	{
 //		printf("bbb[%i]=(%f, %f, %f)\n", i, data->point.x, data->point.y, data->point.z);
-		points += point_to_rombus(data->point, data->value, data->color, mlx);
+		//points += point_to_rombus(data->point, data->value, data->color, mlx);
+		points += point_to_cross(data->point, data->value, data->color, mlx);
 //		ft_printf("ccc\n");
 		data = data->next;
 	}

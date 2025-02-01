@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 18:56:34 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/01 20:44:47 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/01 21:43:39 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ void	put_point(t_point p, int color, t_mlx *mlx)
 	int		y;
 	t_point	plot;
 	
-	plot = p;
-	
+	plot = rotate_point(p, mlx->data.centre, mlx);
+
 	// Apply the projection and translation to screen coordinates
 	z = mlx->plane.origin.z + plot.z;
 	x = mlx->plane.origin.x + plot.x;

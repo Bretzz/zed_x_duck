@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 18:40:34 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/01 20:22:38 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/01 22:31:24 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int	fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx);
 int	fill_line(t_point a, t_point b, int color, t_mlx *mlx);
 int	place_axis(float max_z, float max_x, float max_y, t_mlx *mlx);
 int	point_to_rombus(t_point p, float value, int color, t_mlx *mlx);
+int	point_to_cross(t_point p, float value, int color , t_mlx *mlx);
 
 unsigned int blend_colors(unsigned int src, unsigned int dest, unsigned char alpha);
 
@@ -124,6 +125,7 @@ int	place_axis(float max_z, float max_x, float max_y, t_mlx *mlx)
 	to_zero(&o);
 	if (!ft_lstnew_obj(&mlx->live_objs))
 		return (-1);
+	mlx->live_objs->obj_tail->obj_value = 1000.0f;
 	mlx->live_objs->obj_tail->origin = o;
 	mlx->live_objs->obj_tail->tag = AXIS;
 	points = 0;
@@ -176,6 +178,7 @@ int	point_to_rombus(t_point p, float value, int color , t_mlx *mlx)
 
 	if (!ft_lstnew_obj(&mlx->live_objs))
 		return (-1);
+	mlx->live_objs->obj_tail->obj_value = value;
 	mlx->live_objs->obj_tail->origin = p;
 	mlx->live_objs->obj_tail->tag = DATA;
 	i = 0;
@@ -190,8 +193,6 @@ int	point_to_rombus(t_point p, float value, int color , t_mlx *mlx)
 	vertex[3].x -= value;
 	vertex[4].y += value;
 	vertex[5].y -= value;
-	/* if (value <= 4.0f)
-		color = blend_colors(color, 0x000000, 128); */
 	i = 0;
 	i += fill_area(vertex[5], vertex[2], vertex[0], color, mlx);
 	i += fill_area(vertex[5], vertex[2], vertex[1], color, mlx);
@@ -210,5 +211,55 @@ int	point_to_rombus(t_point p, float value, int color , t_mlx *mlx)
 	i += fill_area(vertex[1], vertex[2], vertex[4], 0xcdcd01, mlx);
 	i += fill_area(vertex[1], vertex[3], vertex[5], 0x0000FF, mlx);
 	i += fill_area(vertex[1], vertex[3], vertex[4], 0xD6108F, mlx); */
+	return (i);
+}
+
+/* take a point, an int and mlx as parameters.
+takes all the 6 points obtained by increasing or decreasing
+individually each coordinate of the point by the int passed as parameter.
+then fills al the areas forming the prysm.
+RETURNS: the number of points forming the areas.*/
+int	point_to_cross(t_point p, float value, int color , t_mlx *mlx)
+{
+	int				i;
+	t_point 		vertex[6];
+
+	if (!ft_lstnew_obj(&mlx->live_objs))
+		return (-1);
+	mlx->live_objs->obj_tail->obj_value = value;
+	mlx->live_objs->obj_tail->origin = p;
+	mlx->live_objs->obj_tail->tag = DATA;
+	i = 0;
+	while (i < 6)
+	{
+		vertex[i] = p;
+		i++;
+	}
+	vertex[0].z += value;
+	vertex[1].z -= value;
+	vertex[2].x += value;
+	vertex[3].x -= value;
+	vertex[4].y += value;
+	vertex[5].y -= value;
+	i = 0;
+	//cross
+	i += fill_line(vertex[0], vertex[1], color, mlx);
+	i += fill_line(vertex[2], vertex[3], color, mlx);
+	i += fill_line(vertex[4], vertex[5], color, mlx);
+
+	//empty rombus
+	/* i += fill_line(vertex[0], vertex[2], color, mlx);
+	i += fill_line(vertex[0], vertex[3], color, mlx);
+	i += fill_line(vertex[0], vertex[4], color, mlx);
+	i += fill_line(vertex[0], vertex[5], color, mlx);
+	i += fill_line(vertex[2], vertex[4], color, mlx);
+	i += fill_line(vertex[2], vertex[5], color, mlx);
+	color += 10000;
+	i += fill_line(vertex[1], vertex[2], color, mlx);
+	i += fill_line(vertex[1], vertex[3], color, mlx);
+	i += fill_line(vertex[1], vertex[4], color, mlx);
+	i += fill_line(vertex[1], vertex[5], color, mlx);
+	i += fill_line(vertex[3], vertex[4], color, mlx);
+	i += fill_line(vertex[3], vertex[5], color, mlx); */
 	return (i);
 }

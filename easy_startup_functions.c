@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 18:32:01 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/01 21:31:34 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/01 22:01:32 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ void	startup_settings(char **argv, t_mlx *mlx)
 	mlx->setty.sel_x = 1;
 	mlx->setty.sel_y = 1;
 	mlx->setty.sel_z = 1;
+	mlx->setty.mana = 0;
 	mlx->argv = argv;
 }
 
