@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 14:54:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/01 00:05:18 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/31 16:04:28 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,22 +44,15 @@ void	rotate_list(t_point_list *list, t_point centre, t_mlx *mlx)
 
 void	put_data(t_mlx *mlx)
 {
-	int				color = 0x0Fa23F;
-	int				i;
 	t_point_list	*list;
 
-	i = 0;
 	list = mlx->live_points;
 	while (list != NULL)
 	{
-		if (i % (16649 / 1) == 0) //128=16649 //365=133757
-			color += 10000;
-		//list->color = color;
 		list->point = rotate_point(list->point, mlx->data.centre, mlx);
 //		printf("putting: (%f, %f, %f)\n", list->point.x, list->point.y, list->point.z);
 		put_point(list->point, list->color, mlx);
 		list = list->next;
-		i++;
 	}
 }
 
@@ -111,11 +104,9 @@ fills the mlx->live points list with the shape you want to make from the point
 RETURNS: the number of points added, -1 on error*/
 int	data_birth(t_point_list *data, t_mlx *mlx)
 {
-	int	i;
 	int	points;
 
 	points = 0;
-	i = 0;
 //	ft_printf("aaa\n");
 	while (data != NULL)
 	{
@@ -123,7 +114,6 @@ int	data_birth(t_point_list *data, t_mlx *mlx)
 		points += point_to_rombus(data->point, data->value, data->color, mlx);
 //		ft_printf("ccc\n");
 		data = data->next;
-		i++;
 	}
 	points += place_axis(555.0f, 555.0f, -500.0f, mlx);
 	rotate_list(mlx->live_points, mlx->data.centre, mlx);
@@ -162,7 +152,7 @@ int	read_file(char *path, t_mlx *mlx)
 		p.y = ft_atof(split[5]);
 		p.z = ft_atof(split[4]);
 	//	printf("adding: (%f, %f, %f)\n", p.x, p.y, p.z);
-		ft_lstadd_point_tail(&mlx->data.list, &tail, 0xcc0000, (ft_atof(split[6]) -5600) / 100, norm(p));
+		ft_lstadd_point_tail(&mlx->data.list, &tail, 0xcc0000, (ft_atof(split[6]) - 5600) / 100, norm(p));
 		ft_free_arr(split);
 		free(line);
 		points++;

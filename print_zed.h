@@ -169,7 +169,7 @@ int		ft_isfloat_space(const char *s);
 int		fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx);
 int		fill_line(t_point a, t_point b, int color, t_mlx *mlx);
 int		place_axis(float max_z, float max_x, float max_y, t_mlx *mlx);
-int		point_to_rombus(t_point p, int value, int color, t_mlx *mlx);
+int		point_to_rombus(t_point p, float value, int color, t_mlx *mlx);
 
 //point_masters.c
 

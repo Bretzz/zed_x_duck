@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shapemakers.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 18:40:34 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/31 23:54:06 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/01/31 16:05:02 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx);
 int	fill_line(t_point a, t_point b, int color, t_mlx *mlx);
 int	place_axis(float max_z, float max_x, float max_y, t_mlx *mlx);
-int	point_to_rombus(t_point p, int value, int color, t_mlx *mlx);
+int	point_to_rombus(t_point p, float value, int color, t_mlx *mlx);
 
 /* takes 3 3D points as parameters and fill the area inbetween them
 (appending each element to mlx->live_points, with the color given).
@@ -36,19 +36,7 @@ int	fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx)
 	t_point			t;
 	t_point			temp_p;
 	t_point			temp_t;
-	/* t_point_list	*tail;
 
-	if (mlx->live_points != NULL)
-	{
-		tail = mlx->live_points;
-//		ft_printf("ppp\n");
-		while (tail && tail->next)
-		{
-//			printf("tailing: (%f, %f, %f)\n", tail->point.x, tail->point.y, tail->point.z);
-			tail = tail->next;
-		}
-	} */
-//	ft_printf("sss\n");
 	p = any_not_obtuse(a, b, c);	//point that moves along a side
 	d = any_not_obtuse(c, b, a);	//point p move towards
 	t = a;							//point that is neither p nor d
@@ -99,14 +87,7 @@ int	fill_line(t_point a, t_point b, int color, t_mlx *mlx)
 	int		ret;
 	float	incr;
 	float	dist;
-	/* t_point_list	*tail;
 
-	if (mlx->live_points != NULL)
-	{
-		tail = mlx->live_points;
-		while (tail && tail->next)
-			tail = tail->next;
-	} */
 	dist = ft_distf(a, b);
 	incr = dist / (1 * dist);
 	ret = 0;
@@ -152,12 +133,34 @@ int	place_axis(float max_z, float max_x, float max_y, t_mlx *mlx)
 	return (points);
 }
 
+/* ty chatgpt :D */
+unsigned int blend_colors(unsigned int src, unsigned int dest, unsigned char alpha)
+{
+    // Extract RGB components from source color
+    unsigned char src_r = (src >> 16) & 0xFF;
+    unsigned char src_g = (src >> 8) & 0xFF;
+    unsigned char src_b = src & 0xFF;
+
+    // Extract RGB components from destination color (background)
+    unsigned char dest_r = (dest >> 16) & 0xFF;
+    unsigned char dest_g = (dest >> 8) & 0xFF;
+    unsigned char dest_b = dest & 0xFF;
+
+    // Blend each color component using the alpha value
+    unsigned char r = (src_r * alpha + dest_r * (255 - alpha)) / 255;
+    unsigned char g = (src_g * alpha + dest_g * (255 - alpha)) / 255;
+    unsigned char b = (src_b * alpha + dest_b * (255 - alpha)) / 255;
+
+    // Reassemble the blended color
+    return (r << 16) | (g << 8) | b;
+}
+
 /* take a point, an int and mlx as parameters.
 takes all the 6 points obtained by increasing or decreasing
 individually each coordinate of the point by the int passed as parameter.
 then fills al the areas forming the prysm.
 RETURNS: the number of points forming the areas.*/
-int	point_to_rombus(t_point p, int value, int color , t_mlx *mlx)
+int	point_to_rombus(t_point p, float value, int color , t_mlx *mlx)
 {
 	int				i;
 	t_point 		vertex[6];
@@ -174,6 +177,8 @@ int	point_to_rombus(t_point p, int value, int color , t_mlx *mlx)
 	vertex[3].x -= value;
 	vertex[4].y += value;
 	vertex[5].y -= value;
+	if (value <= 1.0f)
+		color = blend_colors(color, 0x000000, 0);
 	i = 0;
 	i += fill_area(vertex[5], vertex[2], vertex[0], color, mlx);
 	i += fill_area(vertex[5], vertex[2], vertex[1], color, mlx);
