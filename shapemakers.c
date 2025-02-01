@@ -6,7 +6,7 @@
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 18:40:34 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/31 16:05:02 by totommi          ###   ########.fr       */
+/*   Updated: 2025/02/01 02:03:32 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,6 @@ int	place_axis(float max_z, float max_x, float max_y, t_mlx *mlx)
 	t_point	x;
 	t_point	y;
 	
-	UNUSED(mlx);
 	points = 0;
 	to_zero(&o);
 	to_zero(&z);
@@ -124,8 +123,8 @@ int	place_axis(float max_z, float max_x, float max_y, t_mlx *mlx)
 	y.y = max_y;
 	points += fill_line(o, y, 0xFFFFFF, mlx);
 	z.z = max_z;
-	z.y = max_y;
 	x.x = max_x;
+	z.y = max_y;
 	x.y = max_y;
 	o.y = max_y;
 	points += fill_line(o, z, 0xFFFFFF, mlx);
@@ -177,8 +176,8 @@ int	point_to_rombus(t_point p, float value, int color , t_mlx *mlx)
 	vertex[3].x -= value;
 	vertex[4].y += value;
 	vertex[5].y -= value;
-	if (value <= 1.0f)
-		color = blend_colors(color, 0x000000, 0);
+	if (value <= 4.0f)
+		color = blend_colors(color, 0x000000, 128);
 	i = 0;
 	i += fill_area(vertex[5], vertex[2], vertex[0], color, mlx);
 	i += fill_area(vertex[5], vertex[2], vertex[1], color, mlx);

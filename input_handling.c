@@ -6,7 +6,7 @@
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 14:47:59 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/31 15:40:01 by totommi          ###   ########.fr       */
+/*   Updated: 2025/02/01 02:05:15 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,9 @@ int	handle_mouse(int keysym, int x, int y, t_mlx *mlx)
 int	handle_keypress(int keysym, t_mlx *mlx)
 {
 	static float	r[3];
-	float			one_deg;
+	float			angle;
 
-	one_deg = 1 * MY_PI / 180;
+	angle = 1.6 * MY_PI / 180;
 
 	mlx->plane.r_x = (float)0;
 	mlx->plane.r_y = (float)0;
@@ -56,50 +56,50 @@ int	handle_keypress(int keysym, t_mlx *mlx)
 	if (keysym == XK_Up || keysym == 126)
 	{
 //		ft_printf("going up! %i\n", keysym);
-		mlx->plane.r_x = -one_deg;
+		mlx->plane.r_x = -angle;
 		mlx->plane.r_y = (float)0;
 		mlx->plane.r_z = (float)0;
-		r[1] += one_deg;
+		r[1] += angle;
 	}
 	else if (keysym == XK_Down || keysym == 125)
 	{
 //		ft_printf("going down! %i\n", keysym);
-		mlx->plane.r_x = one_deg;
+		mlx->plane.r_x = angle;
 		mlx->plane.r_y = (float)0;
 		mlx->plane.r_z = (float)0;
-		r[1] -= one_deg;
+		r[1] -= angle;
 	}
 	else if (keysym == XK_Right || keysym == 124)
 	{
 //		ft_printf("going right! %i\n", keysym);
-		mlx->plane.r_y = -one_deg;
+		mlx->plane.r_y = -angle;
 		mlx->plane.r_x = (float)0;
 		mlx->plane.r_z = (float)0;
-		r[2] += one_deg;
+		r[2] += angle;
 	}
 	else if (keysym == XK_Left || keysym == 123)
 	{
 //		ft_printf("going left! %i\n", keysym);
-		mlx->plane.r_y = one_deg;
+		mlx->plane.r_y = angle;
 		mlx->plane.r_x = (float)0;
 		mlx->plane.r_z = (float)0;
-		r[2] -= one_deg;
+		r[2] -= angle;
 	}
 	else if (keysym == XK_a)
 	{
 //		ft_printf("going up(?) %i\n", keysym);
-		mlx->plane.r_z = one_deg;
+		mlx->plane.r_z = angle;
 		mlx->plane.r_x = (float)0;
 		mlx->plane.r_y = (float)0;
-		r[0] -= one_deg;
+		r[0] -= angle;
 	}
 	else if (keysym == XK_d)
 	{
 //		ft_printf("going down(?) %i\n", keysym);
-		mlx->plane.r_z = -one_deg;
+		mlx->plane.r_z = -angle;
 		mlx->plane.r_y = (float)0;
 		mlx->plane.r_x = (float)0;
-		r[0] += one_deg;
+		r[0] += angle;
 	}
 	else if (keysym == XK_w || keysym == 13)
 	{

@@ -6,7 +6,7 @@
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 14:54:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/31 16:04:28 by totommi          ###   ########.fr       */
+/*   Updated: 2025/02/01 02:03:52 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,7 +152,7 @@ int	read_file(char *path, t_mlx *mlx)
 		p.y = ft_atof(split[5]);
 		p.z = ft_atof(split[4]);
 	//	printf("adding: (%f, %f, %f)\n", p.x, p.y, p.z);
-		ft_lstadd_point_tail(&mlx->data.list, &tail, 0xcc0000, (ft_atof(split[6]) - 5600) / 100, norm(p));
+		ft_lstadd_point_tail(&mlx->data.list, &tail, 0xcc0000, (ft_atof(split[7]) / 100), norm(p));
 		ft_free_arr(split);
 		free(line);
 		points++;
@@ -172,14 +172,14 @@ int	get_data(char **argv, t_mlx *mlx)
 	UNUSED(argv); UNUSED(paths); UNUSED(tail); UNUSED(p); UNUSED(i);
 	/* to_zero(&p);
 	i = 0;
-	points = 10;
+	points = 1;
 	while (i < points)
 	{
 		p.x = 6000 + (float)rand()/(float)(RAND_MAX/800);
 		p.y = (800 + (float)rand()/(float)(RAND_MAX/400)) * -1;
 		p.z = 2800 + (float)rand()/(float)(RAND_MAX/1200);
 		printf("rand[%i]: (%f,%f,%f)\n", i, p.x, p.y, p.z);
-		ft_lstadd_point_tail(&mlx->data.list, &tail, 0xcc0000, 10, norm(p));
+		ft_lstadd_point_tail(&mlx->data.list, &tail, 0xcc0000, 8, norm(p));
 		i++;
 	} */
 	//mlx->data.centre = get_list_centre(mlx->live_points, axis_pts, points);
