@@ -13,6 +13,9 @@
 #ifndef PRINT_ZED_H
 # define PRINT_ZED_H
 
+# define AXIS 0 /* Axis object tag */
+# define DATA 1 /* Data plot tag */
+
 # ifndef ESC_KEY
 #  define ESC_KEY 65307
 # endif
@@ -37,6 +40,8 @@
 # include <fcntl.h>
 
 # include <stdio.h>
+# include <time.h> 
+
 
 typedef struct s_pixel
 {
@@ -61,6 +66,16 @@ typedef struct s_point_list
 	struct s_point_list	*next;
 }				t_point_list;
 
+typedef struct s_obj_list
+{
+	unsigned int	tag;
+	t_point			origin;
+	t_point_list	*points;
+	t_point_list	*points_tail;
+	struct s_obj_list	*obj_tail;
+	struct s_obj_list	*next_obj;
+}				t_obj_list;
+
 typedef struct s_plane
 {
 	float		r_z;
@@ -68,7 +83,7 @@ typedef struct s_plane
 	float		r_y;
 	float		fov;
 	int			y_shift;
-	t_point		origin; //origin's coordinate are pixel-basedE
+	t_point		origin;
 }				t_plane;
 
 typedef struct s_data
@@ -90,28 +105,39 @@ typedef struct s_img
 	int		endian;
 }				t_img;
 
+typedef struct s_settings
+{
+	int		sel_x;
+	int		sel_y;
+	int		sel_z;
+}				t_settings;
+
 typedef struct s_mlx
 {
 	int				win_x;
 	int				win_y;
 	t_data			data;
 	t_plane			plane;
-	t_point_list	*live_points;
-	t_point_list	*tail;
+	t_obj_list		*live_objs;
 	void			*mlx;
 	void			*win;
 	t_img			*img;
 	float			*z_img;
+	t_settings		setty;
+	char			**argv;
 }				t_mlx;
 
 
 //main.c
 
 void	my_pixel_put(t_mlx *mlx, int x, int y, float z, int color);
+int		get_data(char **argv, int file, t_mlx *mlx);
+int		read_file(char *path, t_mlx *mlx);
+int		data_birth(t_point_list *data, t_mlx *mlx);
 
 //easy_startup_functions.c
 
-int		juice_the_pc(t_mlx *mlx);
+int		juice_the_pc(char **argv, t_mlx *mlx);
 
 //input_handling.c
 
@@ -123,17 +149,28 @@ int		handle_keypress(int keysym, t_mlx *mlx);
 
 float	ft_atof(const char *nptr);
 void	ft_free_arr(char **arr);
-char	**back_trim_nl(char **arr);
-int		ft_lstadd_point_tail(t_point_list **list, t_point_list **tail, int color, int value, t_point point);
+void	ft_free_point_list(t_point_list *list);
+void	ft_free_obj_list(t_obj_list *obj);
+int		ft_lstadd_point_tail(t_point_list **list, t_point_list **tail,
+			int color, int value, t_point point);
+int		ft_lstadd_obj_tail(t_obj_list *obj_tail, t_point_list **points,
+			int color, int value, t_point point);
+int		ft_lstnew_obj(t_obj_list **obj);
 
 //parsing.c
 
-int		is_time(char *line);
-int		is_date(char *line);
-int		line_parser(char *line);
 int		is_format(char *format, char *path);
+int		line_parser(char *line);
 int		file_parser(int fd);
 int		data_parser(char *ls_out);
+
+//parse_minions.c
+
+int	is_leap(const char *s);
+int	is_thirty(int month);
+int	is_validay(int leap, int month, char *day);
+int	is_date(char *line);
+int	is_time(char *line);
 
 //math_stuff.c
 
@@ -170,6 +207,8 @@ int		fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx);
 int		fill_line(t_point a, t_point b, int color, t_mlx *mlx);
 int		place_axis(float max_z, float max_x, float max_y, t_mlx *mlx);
 int		point_to_rombus(t_point p, float value, int color, t_mlx *mlx);
+
+unsigned int blend_colors(unsigned int src, unsigned int dest, unsigned char alpha);
 
 //point_masters.c
 

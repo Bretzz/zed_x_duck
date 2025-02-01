@@ -1,16 +1,16 @@
 # define standard colors
-BOLD 		:= \033[1m
+BOLD		:= \033[1m
 YELLOW		:= \033[1;33m
-LIGHT_RED 	:= \033[91m
-LIGHT_GREEN := \033[92m
-LIGHT_CYAN 	:= \033[96m
-RESET 		:= \033[0m
+LIGHT_RED	:= \033[91m
+LIGHT_GREEN	:= \033[92m
+LIGHT_CYAN	:= \033[96m
+RESET		:= \033[0m
 
-NAME := print_zed
-DIR := $(shell pwd)
-OS := $(shell uname)
-CC := cc
-CFLAGS := -Wall -Wextra -Werror
+NAME		:= print_zed
+DIR			:= $(shell pwd)
+OS			:= $(shell uname)
+CC			:= cc
+CFLAGS		:= -Wall -Wextra -Werror
 
 #LINKS = -I /opt/homebrew/include -I /usr/X11/include -L /opt/homebrew/lib -L /usr/X11/lib -lX11 -Lmlx -lXext -framework OpenGL -framework AppKit
 ifeq ($(OS),Darwin)
@@ -34,40 +34,41 @@ endif
 #DATE := $(shell $(DATE_CMD))
 
 #source files (full path optional)
-SRCS := main.c parsing.c input_handling.c \
-		point_masters.c shapemakers.c \
-		math_stuff.c math_utils.c math_sidekicks.c \
-		easy_startup_functions.c \
-		checky_funtions.c
+SRCS		:= main.c input_handling.c \
+				parsing.c parse_minions.c \
+				point_masters.c shapemakers.c \
+				math_stuff.c math_utils.c math_sidekicks.c \
+				easy_startup_functions.c \
+				checky_funtions.c
 
 #archive file names
-ARS	= $(LIBFT_DIR)/libft.a $(MINILX_DIR)/libmlx.a #libmlx_Linux.a
+ARS			= $(LIBFT_DIR)/libft.a $(MINILX_DIR)/libmlx.a #libmlx_Linux.a
 
 #folders containing source files [*.c] 
 VPATH =
 
-LIBFT_DIR := libft
-LIBFT = $(LIBFT_DIR)/libft.a
-OBJ_DIR := $(DIR)/obj
-OBJS = $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(SRCS)))
-GIDEF =	"""$\
-		\#default rules\n$\
-		.gitignore\n$\
-		.git\n$\
-		.vscode\n$\
-		**/temp\n$\
-		**/obj\n$\
-		**/resources\n$\
-		**/a.out\n$\
-		**/*.a\n$\
-		**/tester.c\n$\
-		\n$\
-		\#added rules\n$\
-		$(NAME)\n$\
-		$(NAME).tar\n$\
-		$(MINILX_DIR)*\n$\
-		data$\
-		"""
+LIBFT_DIR	:= libft
+LIBFT		= $(LIBFT_DIR)/libft.a
+OBJ_DIR		:= $(DIR)/obj
+OBJS		= $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(SRCS)))
+GIDEF		= """$\
+			\#default rules\n$\
+			.gitignore\n$\
+			.git\n$\
+			.vscode\n$\
+			**/temp\n$\
+			**/obj\n$\
+			**/resources\n$\
+			**/a.out\n$\
+			**/*.a\n$\
+			**/tester.c\n$\
+			\n$\
+			\#added rules\n$\
+			$(NAME)\n$\
+			$(NAME).tar\n$\
+			$(MINILX_DIR)*\n$\
+			data$\
+			"""
 
 all: $(NAME)
 

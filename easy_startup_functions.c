@@ -6,17 +6,36 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 18:32:01 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/01 00:06:53 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/01 21:31:34 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "print_zed.h"
 
-int	juice_the_pc(t_mlx *mlx);
+int	juice_the_pc(char **argv, t_mlx *mlx);
+
+/* default settings for mlx variables */
+void	startup_settings(char **argv, t_mlx *mlx)
+{
+	mlx->plane.r_z = 0 * MY_PI / 180;
+	mlx->plane.r_x = 0 * MY_PI / 180;
+	mlx->plane.r_y = 50 * MY_PI / 180;
+	mlx->plane.origin.z = -100.0f;
+	mlx->plane.origin.x = (MAX_WIN_X / 4.0f);
+	mlx->plane.origin.y = (MAX_WIN_Y / 1.5f);
+	mlx->plane.y_shift = 0;
+	mlx->plane.fov = 1.0f;
+	mlx->live_objs = NULL;
+	mlx->data.list = NULL;
+	mlx->setty.sel_x = 1;
+	mlx->setty.sel_y = 1;
+	mlx->setty.sel_z = 1;
+	mlx->argv = argv;
+}
 
 /*set up the pc-side of the t_data (mlx) struct
 RETURNS: 0 all good, 1 error*/
-int	juice_the_pc(t_mlx *mlx)
+int	juice_the_pc(char **argv, t_mlx *mlx)
 {
 	mlx->mlx = mlx_init();
 	if (!mlx->mlx)
@@ -36,14 +55,6 @@ int	juice_the_pc(t_mlx *mlx)
 		free(mlx->mlx);
 		return (1);
 	}
-	mlx->plane.r_z = 0 * MY_PI / 180; // the z axis orientation, 0 = towards the user
-	mlx->plane.r_x = 0 * MY_PI / 180; // the z axis orientation, 0 = towards the user
-	mlx->plane.r_y = 50 * MY_PI / 180;/* 60 * MY_PI / 180 */; // the z axis orientation, 0 = towards the user
-	mlx->plane.origin.z = -100.0f;
-	mlx->plane.origin.x = (MAX_WIN_X / 4.0f) /* - (MAX_WIN_X / 4.0f) */;
-	mlx->plane.origin.y = (MAX_WIN_Y / 1.5f) /* + (MAX_WIN_Y / 8.0f) */;
-	mlx->plane.y_shift = 0;
-	mlx->plane.fov = 1.0f;
-	mlx->live_points = NULL;
+	startup_settings(argv, mlx);
 	return (0);
 }

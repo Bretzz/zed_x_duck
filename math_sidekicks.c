@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 17:41:35 by topiana-          #+#    #+#             */
-/*   Updated: 2025/01/31 18:38:28 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/01 16:52:38 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ RETURNS: 1 if respects the pattern, 0 if it doesn't. */
 int	ft_isfloat(const char *s)
 {
 	int	i;
-	int point;
+	int	point;
 
 	if (!s)
 		return (0);
@@ -65,7 +65,7 @@ int	ft_isfloat(const char *s)
 int	ft_isfloat_space(const char *s)
 {
 	int	i;
-	int point;
+	int	point;
 
 	if (!s)
 		return (0);

@@ -6,87 +6,16 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 02:15:55 by totommi           #+#    #+#             */
-/*   Updated: 2025/01/31 12:25:09 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/01 18:09:50 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "print_zed.h"
 
-int	is_time(char *line);
-int	is_date(char *line);
-int	line_parser(char *line);
 int	is_format(char *format, char *path);
-int file_parser(int fd);
+int	line_parser(char *line);
+int	file_parser(int fd);
 int	data_parser(char *ls_out);
-
-
-
-/* takes a char pointer as a parameter
-RETURNS: 1 if the string begins with a 'date', 0 if it doesn't 
-date: yyyy/mm/dd */
-
-// Return true if year is a  
-// multiple of 4 and not  
-// multiple of 100. OR year 
-// is multiple of 400. 
-
-int	is_date(char *line)
-{
-	int	i;
-
-	i = 0;
-	while (i < 10)
-	{
-		if (*line == '\0')
-			return (0);
-		if ((i == 4 || i == 7))
-		{
-			if (*line != '/')
-			{
-				ft_printf("date: backslash [%i] strike OUT\n", i);
-				return (0);
-			}
-		}
-		else if (!ft_isdigit(*line))
-		{
-			ft_printf("date: digit [%i] strike OUT\n", i);
-			return (0);
-		}
-		line++;
-		i++;
-	}
-	return (1);
-}
-
-/* takes a char pointer as a parameter
-RETURNS: 1 if the string begins with a 'timestamp', 0 if it doesn't
-timestamp: hh:mm:ss */
-int	is_time(char *line)
-{
-	int	i;
-
-	if (line == NULL)
-		return (0);
-	i = 0;
-	while (i < 8)
-	{
-		if (line[i] == '\0')
-			return (0);
-		if (i == 0 && (!ft_isdigit(line[i]) || line[i] > '2'))
-			return (0);
-		else if (i == 1 && (!ft_isdigit(line[i]) || (line[0] == '2' && line[i] > '4')))
-			return (0);
-		else if ((i == 2 || i == 5) && line[i] != ':')
-			return (0);
-		else if ((i == 3 || i == 6) && (!ft_isdigit(line[i])
-			|| line[i] > '5'))
-			return (0);
-		else if ((i == 4 || i == 7 ) && !ft_isdigit(line[i]))
-			return (0);
-		i++;
-	}
-	return (1);
-}
 
 /* 2020/12/04 00:00:00      1607040000       6000.   4000.   -800.       5580.    430.    1.790    0.052
 take a char pointer as a parameter
@@ -152,7 +81,6 @@ int	line_parser(char *line)
 //			ft_printf("'digit' element OK\n");
 		}
 		i++;
-		//if (i < 6 || (i > 16 && i < 23) || (i > 28 && i < 31) || (i > 36 && i < 39) || (i > 44 & i < 51) || ())
 	}
 	if (*line != '\n')
 		return (0);

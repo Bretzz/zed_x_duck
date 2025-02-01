@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 14:54:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/01 02:03:52 by totommi          ###   ########.fr       */
+/*   Updated: 2025/02/01 21:24:47 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,15 +44,27 @@ void	rotate_list(t_point_list *list, t_point centre, t_mlx *mlx)
 
 void	put_data(t_mlx *mlx)
 {
+	t_obj_list		*obj;
 	t_point_list	*list;
 
-	list = mlx->live_points;
-	while (list != NULL)
+	obj = mlx->live_objs;
+//	ft_printf("sel_y=%i\n", mlx->setty.sel_y);
+	while (obj != NULL)
 	{
-		list->point = rotate_point(list->point, mlx->data.centre, mlx);
-//		printf("putting: (%f, %f, %f)\n", list->point.x, list->point.y, list->point.z);
-		put_point(list->point, list->color, mlx);
-		list = list->next;
+		list = obj->points;
+		while (list != NULL)
+		{
+			list->point = rotate_point(list->point, mlx->data.centre, mlx);
+	//			printf("putting: (%f, %f, %f)\n", list->point.x, list->point.y, list->point.z);
+			if ((obj->tag == DATA && ((mlx->setty.sel_y <= 0 && (obj->origin.y == mlx->setty.sel_y))
+				|| (mlx->setty.sel_x > 0 && mlx->setty.sel_y > 0 && mlx->setty.sel_z > 0)))
+				|| obj->tag != DATA)
+				put_point(list->point, list->color, mlx);
+			/* else
+				put_point(list->point, blended, mlx); */
+			list = list->next;
+		}
+		obj = obj->next_obj;
 	}
 }
 
@@ -78,9 +90,9 @@ void	plot_data(t_mlx *mlx)
 //	put_point(b, 0x00FFFF, mlx); //YELLOW?
 //	put_point(c, 0x00FFFF, mlx); //YELLOW?
 	mlx_put_image_to_window((*mlx).mlx, (*mlx).win, (*mlx).img->img, 0, 0);
+	mlx_destroy_image((*mlx).mlx, (*mlx).img->img);
 	free(mlx->z_img);
 	mlx->z_img = NULL;
-	mlx_destroy_image((*mlx).mlx, (*mlx).img->img);
 }
 
 /* this function does the magic.
@@ -94,7 +106,7 @@ t_point	norm(t_point p)
 	t_point	norm_p;
 
 	norm_p.x = p.x - 6000;
-	norm_p.y = (p.y + 1300) * -1;
+	norm_p.y = (p.y + 1400) * -1;
 	norm_p.z = p.z - 2800;
 	return (norm_p);
 }
@@ -115,8 +127,8 @@ int	data_birth(t_point_list *data, t_mlx *mlx)
 //		ft_printf("ccc\n");
 		data = data->next;
 	}
-	points += place_axis(555.0f, 555.0f, -500.0f, mlx);
-	rotate_list(mlx->live_points, mlx->data.centre, mlx);
+	points += place_axis(555.0f, 555.0f, -600.0f, mlx);
+//	rotate_list(mlx->live_points, mlx->data.centre, mlx);
 	return (points);
 }
 
@@ -146,13 +158,13 @@ int	read_file(char *path, t_mlx *mlx)
 	while (points <= 11000 && (line = get_next_line(fd)))
 	{
 		split = ft_split(line, ' ');
-		if (!split)
+		if (split == NULL)
 			return (0);
 		p.x = ft_atof(split[3]);
 		p.y = ft_atof(split[5]);
 		p.z = ft_atof(split[4]);
-	//	printf("adding: (%f, %f, %f)\n", p.x, p.y, p.z);
 		ft_lstadd_point_tail(&mlx->data.list, &tail, 0xcc0000, (ft_atof(split[7]) / 100), norm(p));
+		//printf("adding: (%f, %f, %f)\n", p.x, p.y, p.z);
 		ft_free_arr(split);
 		free(line);
 		points++;
@@ -161,7 +173,7 @@ int	read_file(char *path, t_mlx *mlx)
 	return (points);
 }
 
-int	get_data(char **argv, t_mlx *mlx)
+int	get_data(char **argv, int file, t_mlx *mlx)
 {
 	int		i;
 	int		points;
@@ -179,12 +191,13 @@ int	get_data(char **argv, t_mlx *mlx)
 		p.y = (800 + (float)rand()/(float)(RAND_MAX/400)) * -1;
 		p.z = 2800 + (float)rand()/(float)(RAND_MAX/1200);
 		printf("rand[%i]: (%f,%f,%f)\n", i, p.x, p.y, p.z);
-		ft_lstadd_point_tail(&mlx->data.list, &tail, 0xcc0000, 8, norm(p));
+		ft_lstadd_point_tail(&mlx->data.list, &tail, 0xcc0001, 128, norm(p));
 		i++;
 	} */
-	//mlx->data.centre = get_list_centre(mlx->live_points, axis_pts, points);
+	ft_printf("data found??\n");
 	paths = ft_split(argv[1], ' ');
-	points = read_file(paths[0], mlx);
+	ft_printf("%s...?\n", paths[file]);
+	points = read_file(paths[file], mlx);
 	if (!points)
 		ft_printf("no data found!!!\n");
 	ft_free_arr(paths);
@@ -202,14 +215,21 @@ int	main(int argc, char *argv[])
 	
 	(void)argc; (void)argv;
 	mlx = (t_mlx *)malloc(1 * sizeof(t_mlx));
-	if (juice_the_pc(mlx))
+	if (juice_the_pc(argv, mlx))
 	{
 		free(mlx);
 		return (1);
 	}
-	if (!get_data(argv, mlx))
+	ft_printf("PC JUICED!\n");
+	if (!get_data(argv, 0, mlx))
 		return (1);
+
+	clock_t t; 
+	t = clock(); 
 	plot_data(mlx);
+	t = clock() - t; 
+	double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds 
+	printf("PLOT_DATA took %f seconds to execute \n", time_taken); 
 //	ft_printf("%s\n", argv[1]);
 	/* if (!data_parser(argv[1]))
 	{

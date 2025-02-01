@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shapemakers.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 18:40:34 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/01 02:03:32 by totommi          ###   ########.fr       */
+/*   Updated: 2025/02/01 20:22:38 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ int	fill_line(t_point a, t_point b, int color, t_mlx *mlx);
 int	place_axis(float max_z, float max_x, float max_y, t_mlx *mlx);
 int	point_to_rombus(t_point p, float value, int color, t_mlx *mlx);
 
+unsigned int blend_colors(unsigned int src, unsigned int dest, unsigned char alpha);
+
 /* takes 3 3D points as parameters and fill the area inbetween them
 (appending each element to mlx->live_points, with the color given).
 The idea is that a point (p) moves allong a side of the triangle
@@ -25,7 +27,7 @@ At the same time a point (temp_c) moves from the startin point towards the other
 For each increment of the 2 points another point (temp_p)
 travels from one (p) to another (temp_c).
 The varous values of temp_p are the ones we append to the list.
-RETURNS: the number of points added. */
+RETURNS: the number of points added, -1 on error. */
 int	fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx)
 {
 	int				ret;
@@ -37,6 +39,9 @@ int	fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx)
 	t_point			temp_p;
 	t_point			temp_t;
 
+	/* if (!ft_lstnew_obj(&mlx->live_objs))
+		return (-1); */
+//	ft_printf("new AREA obj created!\n");
 	p = any_not_obtuse(a, b, c);	//point that moves along a side
 	d = any_not_obtuse(c, b, a);	//point p move towards
 	t = a;							//point that is neither p nor d
@@ -50,7 +55,6 @@ int	fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx)
 	incr[1] = dist[1] / (1 * dist[1]);
 	temp_t = p;
 	ret = 0;
-//	ft_printf("ggg\n");
 	while (dist[1] >= 0.0f)
 	{
 		temp_p = p;
@@ -58,9 +62,10 @@ int	fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx)
 		incr[2] = dist[2] / (1 * dist[2]);
 		while (dist[2] >= 0.0f)
 		{
-			ft_lstadd_point_tail(&mlx->live_points, &mlx->tail, color, 0, temp_p);
-			//ft_printf("Error\n");	//PROTECT TE MALLOCC!!!
+			if (!(ft_lstadd_obj_tail(mlx->live_objs->obj_tail, &mlx->live_objs->points_tail, color, 0, temp_p)))
+				return (-1);
 			ret++;
+//			ft_printf("point %i added!!!\n", ret);
 			temp_p.z += incr[2] * ((temp_t.z - temp_p.z) / dist[2]);
 			temp_p.x += incr[2] * ((temp_t.x - temp_p.x) / dist[2]);
 			temp_p.y += incr[2]* ((temp_t.y - temp_p.y) / dist[2]);
@@ -75,7 +80,6 @@ int	fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx)
 		dist[0] -= incr[0];
 		dist[1] -= incr[1];
 	}
-//	ft_printf("single area added %i points\n", ret);
 	return (ret);
 }
 
@@ -88,20 +92,22 @@ int	fill_line(t_point a, t_point b, int color, t_mlx *mlx)
 	float	incr;
 	float	dist;
 
+	/* if (!ft_lstnew_obj(&mlx->live_objs))
+		return (-1); */
+//	ft_printf("new LINE obj created!\n");
 	dist = ft_distf(a, b);
 	incr = dist / (1 * dist);
 	ret = 0;
 	while (dist >= 0.0f)
 	{
-		ft_lstadd_point_tail(&mlx->live_points, &mlx->tail, color, 0, a);
-		//ft_printf("Error\n");	//PROTECT TE MALLOCC!!!
+		if (!(ft_lstadd_obj_tail(mlx->live_objs->obj_tail, &mlx->live_objs->points_tail, color, 0, a)))
+			return (-1);
 		ret++;
 		a.z += incr * ((b.z - a.z) / dist);
 		a.x += incr * ((b.x - a.x) / dist);
 		a.y += incr * ((b.y - a.y) / dist);
 		dist -= incr;
 	}
-//	ft_printf("single line added %i points\n", ret);
 	return (ret);
 }
 
@@ -115,8 +121,12 @@ int	place_axis(float max_z, float max_x, float max_y, t_mlx *mlx)
 	t_point	x;
 	t_point	y;
 	
-	points = 0;
 	to_zero(&o);
+	if (!ft_lstnew_obj(&mlx->live_objs))
+		return (-1);
+	mlx->live_objs->obj_tail->origin = o;
+	mlx->live_objs->obj_tail->tag = AXIS;
+	points = 0;
 	to_zero(&z);
 	to_zero(&x);
 	to_zero(&y);
@@ -164,6 +174,10 @@ int	point_to_rombus(t_point p, float value, int color , t_mlx *mlx)
 	int				i;
 	t_point 		vertex[6];
 
+	if (!ft_lstnew_obj(&mlx->live_objs))
+		return (-1);
+	mlx->live_objs->obj_tail->origin = p;
+	mlx->live_objs->obj_tail->tag = DATA;
 	i = 0;
 	while (i < 6)
 	{
@@ -176,8 +190,8 @@ int	point_to_rombus(t_point p, float value, int color , t_mlx *mlx)
 	vertex[3].x -= value;
 	vertex[4].y += value;
 	vertex[5].y -= value;
-	if (value <= 4.0f)
-		color = blend_colors(color, 0x000000, 128);
+	/* if (value <= 4.0f)
+		color = blend_colors(color, 0x000000, 128); */
 	i = 0;
 	i += fill_area(vertex[5], vertex[2], vertex[0], color, mlx);
 	i += fill_area(vertex[5], vertex[2], vertex[1], color, mlx);
