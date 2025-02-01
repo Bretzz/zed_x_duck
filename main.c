@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 14:54:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/01 22:33:40 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/01 22:39:11 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,10 +169,10 @@ int	read_file(char *path, t_mlx *mlx)
 		split = ft_split(line, ' ');
 		if (split == NULL)
 			return (0);
-		p.x = ft_atof(split[3]);
-		p.y = ft_atof(split[5]);
-		p.z = ft_atof(split[4]);
-		ft_lstadd_point_tail(&mlx->data.list, &tail, 0xcc0000, (ft_atof(split[7]) / 100), norm(p));
+		p.x = ft_atoi(split[3]);
+		p.y = ft_atoi(split[5]);
+		p.z = ft_atoi(split[4]);
+		ft_lstadd_point_tail(&mlx->data.list, &tail, 0xcc0000, (ft_atoi(split[7]) / 100), norm(p));
 		//printf("adding: (%f, %f, %f)\n", p.x, p.y, p.z);
 		ft_free_arr(split);
 		free(line);

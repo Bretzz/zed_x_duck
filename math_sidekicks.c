@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 17:41:35 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/01 21:42:08 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/01 22:40:56 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ int	ft_isfloat_space(const char *s)
 /*the functions returns the float value of the number
 written on the string after the dot (.). Initially skips all the blank spaces
 and numbers so you can use it also at the beginning of the cycle*/
+/* ! ! ! INVALI READS ON NUMBERS THAT END WITH A '.' ! ! ! */
 float	ft_get_decimals(const char *nptr)
 {
 	float	dec;
