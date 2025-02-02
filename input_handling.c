@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   input_handling.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 14:47:59 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/01 22:04:52 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/02 14:27:06 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ mlx->win and mlx->mlx are cleaned with built-in functions
 int	clean_exit(t_mlx *mlx)
 {
 	mlx_destroy_window(mlx->mlx, mlx->win);
-	mlx_destroy_display(mlx->mlx);
+	//mlx_destroy_display(mlx->mlx);
 	if (mlx->img)
 		free(mlx->img);
 	if (mlx->z_img)
@@ -60,19 +60,19 @@ int	handle_keypress(int keysym, t_mlx *mlx)
 		mlx->plane.r_y += -angle;
 	else if (keysym == XK_Left || keysym == 123)
 		mlx->plane.r_y += angle;
-	else if (keysym == XK_a)
+	else if (keysym == XK_a || keysym == 0)
 		mlx->plane.r_z += angle;
-	else if (keysym == XK_d)
+	else if (keysym == XK_d || keysym == 2)
 		mlx->plane.r_z += -angle;
 	else if (keysym == XK_w || keysym == 13)
 		mlx->plane.y_shift -= (float)10;
 	else if (keysym == XK_s || keysym == 1)
 		mlx->plane.y_shift += (float)10;
-	else if (keysym == XK_equal)
+	else if (keysym == XK_equal || keysym == 24)
 		mlx->setty.mana += 0.1f;
-	else if (keysym == XK_minus)
+	else if (keysym == XK_minus || keysym == 27)
 		mlx->setty.mana -= 0.1f;
-	else if (keysym == XK_i)
+	else if (keysym == XK_i || keysym == 34)
 	{
 		if (mlx->setty.sel_y > 0 || mlx->setty.sel_y <= -600)
 			mlx->setty.sel_y = 0;
@@ -81,7 +81,7 @@ int	handle_keypress(int keysym, t_mlx *mlx)
 		mlx->setty.sel_x = 0;
 		mlx->setty.sel_z = 0;
 	}
-	else if (keysym == XK_k)
+	else if (keysym == XK_k || keysym == 40)
 	{
 		if (mlx->setty.sel_y > 0 || mlx->setty.sel_y == 0)
 			mlx->setty.sel_y = -600;
@@ -99,7 +99,7 @@ int	handle_keypress(int keysym, t_mlx *mlx)
 		mlx->setty.sel_y = 1;
 		mlx->setty.sel_z = 1;
 	}
-	else if (keysym == XK_p)
+	else if (keysym == XK_p || keysym == 35)
 	{
 		ft_free_obj_list(mlx->live_objs);
 		ft_free_point_list(mlx->data.list);
