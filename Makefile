@@ -144,7 +144,7 @@ rundata: $(NAME) data
 
 tar: os
 	@ls | grep -q "$(NAME).tar" && rm -f $(NAME).tar || true
-	@tar -cf $(NAME).tar --exclude=".git" --exclude="$(NAME)" --exclude="$(MINILX_DIR)" --exclude="obj" --exclude="$(LIBFT_DIR)/obj" --exclude="data" ./*
+	@tar -cf $(NAME).tar --exclude=".git" --exclude="$(NAME)" --exclude="$(MINILX_DIR)" --exclude="$(OBJS_DIR)" --exclude="$(LIBFT_DIR)/obj" --exclude="data" ./*
 
 #test commands
 #make tar && mkdir ../test && cd ../test && mv ../print_zed/print_zed.tar . && tar -xf print_zed.tar && ls -a
@@ -173,7 +173,7 @@ clean:
 	@echo "${BOLD}removed:${RESET}\vobjects (.o) and archives (.tar, .tgz)"
 
 fclean: clean
-	@rm -rf $(NAME) $(EXE) $(MINILX_DIR) data
+	@rm -rf $(NAME) $(MINILX_DIR) data
 	@$(MAKE) fclean -C $(LIBFT_DIR) --quiet
 	@echo "\texecutable ($(NAME)),\n\t$(MINILX_DIR),\n\tdata extracted,\n\tarchives (.a)"
 
