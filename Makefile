@@ -1,87 +1,104 @@
 # define standard colors
-BOLD		:= \033[1m
-YELLOW		:= \033[1;33m
-LIGHT_RED	:= \033[91m
-LIGHT_GREEN	:= \033[92m
-LIGHT_CYAN	:= \033[96m
-RESET		:= \033[0m
+BOLD			= \033[1m
+BLACK    		= \033[30m    # Black
+RED      		= \033[31m    # Red
+GREEN    		= \033[32m    # Green
+YELLOW   		= \033[33m    # Yellow
+BLUE     		= \033[34m    # Blue
+MAGENTA  		= \033[35m    # Magenta
+CYAN     		= \033[36m    # Cyan
+WHITE    		= \033[37m    # White
+LIGHT_RED		= \033[91m
+LIGHT_GREEN		= \033[92m
+LIGHT_CYAN		= \033[96m
+RESET			= \033[0m
 
-NAME		:= print_zed
-DIR			:= $(shell pwd)
-OS			:= $(shell uname)
-CC			:= cc
-CFLAGS		:= -Wall -Wextra -Werror
+NAME			:= print_zed
+OS				:= $(shell uname)
+CC				:= cc
+CFLAGS			:= -Wall -Wextra -Werror
 
-#LINKS = -I /opt/homebrew/include -I /usr/X11/include -L /opt/homebrew/lib -L /usr/X11/lib -lX11 -Lmlx -lXext -framework OpenGL -framework AppKit
-ifeq ($(OS),Darwin)
-	MINILX_DIR =  minilibx_opengl
-	URL = https://cdn.intra.42.fr/document/document/28086/minilibx_opengl.tgz
-	INK = -D ESC_KEY=53 -D MAX_WIN_X=1440 -D MAX_WIN_Y=840 -I/usr/include -I/usr/X11/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3
-	LINKS = -I$(MINILX_DIR) -I$(DIR) -I/opt/homebrew/include -I/usr/X11/include -L$(MINILX_DIR) -L/usr/lib -L/usr/X11/lib -lX11 -lXext -lm -lz -framework OpenGL -framework AppKit
-	STAT = stat -f %m
-	DATE = date +%Y-%m-%d\ %H:%M:%S
-else ifeq ($(OS),Linux)
-	MINILX_DIR = minilibx-linux
-	URL = https://cdn.intra.42.fr/document/document/28085/minilibx-linux.tgz
-	INK = -I/usr/include -I$(MINILX_DIR) -I$(LIBFT_DIR) -O3
-	LINKS = -L$(MINILX_DIR) -lmlx_Linux -L/usr/lib -I$(MINILX_DIR) -lXext -lX11 -lm -lz
-	STAT = stat -c %Z
-	DATE = date +%Y-%m-%d\ %H:%M:%S
-else
-	OS = Error
-endif
+# Libs
+LIBFT_DIR		:= libft
+LIBFT			= $(LIBFT_DIR)/libft.a
+LINKER  	    = -lft -L $(LIBFT_DIR)
 
-#DATE := $(shell $(DATE_CMD))
+# Includes
+INK				= -I$(LIBFT_DIR)
 
-#source files (full path optional)
-SRCS		:= main.c input_handling.c \
+#source files (expected in the root folder)
+SRCS_DIR		=
+SRC_FILES		= main.c input_handling.c \
 				parsing.c parse_minions.c \
 				point_masters.c shapemakers.c \
 				math_stuff.c math_utils.c math_sidekicks.c \
 				easy_startup_functions.c \
 				checky_funtions.c
+SRCS			= $(addprefix $(SRCS_DIR), $(SRC_FILES))
 
-#archive file names
-ARS			= $(LIBFT_DIR)/libft.a $(MINILX_DIR)/libmlx.a #libmlx_Linux.a
+# Objects
+OBJS_DIR		= objs/
+OBJ_FILES		= $(SRCS:.c=.o)
+OBJS			= $(addprefix $(OBJS_DIR), $(OBJ_FILES))
+
+#LINKS = -I /opt/homebrew/include -I /usr/X11/include -L /opt/homebrew/lib -L /usr/X11/lib -lX11 -Lmlx -lXext -framework OpenGL -framework AppKit
+
+ifeq ($(OS),Darwin)
+	MINILX_DIR	= minilibx_opengl
+	MLX			= $(MINILX_DIR)/libmlx.a
+	URL			= https://cdn.intra.42.fr/document/document/28086/minilibx_opengl.tgz
+	DEFS		= -D ESC_KEY=53 -D MAX_WIN_X=1440 -D MAX_WIN_Y=840
+	INK			+= -I$(MINILX_DIR) -I/usr/X11/include -O3
+	LINKS		+= -L$(MINILX_DIR) I/opt/homebrew/include -I/usr/X11/include -L$(MINILX_DIR) -L/usr/lib -L/usr/X11/lib -lX11 -lXext -lm -lz -framework OpenGL -framework AppKit
+	STAT		= stat -f %m
+	DATE		= date +%Y-%m-%d\ %H:%M:%S
+else ifeq ($(OS),Linux)
+	MINILX_DIR	= minilibx-linux
+	MLX			= $(MINILX_DIR)/libmlx.a
+	URL			= https://cdn.intra.42.fr/document/document/28085/minilibx-linux.tgz
+	DEFS		=
+	INK			+= -I$(MINILX_DIR) -I/usr/include -O3
+	LINKS		+= -L$(MINILX_DIR) -lmlx_Linux -L/usr/lib -lXext -lX11 -lm -lz
+	STAT		= stat -c %Z
+	DATE		= date +%Y-%m-%d\ %H:%M:%S
+else
+	OS = Error
+endif
 
 #folders containing source files [*.c] 
 VPATH =
 
-LIBFT_DIR	:= libft
-LIBFT		= $(LIBFT_DIR)/libft.a
-OBJ_DIR		:= $(DIR)/obj
-OBJS		= $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(SRCS)))
-GIDEF		= """$\
-			\#default rules\n$\
-			.gitignore\n$\
-			.git\n$\
-			.vscode\n$\
-			**/temp\n$\
-			**/obj\n$\
-			**/resources\n$\
-			**/a.out\n$\
-			**/*.a\n$\
-			**/tester.c\n$\
-			\n$\
-			\#added rules\n$\
-			$(NAME)\n$\
-			$(NAME).tar\n$\
-			$(MINILX_DIR)*\n$\
-			data$\
-			"""
+GIDEF			= """$\
+				\#default rules\n$\
+				.gitignore\n$\
+				.git\n$\
+				.vscode\n$\
+				**/temp\n$\
+				**/objs\n$\
+				**/resources\n$\
+				**/a.out\n$\
+				**/*.a\n$\
+				**/tester.c\n$\
+				\n$\
+				\#added rules\n$\
+				$(NAME)\n$\
+				$(NAME).tar\n$\
+				$(MINILX_DIR)*\n$\
+				data$\
+				"""
 
 all: $(NAME)
 
 os:
 ifeq ($(OS),Error)
-	$(error inncompatible OS)
+	$(error incompatible OS)
 endif
 
-$(OBJ_DIR):
-	@mkdir -p $(OBJ_DIR)
+$(OBJS_DIR):
+	@mkdir -p $(OBJS_DIR)
 
-$(OBJ_DIR)/%.o: %.c | $(OBJ_DIR)
-	@$(CC) $(CFLAGS) $(INK) -c $< -o $(OBJ_DIR)/$(notdir $@)
+$(OBJS_DIR)%.o: $(SRCS_DIR)%.c | $(OBJS_DIR) 
+	@$(CC) $(CFLAGS) $(INK) $(DEFS) -c $< -o $@
 
 data:
 	@echo "${BOLD}extracting data...${RESET}"
@@ -90,7 +107,7 @@ data:
 	|| (mkdir data \
 	&& unzip -q Archive.zip -d data)
 
-$(MINILX_DIR):
+$(MLX):
 	@echo "${BOLD}creating $(MINILX_DIR)...${RESET}"
 	@curl $(URL) --output $(MINILX_DIR).tgz \
 	&& tar -xf $(MINILX_DIR).tgz \
@@ -102,24 +119,24 @@ $(LIBFT):
 	@echo "${BOLD}creating libft...${RESET}"
 	@$(MAKE) -C $(LIBFT_DIR) --quiet
 
-$(NAME): $(MINILX_DIR) $(LIBFT) $(OBJS)
+$(NAME): $(MLX) $(LIBFT) $(OBJS)
 	@echo "${BOLD}compiling $(NAME)...${RESET}"
 #	=========== just for sowing different versions
-	@rm -f $(OBJ_DIR)/main_*
+	@rm -f $(OBJS_DIR)main_*
 #	===========
-	@$(CC) $(CFLAGS) $(OBJ_DIR)/* $(ARS) $(LINKS) -o $(NAME) \
+	@$(CC) $(CFLAGS) $(OBJS_DIR)* $(MLX) $(LIBFT) $(LINKS) -o $(NAME) \
 	&& echo "${LIGHT_GREEN}DONE${RESET}"
 
-v1: $(MINILX_DIR) $(LIBFT) $(OBJS)
+v1: $(MLX) $(LIBFT) $(OBJS)
 	@echo "${BOLD}compiling $(NAME)_v1...${RESET}"
-	@rm -f $(OBJ_DIR)/main*
-	@$(CC) $(CFLAGS) main_v1.c -I$(LIBFT_DIR) $(OBJ_DIR)/* $(ARS) $(LINKS) -o $(NAME)_v1 \
+	@rm -f $(OBJS_DIR)main*
+	@$(CC) $(CFLAGS) main_v1.c -I$(LIBFT_DIR) $(OBJS_DIR)* $(ARS) $(LINKS) -o $(NAME)_v1 \
 	&& echo "${LIGHT_GREEN}DONE${RESET}"
 
-v2: $(MINILX_DIR) $(LIBFT) $(OBJS)
+v2: $(MLX) $(LIBFT) $(OBJS)
 	@echo "${BOLD}compiling $(NAME)_v2...${RESET}"
-	@rm -f $(OBJ_DIR)/main*
-	@$(CC) $(CFLAGS) main_v2.c -I$(LIBFT_DIR) $(OBJ_DIR)/* $(ARS) $(LINKS) -o $(NAME)_v2 \
+	@rm -f $(OBJS_DIR)main*
+	@$(CC) $(CFLAGS) main_v2.c -I$(LIBFT_DIR) $(OBJS_DIR)* $(ARS) $(LINKS) -o $(NAME)_v2 \
 	&& echo "${LIGHT_GREEN}DONE${RESET}"
 
 rundata: $(NAME) data
@@ -151,7 +168,7 @@ show:
 	@printf "OBJS		:\n$(OBJS)\n"
 
 clean:
-	@rm -rf $(OBJ_DIR) $(NAME).tar $(MINILX_DIR).tgz
+	@rm -rf $(OBJS_DIR) $(NAME).tar $(MINILX_DIR).tgz
 	@$(MAKE) clean -C $(LIBFT_DIR) --quiet
 	@echo "${BOLD}removed:${RESET}\vobjects (.o) and archives (.tar, .tgz)"
 

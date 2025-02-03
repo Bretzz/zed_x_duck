@@ -39,7 +39,7 @@ SRCS :=	ft_atoi.c ft_bzero.c ft_calloc.c ft_isalnum.c ft_isalpha.c ft_isascii.c 
 VPATH = 
 
 OBJS = $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(SRCS)))
-OBJ_DIR := $(DIR)/obj
+OBJ_DIR := $(DIR)/objs
 GIDEF =	"""$\
 		\#default rules\n$\
 		.gitignore\n$\
