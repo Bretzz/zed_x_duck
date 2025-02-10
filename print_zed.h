@@ -92,6 +92,7 @@ typedef struct s_data
 	float			max_z;
 	float			max_x;
 	float			max_y;
+	unsigned int	obj_nb;
 	t_point			centre;
 	t_point_list	*list;
 	t_point_list	*tail;
@@ -120,6 +121,10 @@ typedef struct s_mlx
 	int				win_y;
 	t_data			data;
 	t_plane			plane;
+	t_point_list	*thread_list_0;
+	t_point_list	*thread_list_1;
+	t_point_list	*thread_list_2;
+	t_point_list	*thread_list_3;
 	t_obj_list		*live_objs;
 	void			*mlx;
 	void			*win;
@@ -134,6 +139,7 @@ typedef struct s_mlx
 
 void	my_pixel_put(t_mlx *mlx, int x, int y, float z, int color);
 int		get_data(char **argv, int file, t_mlx *mlx);
+void	put_data(t_mlx *mlx);
 int		read_file(char *path, t_mlx *mlx);
 int		data_birth(t_point_list *data, t_mlx *mlx);
 

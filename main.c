@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 14:54:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/02 14:41:35 by totommi          ###   ########.fr       */
+/*   Updated: 2025/02/11 00:12:10 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,15 @@
 void	my_pixel_put(t_mlx *mlx, int x, int y, float z, int color);
 void	put_point(t_point p, int color, t_mlx *mlx);
 void	plot_data(t_mlx *mlx);
+
+int	show_cool_data(t_mlx *mlx)
+{
+	char string[] = "BWAHAHA";
+	
+	mlx_string_put(mlx->mlx, mlx->win, 100, 100, 0xff00ff, string);
+	my_pixel_put(mlx, 100, 100, 10000, 0xff00ff);
+	return (0);
+}
 
 /* we should be taking into accounnt the depth of the point,
 but we're not handling black points priority. */
@@ -80,25 +89,29 @@ void	plot_data(t_mlx *mlx)
 {
 	t_point a;
 
-	(*mlx).img->img = mlx_new_image((*mlx).mlx, (*mlx).win_x, (*mlx).win_y);
-	(*mlx).img->addr = mlx_get_data_addr((*mlx).img->img, &(*mlx).img
-			->bits_per_pixel, &(*mlx).img->line_length, &(*mlx).img->endian);
+	mlx->img->img = mlx_new_image(mlx->mlx, mlx->win_x, mlx->win_y);
+	mlx->img->addr = mlx_get_data_addr(mlx->img->img, &mlx->img
+			->bits_per_pixel, &mlx->img->line_length, &mlx->img->endian);
 	mlx->z_img = (float *)malloc(mlx->win_y * mlx->img->line_length * mlx->img->bits_per_pixel * sizeof(float));
 	if (!mlx->img->img || !mlx->img->addr || !mlx->z_img)
 		return ;
 
 	//point_to_rombus(a, 356, mlx);
 	put_data(mlx);
-
+	my_pixel_put(mlx, 100, 100, 10000, 0xff00ff);
+	
 	//printf("ORIGIN: (%f, %f, %f)\n", mlx->plane.origin.x, mlx->plane.origin.y, mlx->plane.origin.z);
 	to_zero(&a);
 	put_point(a, 0x00FFFF, mlx);
 	my_pixel_put(mlx, mlx->plane.origin.x, mlx->plane.origin.y, mlx->plane.origin.z, 0xFF0000); //RED
-//	put_point(a, 0x00FFFF, mlx); //YELLOW?
-//	put_point(b, 0x00FFFF, mlx); //YELLOW?
-//	put_point(c, 0x00FFFF, mlx); //YELLOW?
-	mlx_put_image_to_window((*mlx).mlx, (*mlx).win, (*mlx).img->img, 0, 0);
-	mlx_destroy_image((*mlx).mlx, (*mlx).img->img);
+	//	put_point(a, 0x00FFFF, mlx); //YELLOW?
+	//	put_point(b, 0x00FFFF, mlx); //YELLOW?
+	//	put_point(c, 0x00FFFF, mlx); //YELLOW?
+	mlx_put_image_to_window(mlx->mlx, mlx->win, mlx->img->img, 0, 0);
+	mlx_string_put(mlx->mlx, mlx->win, 10, 10, 0xff00ff, "HAHAAH");
+	// ft_bzero(mlx->img->addr, mlx->win_y * mlx->win_x * 4/* 100 * sizeof(int *) *//* (mlx->win_y * mlx->img->line_length + mlx->win_x * (mlx->img->bits_per_pixel / sizeof(int *))) */);
+	// ft_bzero(mlx->z_img, mlx->win_y * mlx->img->line_length * mlx->img->bits_per_pixel * sizeof(float));
+	mlx_destroy_image(mlx->mlx, mlx->img->img);
 	free(mlx->z_img);
 	mlx->z_img = NULL;
 }
@@ -119,15 +132,51 @@ t_point	norm(t_point p)
 	return (norm_p);
 }
 
+int	birth_n_points(int n, t_mlx *mlx)
+{
+	int 	points;
+	int		i;
+	t_point	a;
+	
+	a.x = mlx->data.centre.x;
+	a.y = mlx->data.centre.y;
+	a.z = mlx->data.centre.z;
+	points = 0;
+	i = 0;
+	while (i < n)
+	{
+		/* if (i % 3 == 0)
+			a.x += (20 + rand()/(RAND_MAX/100)); */
+		if (i % 3 == 1)
+		{
+			a.x += (10 + rand()/(RAND_MAX/100));
+			a.y += (rand()/(RAND_MAX/100));
+			a.z += (30 + rand()/(RAND_MAX/50));
+		}
+		/* if (i % 3 == 2)
+		{
+			a.y += (rand()/(RAND_MAX/30));
+			a.z += (30 + rand()/(RAND_MAX/50));
+		} */
+		//write(1, "ddd\n", 4);
+		points += point_to_rombus(a, 128, 0xcc0001, mlx);
+		i++;
+	}
+	return (points);
+}
+
 /* takes an array of points as parameter.
 fills the mlx->live points list with the shape you want to make from the point
 RETURNS: the number of points added, -1 on error*/
 int	data_birth(t_point_list *data, t_mlx *mlx)
 {
 	int	points;
+	int	i;
 
+	(void)i; (void)data;
 	points = 0;
-//	ft_printf("aaa\n");
+	//points += birth_n_points(2, mlx);
+	i = 0;
 	while (data != NULL)
 	{
 //		printf("bbb[%i]=(%f, %f, %f)\n", i, data->point.x, data->point.y, data->point.z);
@@ -135,6 +184,7 @@ int	data_birth(t_point_list *data, t_mlx *mlx)
 		//points += point_to_cross(data->point, data->value, data->color, mlx);
 //		ft_printf("ccc\n");
 		data = data->next;
+		i++;
 	}
 	points += place_axis(555.0f, 555.0f, -600.0f, mlx);
 //	rotate_list(mlx->live_points, mlx->data.centre, mlx);
@@ -146,7 +196,7 @@ reads the file and appens a point with the coordinates
 found in  "X       Y       Z" to mlx->data.list.*/
 int	read_file(char *path, t_mlx *mlx)
 {
-	int		points;
+	//int		points;
 	int		fd;
 	char	*line;
 	char	**split;
@@ -163,8 +213,9 @@ int	read_file(char *path, t_mlx *mlx)
 		}
 		free(line);
 	}
-	points = 0;
-	while (points <= 11000 && (line = get_next_line(fd)))
+	//points = 0;
+	mlx->data.obj_nb = 0;
+	while (mlx->data.obj_nb <= 11000 && (line = get_next_line(fd)))
 	{
 		split = ft_split(line, ' ');
 		if (split == NULL)
@@ -176,10 +227,11 @@ int	read_file(char *path, t_mlx *mlx)
 		//printf("adding: (%f, %f, %f)\n", p.x, p.y, p.z);
 		ft_free_arr(split);
 		free(line);
-		points++;
+		mlx->data.obj_nb++;
+		//points++;
 		//break ;
 	}
-	return (points);
+	return (mlx->data.obj_nb);
 }
 
 int	get_data(char **argv, int file, t_mlx *mlx)
@@ -252,7 +304,7 @@ int	main(int argc, char *argv[])
 	mlx_mouse_hook(mlx->win, &handle_mouse, mlx);
 	mlx_hook(mlx->win, KeyPress, KeyPressMask, &handle_keypress, mlx);
 	mlx_hook(mlx->win, DestroyNotify, StructureNotifyMask, &clean_exit, mlx);
-	mlx_hook(mlx->win, DestroyNotify, StructureNotifyMask, &clean_exit, mlx);
+	//mlx_loop_hook(mlx->win, &show_cool_data, mlx);
 	mlx_loop(mlx->mlx);
 	return (0);
 }

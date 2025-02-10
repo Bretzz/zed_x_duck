@@ -49,7 +49,7 @@ SRCS			= $(addprefix $(SRCS_DIR), $(SRC_FILES))
 VPATH			= 
 
 # Objects
-OBJS_DIR		= objs/
+OBJS_DIR		= obj/
 OBJ_FILES		= $(SRCS:.c=.o)
 OBJS			= $(addprefix $(OBJS_DIR), $(OBJ_FILES))
 GIDEF			=	"""$\
@@ -58,7 +58,7 @@ GIDEF			=	"""$\
 					.git\n$\
 					.vscode\n$\
 					**/temp\n$\
-					**/objs\n$\
+					**/$(OBJS_DIR)\n$\
 					**/resources\n$\
 					**/a.out\n$\
 					**/*.a\n$\
@@ -84,7 +84,7 @@ $(NAME): $(OBJS)
 		echo $(GIDEF)"$$(cat .gitignore)" > .gitignore
 
 clean:
-	rm -rf $(OBJS_DIR)
+	rm -rf $(OBJS)
 
 fclean: clean
 	rm -f $(NAME)
