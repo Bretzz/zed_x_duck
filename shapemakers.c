@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 18:40:34 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/11 00:11:50 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/12 18:21:46 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,49 +32,37 @@ RETURNS: the number of points added, -1 on error. */
 int	fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx)
 {
 	int				ret;
-	float			incr[3];
-	float			dist[3];
+	float			incr[2];
+	float			dist[2];
 	t_point			p;
 	t_point			d;
-	t_point			t;
+	t_point			s;
 	t_point			temp_p;
-	t_point			temp_t;
+	t_point			temp_s;
 
 	/* if (!ft_lstnew_obj(&mlx->live_objs))
 		return (-1); */
 //	ft_printf("new AREA obj created!\n");
 	p = any_not_obtuse(a, b, c);	//point that moves along a side
 	d = any_not_obtuse(c, b, a);	//point p move towards
-	t = a;							//point that is neither p nor d
-	if (point_equal(t, p) || point_equal(t, d))
-		t = b;
-	if (point_equal(t, p) || point_equal(t, d))
-		t = c;
+	s = a;							//point that is neither p nor d
+	if (point_equal(s, p) || point_equal(s, d))
+		s = b;
+	if (point_equal(s, p) || point_equal(s, d))
+		s = c;
 	dist[0] = ft_distf(p, d);
 	incr[0] = dist[0] / (1 * dist[0]);
-	dist[1] = ft_distf(p, t);
+	dist[1] = ft_distf(p, s);
 	incr[1] = dist[1] / (1 * dist[1]);
-	temp_t = p;
+	temp_s = p;
 	ret = 0;
 	while (dist[1] >= 0.0f)
 	{
 		temp_p = p;
-		dist[2] = ft_distf(temp_p, temp_t);
-		incr[2] = dist[2] / (1 * dist[2]);
-		while (dist[2] >= 0.0f)
-		{
-			if (!(ft_lstadd_obj_tail(mlx->live_objs->obj_tail, &mlx->live_objs->points_tail, color, 0, temp_p)))
-				return (-1);
-			ret++;
-//			ft_printf("point %i added!!!\n", ret);
-			temp_p.z += incr[2] * ((temp_t.z - temp_p.z) / dist[2]);
-			temp_p.x += incr[2] * ((temp_t.x - temp_p.x) / dist[2]);
-			temp_p.y += incr[2]* ((temp_t.y - temp_p.y) / dist[2]);
-			dist[2] -= incr[2];
-		}
-		temp_t.z += incr[1] * ((t.z - temp_t.z) / dist[1]);
-		temp_t.x += incr[1] * ((t.x - temp_t.x) / dist[1]);
-		temp_t.y += incr[1] * ((t.y - temp_t.y) / dist[1]);
+		ret += fill_line(temp_p, temp_s, color, mlx);
+		temp_s.z += incr[1] * ((s.z - temp_s.z) / dist[1]);
+		temp_s.x += incr[1] * ((s.x - temp_s.x) / dist[1]);
+		temp_s.y += incr[1] * ((s.y - temp_s.y) / dist[1]);
 		p.z += incr[0] * ((d.z - p.z) / dist[0]);
 		p.x += incr[0] * ((d.x - p.x) / dist[0]);
 		p.y += incr[0] * ((d.y - p.y) / dist[0]);
@@ -101,7 +89,8 @@ int	fill_line(t_point a, t_point b, int color, t_mlx *mlx)
 	ret = 0;
 	while (dist >= 0.0f)
 	{
-		if (!(ft_lstadd_obj_tail(mlx->live_objs->obj_tail, &mlx->live_objs->points_tail, color, 0, a)))
+		if (!(ft_lstadd_obj_tail(mlx->live_objs->obj_tail,
+				&mlx->live_objs->points_tail, color, 0, a)))
 			return (-1);
 		ret++;
 		a.z += incr * ((b.z - a.z) / dist);
@@ -195,14 +184,21 @@ int	point_to_rombus(t_point p, float value, int color , t_mlx *mlx)
 	vertex[5].y -= value;
 	i = 0;
 	i += fill_area(vertex[5], vertex[2], vertex[0], color, mlx);
+	color += 10000;
 	i += fill_area(vertex[5], vertex[2], vertex[1], color, mlx);
+	color += 10000;
 	i += fill_area(vertex[5], vertex[3], vertex[0], color, mlx);
+	color += 10000;
 	i += fill_area(vertex[5], vertex[3], vertex[1], color, mlx);
 	color += 10000;
 	i += fill_area(vertex[4], vertex[2], vertex[0], color, mlx);
+	color += 10000;
 	i += fill_area(vertex[4], vertex[2], vertex[1], color, mlx);
+	color += 10000;
 	i += fill_area(vertex[4], vertex[3], vertex[0], color, mlx);
+	color += 10000;
 	i += fill_area(vertex[4], vertex[3], vertex[1], color, mlx);
+	color += 10000;
 	/* i += fill_area(vertex[0], vertex[2], vertex[5], 0xFF00Fc, mlx);
 	i += fill_area(vertex[0], vertex[2], vertex[4], 0x2FFFA2, mlx);
 	i += fill_area(vertex[0], vertex[3], vertex[5], 0x00a2FF, mlx);

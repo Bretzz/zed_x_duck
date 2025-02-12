@@ -6,14 +6,15 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 17:41:35 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/01 22:40:56 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/12 18:36:21 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "print_zed.h"
 
-int	ft_isuint(const char *s);
-int	ft_isfloat(const char *s);
+int		ft_isuint(const char *s);
+int		ft_isfloat(const char *s);
+int		ft_isfloat_space(const char *s);
 float	ft_get_decimals(const char *nptr);
 float	ft_atof(const char *nptr);
 

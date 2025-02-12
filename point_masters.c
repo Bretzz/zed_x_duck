@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 18:56:34 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/01 21:43:39 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/12 18:45:59 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,23 @@ void	put_point(t_point p, int color, t_mlx *mlx);
 t_point	rotate_point(t_point p, t_point c, t_mlx *mlx);
 t_point	get_centre(t_point *data, int pt_num);
 t_point	get_list_centre(t_point_list *data, int pt_num);
+t_point	norm(t_point p);
+
+/* this function does the magic.
+if you pass a (1, 1, 1), it returns the equivalent in the axis we just plot
+(actually just swaps the y coordinate :D) */
+// VOLUME -- Xmin: 6000 -- Xmax: 6800
+// VOLUME -- Ymin: 2800 -- Ymax: 4000
+// VOLUME -- Zmin: -1400 -- Zmax: -800
+t_point	norm(t_point p)
+{
+	t_point	norm_p;
+
+	norm_p.x = p.x - 6000;
+	norm_p.y = (p.y + 1400) * -1;
+	norm_p.z = p.z - 2800;
+	return (norm_p);
+}
 
 /* Takes a t_point as a parameter and plots it to the image */
 void	put_point(t_point p, int color, t_mlx *mlx)

@@ -38,6 +38,7 @@
 # include <math.h>
 //# include <sys/stat.h>
 # include <fcntl.h>
+# include <pthread.h>
 
 # include <stdio.h>
 # include <time.h> 
@@ -117,14 +118,11 @@ typedef struct s_settings
 
 typedef struct s_mlx
 {
+	unsigned int	max_threads;
 	int				win_x;
 	int				win_y;
 	t_data			data;
 	t_plane			plane;
-	t_point_list	*thread_list_0;
-	t_point_list	*thread_list_1;
-	t_point_list	*thread_list_2;
-	t_point_list	*thread_list_3;
 	t_obj_list		*live_objs;
 	void			*mlx;
 	void			*win;
@@ -134,14 +132,18 @@ typedef struct s_mlx
 	char			**argv;
 }				t_mlx;
 
+typedef struct s_pid_lst
+{
+	pthread_t			pid;
+	unsigned int		layer;
+	t_obj_list			*obj;
+	t_mlx				*mlx;
+	struct s_pid_lst	*next;
+}				t_pid_lst;
 
 //main.c
 
 void	my_pixel_put(t_mlx *mlx, int x, int y, float z, int color);
-int		get_data(char **argv, int file, t_mlx *mlx);
-void	put_data(t_mlx *mlx);
-int		read_file(char *path, t_mlx *mlx);
-int		data_birth(t_point_list *data, t_mlx *mlx);
 
 //easy_startup_functions.c
 
@@ -152,18 +154,6 @@ int		juice_the_pc(char **argv, t_mlx *mlx);
 int		clean_exit(t_mlx *mlx);
 int		handle_mouse(int keysym, int x, int y, t_mlx *mlx);
 int		handle_keypress(int keysym, t_mlx *mlx);
-
-//checky_functions.c
-
-float	ft_atof(const char *nptr);
-void	ft_free_arr(char **arr);
-void	ft_free_point_list(t_point_list *list);
-void	ft_free_obj_list(t_obj_list *obj);
-int		ft_lstadd_point_tail(t_point_list **list, t_point_list **tail,
-			int color, float value, t_point point);
-int		ft_lstadd_obj_tail(t_obj_list *obj_tail, t_point_list **points,
-			int color, int value, t_point point);
-int		ft_lstnew_obj(t_obj_list **obj);
 
 //parsing.c
 
@@ -179,6 +169,19 @@ int		is_thirty(int month);
 int		is_validay(int leap, int month, char *day);
 int		is_date(char *line);
 int		is_time(char *line);
+
+//get_data.c
+
+int		get_zed_data(char **argv, int file, t_mlx *mlx);
+int		read_file(char *path, t_mlx *mlx);
+int		zed_data_birth(t_point_list *data, t_mlx *mlx);
+
+//checky_functions.c
+
+void	ft_free_arr(char **arr);
+void	ft_free_point_list(t_point_list *list);
+void	ft_free_obj_list(t_obj_list *obj);
+void	ft_free_pid_lst(t_pid_lst **list);
 
 //math_stuff.c
 
@@ -202,12 +205,13 @@ t_point	minor_z(t_point a, t_point b);
 t_point	minor_x(t_point a, t_point b);
 t_point	minor_y(t_point a, t_point b);
 
-
 //math_sidekicks.c
 
 int		ft_isuint(const char *s);
 int		ft_isfloat(const char *s);
 int		ft_isfloat_space(const char *s);
+float	ft_get_decimals(const char *nptr);
+float	ft_atof(const char *nptr);
 
 //shapemakers.c
 
@@ -225,8 +229,36 @@ void	put_point(t_point p, int color, t_mlx *mlx);
 t_point	rotate_point(t_point p, t_point c, t_mlx *mlx);
 t_point	get_centre(t_point *data, int pt_num);
 t_point	get_list_centre(t_point_list *data, int pt_num);
+t_point	norm(t_point p);
 
 /* t_point_list    *z_quick_sort(float min_z, float max_z, t_point_list *list);
-void			print_z_list(t_point_list *list); */
+void				print_z_list(t_point_list *list); */
+
+//pid_lst_utils.c
+
+int			ft_pid_lst_addback_tail(t_pid_lst **list, t_pid_lst **tail,
+	t_pid_lst *node);
+t_pid_lst	*ft_pthread_lstnew(pthread_t pid);
+int			ft_pid_lst_append(t_pid_lst **list, t_pid_lst **tail, int pid);
+void		ft_print_pid_lst(t_pid_lst *list);
+
+//point_obj_list_utils.c
+
+void	ft_free_obj_list(t_obj_list *obj);
+int		ft_lstadd_point_tail(t_point_list **list, t_point_list **tail,
+			int color, float value, t_point point);
+int		ft_lstadd_obj_tail(t_obj_list *obj_tail, t_point_list **points,
+			int color, int value, t_point point);
+int		ft_lstnew_obj(t_obj_list **obj);
+
+//base_plotting.c
+
+void	put_obj(t_obj_list *obj, t_mlx *mlx);
+void	put_data(t_mlx *mlx);
+
+//thread_plotting.c
+
+void	*put_layer_thread(void *arg);
+void	put_data_thread(t_mlx *mlx);
 
 #endif

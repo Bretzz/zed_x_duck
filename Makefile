@@ -21,7 +21,9 @@ CFLAGS			:= -Wall -Wextra -Werror
 # Libs
 LIBFT_DIR		:= libft
 LIBFT			= $(LIBFT_DIR)/libft.a
-LINKS 	 	   = -L/usr/lib -L$(MLX_DIR) -lXext -lX11 -lm -lz
+
+#Linkers
+LINKS 	 	   = -L/usr/lib -L$(MLX_DIR) -lXext -lX11 -lm -lz -lpthread
 
 # Includes
 INKS			= -I$(LIBFT_DIR) -I$(MLX_DIR) -O3
@@ -29,10 +31,13 @@ INKS			= -I$(LIBFT_DIR) -I$(MLX_DIR) -O3
 #source files (expected in the root folder)
 SRCS_DIR		=
 SRC_FILES		= main.c input_handling.c \
-				parsing.c parse_minions.c \
-				point_masters.c shapemakers.c \
-				math_stuff.c math_utils.c math_sidekicks.c \
 				easy_startup_functions.c \
+				parsing.c parse_minions.c \
+				get_zed_data.c \
+				point_masters.c shapemakers.c \
+				thread_plotting.c base_plotting.c \
+				math_stuff.c math_utils.c math_sidekicks.c \
+				pid_lst_utils.c point_obj_list_utils.c \
 				checky_funtions.c
 SRCS			= $(addprefix $(SRCS_DIR), $(SRC_FILES))
 
@@ -58,8 +63,8 @@ else ifeq ($(UNAME),Linux)
 	URL			= https://cdn.intra.42.fr/document/document/28085/minilibx-linux.tgz
 	DEFS		=
 	INKS		+= -I/usr/include
-	LINKS		+= -lmlx_Linux -I $(MLX_DIR)
-	LINKS		= -L$(MLX_DIR) -lmlx_Linux -L/usr/lib -I$(MLX_DIR) -lXext -lX11 -lm -lz
+	LINKS		+= -lmlx_Linux -I$(MLX_DIR)
+#	LINKS		= -L$(MLX_DIR) -lmlx_Linux -L/usr/lib -I$(MLX_DIR) -lXext -lX11 -lm -lz
 	STAT		= stat -c %Z
 	DATE		= date +%Y-%m-%d\ %H:%M:%S
 else
@@ -173,7 +178,7 @@ show:
 	@printf "OBJS		:\n$(OBJS)\n"
 
 clean:
-	@rm -rf $(OBJS) $(NAME).tar $(MLX_DIR).tgz
+	@rm -rf $(OBJS_DIR) $(NAME).tar $(MLX_DIR).tgz
 	@$(MAKE) clean -C $(LIBFT_DIR) --quiet
 	@echo "${BOLD}removed:${RESET}\vobjects (.o) and archives (.tar, .tgz)"
 

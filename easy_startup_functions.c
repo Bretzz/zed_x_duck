@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 18:32:01 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/11 00:05:35 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/12 18:57:56 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void	startup_settings(char **argv, t_mlx *mlx)
 	mlx->live_objs = NULL;
 	mlx->data.list = NULL;
 	mlx->data.obj_nb = 0;
+	mlx->max_threads = 16;
 	mlx->setty.sel_x = 1;
 	mlx->setty.sel_y = 1;
 	mlx->setty.sel_z = 1;

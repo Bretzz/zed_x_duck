@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 14:47:59 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/10 23:27:33 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/12 19:01:19 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ int	handle_keypress(int keysym, t_mlx *mlx)
 		mlx->live_objs = NULL;
 		mlx->data.list = NULL;
 		file += 1;
-		get_data(mlx->argv, file, mlx);
+		get_zed_data(mlx->argv, file, mlx);
 	}
 	else if (keysym == ESC_KEY)
 	{
