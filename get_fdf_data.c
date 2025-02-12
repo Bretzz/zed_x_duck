@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 20:13:56 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/12 23:51:46 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/13 00:09:20 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,12 +55,16 @@ int	link_friends(t_point point, t_point *friends, t_mlx *mlx)
 	i = 0;
 	if (!ft_lstnew_obj(&mlx->live_objs))
 		return (-1);
+	mlx->data.obj_nb++;
 	//ft_printf("new SPIDER obj created!\n");
 	while (i < 4)
 	{
 		//ft_printf("friend[%i]=[%i,%i,%i]\n", i, (int)friends[i].x, (int)friends[i].y, (int)friends[i].z);
 		if (friends[i].x > 0)
 		{
+			/* if (!ft_lstnew_obj(&mlx->live_objs))
+				return (-1);
+			mlx->data.obj_nb++; */
 			points += fill_line(point, friends[i], 0xcc0001, mlx);
 		}
 		i++;
@@ -82,6 +86,7 @@ int	fdf_data_birth(t_point **data, t_mlx *mlx)
 	friends = (t_point *)malloc(4 * sizeof(t_point));
 	if (!friends)
 		return (0);
+	mlx->data.obj_nb = 0;
 	points = 0;
 	printf("max_x=%f, max_y=%f\n", mlx->data.max_x, mlx->data.max_y);
 	y = 0;

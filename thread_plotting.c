@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 18:09:10 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/12 23:51:10 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/13 00:03:51 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,15 +49,19 @@ void	put_data_thread(t_mlx *mlx)
 	t_pid_lst	*p_list;
 	t_pid_lst	*p_tail;
 	int			i;
+	int			threads;
 
 	p_list = NULL;
 	obj = mlx->live_objs;
+	threads = 0;
 	i = 0;
+	ft_printf("%u\n", mlx->data.obj_nb);
 	while (obj != NULL)
 	{
 		if (mlx->data.obj_nb < mlx->max_threads
 			|| i % (mlx->data.obj_nb / mlx->max_threads) == 0)
 		{
+			threads++;
 			ft_pid_lst_append(&p_list, &p_tail, 42);
 			p_tail->obj = obj;
 			p_tail->mlx = mlx;
@@ -71,4 +75,5 @@ void	put_data_thread(t_mlx *mlx)
 	}
 	mass_join(p_list);
 	ft_free_pid_lst(&p_list);
+	ft_printf("%i thread used\n", threads);
 }

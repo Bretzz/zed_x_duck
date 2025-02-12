@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 18:32:01 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/12 23:20:30 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/13 00:11:21 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	zed_startup_settings(char **argv, t_mlx *mlx)
 	mlx->live_objs = NULL;
 	mlx->data.list = NULL;
 	mlx->data.obj_nb = 0;
-	mlx->max_threads = 16;
+	mlx->max_threads = 4;
 	mlx->setty.sel_x = 1;
 	mlx->setty.sel_y = 1;
 	mlx->setty.sel_z = 1;
@@ -51,7 +51,7 @@ void	fdf_startup_settings(char **argv, t_mlx *mlx)
 	mlx->data.obj_nb = 0;
 	mlx->data.max_x = 0;
 	mlx->data.max_y = 0;
-	mlx->max_threads = 32;
+	mlx->max_threads = 4;
 	mlx->setty.sel_x = 1;
 	mlx->setty.sel_y = 1;
 	mlx->setty.sel_z = 1;
