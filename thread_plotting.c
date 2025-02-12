@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 18:09:10 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/12 18:57:27 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/12 23:51:10 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,8 @@ void	put_data_thread(t_mlx *mlx)
 	i = 0;
 	while (obj != NULL)
 	{
-		if (i % (mlx->data.obj_nb / mlx->max_threads) == 0)
+		if (mlx->data.obj_nb < mlx->max_threads
+			|| i % (mlx->data.obj_nb / mlx->max_threads) == 0)
 		{
 			ft_pid_lst_append(&p_list, &p_tail, 42);
 			p_tail->obj = obj;

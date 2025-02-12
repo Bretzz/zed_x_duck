@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 14:54:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/12 19:00:05 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/12 23:51:36 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,19 +74,50 @@ void	plot_data(t_mlx *mlx)
 	mlx->z_img = NULL;
 }
 
-int	main(int argc, char *argv[])
+int	fdf_main(int argc, char *argv[])
 {
 	t_mlx	*mlx;
 	
-	(void)argc; (void)argv;
 	mlx = (t_mlx *)malloc(1 * sizeof(t_mlx));
-	if (juice_the_pc(argv, mlx))
+	if (juice_the_pc(FDF, argv, mlx))
 	{
 		free(mlx);
 		return (1);
 	}
-//	printf("%i", 0xa10);
 	ft_printf("PC JUICED!\n");
+	ft_printf("argc=%i, argv[0]=%s\n", argc, argv[0]);
+	if (!get_fdf_data(argv, mlx))
+		return (1);
+	plot_data(mlx);
+	// if (!get_zed_data(argv, 0, mlx))
+	// 	return (1);
+	// clock_t t; 
+	// t = clock(); 
+	// plot_data(mlx);
+	// t = clock() - t; 
+	// double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds 
+	// printf("PLOT_DATA took %f seconds to execute \n", time_taken); 
+	mlx_mouse_hook(mlx->win, &handle_mouse, mlx);
+	mlx_hook(mlx->win, KeyPress, KeyPressMask, &handle_keypress, mlx);
+	mlx_hook(mlx->win, DestroyNotify, StructureNotifyMask, &clean_exit, mlx);
+	//mlx_loop_hook(mlx->win, &show_cool_data, mlx);
+	mlx_loop(mlx->mlx);
+	return (0);
+}
+
+/* ZED Deafult main */
+int	zed_main(int argc, char *argv[])
+{
+	t_mlx	*mlx;
+	
+	mlx = (t_mlx *)malloc(1 * sizeof(t_mlx));
+	if (juice_the_pc(ZED, argv, mlx))
+	{
+		free(mlx);
+		return (1);
+	}
+	ft_printf("PC JUICED!\n");
+	ft_printf("argc=%i, argv[0]=%s\n", argc, argv[0]);
 //	ft_printf("%s\n", argv[1]);
 	/* if (!data_parser(argv[1]))
 	{
@@ -108,6 +139,19 @@ int	main(int argc, char *argv[])
 	mlx_hook(mlx->win, DestroyNotify, StructureNotifyMask, &clean_exit, mlx);
 	//mlx_loop_hook(mlx->win, &show_cool_data, mlx);
 	mlx_loop(mlx->mlx);
+	return (0);
+}
+
+int	main(int argc, char *argv[])
+{
+	if (argc < 2)
+		return (1);
+	if (!ft_strncmp("zed", argv[1], 3))
+		zed_main(argc - 1, &argv[1]);
+	else if (!ft_strncmp("fdf", argv[1], 3))
+		fdf_main(argc - 1, &argv[1]);
+	else
+		ft_printf("dunno man...\n");
 	return (0);
 }
 

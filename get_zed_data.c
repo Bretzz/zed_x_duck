@@ -6,15 +6,13 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 18:43:21 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/12 19:02:34 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/12 20:29:49 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "print_zed.h"
 
 int	get_zed_data(char **argv, int file, t_mlx *mlx);
-int	read_file(char *path, t_mlx *mlx);
-int	zed_data_birth(t_point_list *data, t_mlx *mlx);
 
 /* takes an array of points as parameter.
 fills the mlx->live points list with the shape you want to make from the point
@@ -46,7 +44,7 @@ int	zed_data_birth(t_point_list *data, t_mlx *mlx)
 /* Takes a path-string and mlx as parameters.
 reads the file and appens a point with the coordinates
 found in  "X       Y       Z" to mlx->data.list.*/
-int	read_file(char *path, t_mlx *mlx)
+int	read_zed_file(char *path, t_mlx *mlx)
 {
 	int		fd;
 	char	*line;
@@ -74,7 +72,7 @@ X       Y       Z         Vp     dVp     VpVs    dVpVs ", line, 100))
 		p.x = ft_atoi(split[3]);
 		p.y = ft_atoi(split[5]);
 		p.z = ft_atoi(split[4]);
-		ft_lstadd_point_tail(&mlx->data.list, &tail, 0xcc0001, (ft_atof(split[7]) / 100), norm(p));
+		ft_lstadd_point_tail(&mlx->data.list, &tail, 0xcc0001, (ft_atof(split[7]) / 100), zed_norm(p));
 		//printf("adding: (%f, %f, %f)\n", p.x, p.y, p.z);
 		ft_free_arr(split);
 		free(line);
@@ -91,7 +89,7 @@ int	get_zed_data(char **argv, int file, t_mlx *mlx)
 	ft_printf("data found??\n");
 	paths = ft_split(argv[1], ' ');
 	ft_printf("%s...?\n", paths[file]);
-	points = read_file(paths[file], mlx);
+	points = read_zed_file(paths[file], mlx);
 	if (!points)
 	{
 		ft_printf("no data found!!!\n");

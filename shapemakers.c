@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 18:40:34 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/12 18:21:46 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/12 20:03:13 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,8 @@ int	fill_line(t_point a, t_point b, int color, t_mlx *mlx)
 }
 
 /* takes the maximum of each axis and mlx
-then adds the points to the live_points list */
+then adds the points to the live_points list. 
+RETURNS: the number of points forming the areas, -1 on error. */
 int	place_axis(float max_z, float max_x, float max_y, t_mlx *mlx)
 {
 	int	points;
@@ -114,7 +115,7 @@ int	place_axis(float max_z, float max_x, float max_y, t_mlx *mlx)
 	to_zero(&o);
 	if (!ft_lstnew_obj(&mlx->live_objs))
 		return (-1);
-	mlx->live_objs->obj_tail->obj_value = 1000.0f;
+	mlx->live_objs->obj_tail->obj_value = 0.0101f;
 	mlx->live_objs->obj_tail->origin = o;
 	mlx->live_objs->obj_tail->tag = AXIS;
 	points = 0;
@@ -159,7 +160,7 @@ unsigned int blend_colors(unsigned int src, unsigned int dest, unsigned char alp
 takes all the 6 points obtained by increasing or decreasing
 individually each coordinate of the point by the int passed as parameter.
 then fills al the areas forming the prysm.
-RETURNS: the number of points forming the areas.*/
+RETURNS: the number of points forming the areas, -1 on error. */
 int	point_to_rombus(t_point p, float value, int color , t_mlx *mlx)
 {
 	int				i;
@@ -214,7 +215,7 @@ int	point_to_rombus(t_point p, float value, int color , t_mlx *mlx)
 takes all the 6 points obtained by increasing or decreasing
 individually each coordinate of the point by the int passed as parameter.
 then fills al the areas forming the prysm.
-RETURNS: the number of points forming the areas.*/
+RETURNS: the number of points forming the areas, -1 on error. */
 int	point_to_cross(t_point p, float value, int color , t_mlx *mlx)
 {
 	int				i;

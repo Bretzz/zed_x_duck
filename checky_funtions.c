@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 13:26:33 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/12 18:55:43 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/12 23:22:51 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,27 @@ void	ft_free_arr(char **arr);
 void	ft_free_point_list(t_point_list *list);
 void	ft_free_obj_list(t_obj_list *obj);
 void	ft_free_pid_lst(t_pid_lst **list);
+
+void	ft_print_point_arr(t_point **arr, int max_x);
+
+void	ft_print_point_arr(t_point **arr, int max_x)
+{
+	int	x;
+	int	y;
+
+	y = 0;
+	while (arr[y] != NULL)
+	{
+		x = 0;
+		while (x < max_x)
+		{
+			ft_printf("%i ", (int)arr[y][x].z);
+			x++;
+		}
+		ft_printf("\n");
+		y++;
+	}
+}
 
 void	ft_free_arr(char **arr)
 {

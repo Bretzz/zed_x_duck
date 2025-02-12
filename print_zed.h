@@ -15,6 +15,8 @@
 
 # define AXIS 0 /* Axis object tag */
 # define DATA 1 /* Data plot tag */
+# define ZED 122 /* ZED program behaviour flag */
+# define FDF 102 /* FDF program behaviour flag */
 
 # ifndef ESC_KEY
 #  define ESC_KEY 65307
@@ -63,7 +65,7 @@ typedef struct s_point_list
 	t_point 		point;
 	unsigned int	color;
 	float			value;
-//	struct s_point_list *z_sorted_next;
+	//struct s_point_list	close[4];
 	struct s_point_list	*next;
 }				t_point_list;
 
@@ -85,6 +87,7 @@ typedef struct s_plane
 	float		r_y;
 	float		fov;
 	int			y_shift;
+	int			x_shift;
 	t_point		origin;
 }				t_plane;
 
@@ -95,6 +98,7 @@ typedef struct s_data
 	float			max_y;
 	unsigned int	obj_nb;
 	t_point			centre;
+	t_point			**arr;
 	t_point_list	*list;
 	t_point_list	*tail;
 }				t_data;
@@ -147,7 +151,7 @@ void	my_pixel_put(t_mlx *mlx, int x, int y, float z, int color);
 
 //easy_startup_functions.c
 
-int		juice_the_pc(char **argv, t_mlx *mlx);
+int		juice_the_pc(char flag, char **argv, t_mlx *mlx);
 
 //input_handling.c
 
@@ -170,11 +174,13 @@ int		is_validay(int leap, int month, char *day);
 int		is_date(char *line);
 int		is_time(char *line);
 
-//get_data.c
+//get_zed_data.c
 
 int		get_zed_data(char **argv, int file, t_mlx *mlx);
-int		read_file(char *path, t_mlx *mlx);
-int		zed_data_birth(t_point_list *data, t_mlx *mlx);
+
+//get_fdf_data.c
+
+int		get_fdf_data(char **argv, t_mlx *mlx);
 
 //checky_functions.c
 
@@ -183,8 +189,9 @@ void	ft_free_point_list(t_point_list *list);
 void	ft_free_obj_list(t_obj_list *obj);
 void	ft_free_pid_lst(t_pid_lst **list);
 
-//math_stuff.c
+void	ft_print_point_arr(t_point **arr, int max_x);
 
+//math_stuff.c
 float	ft_anglef(t_point a, t_point o, t_point b);
 float	ft_areaf(t_point a, t_point b, t_point c);
 int	    is_inside(t_point p, t_point a, t_point b, t_point c);
@@ -229,7 +236,9 @@ void	put_point(t_point p, int color, t_mlx *mlx);
 t_point	rotate_point(t_point p, t_point c, t_mlx *mlx);
 t_point	get_centre(t_point *data, int pt_num);
 t_point	get_list_centre(t_point_list *data, int pt_num);
-t_point	norm(t_point p);
+
+t_point	zed_norm(t_point p);
+t_point	fdf_norm(t_point p);
 
 /* t_point_list    *z_quick_sort(float min_z, float max_z, t_point_list *list);
 void				print_z_list(t_point_list *list); */

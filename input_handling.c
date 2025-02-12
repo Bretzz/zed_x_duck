@@ -6,7 +6,7 @@
 /*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 14:47:59 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/12 19:01:19 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/12 23:11:13 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,13 +61,13 @@ int	handle_keypress(int keysym, t_mlx *mlx)
 	else if (keysym == XK_Left || keysym == 123)
 		mlx->plane.r_y += angle;
 	else if (keysym == XK_a || keysym == 0)
-		mlx->plane.r_z += angle;
+		mlx->plane.x_shift -= 10;
 	else if (keysym == XK_d || keysym == 2)
-		mlx->plane.r_z += -angle;
+		mlx->plane.x_shift += 10;
 	else if (keysym == XK_w || keysym == 13)
-		mlx->plane.y_shift -= (float)10;
+		mlx->plane.y_shift -= 10;
 	else if (keysym == XK_s || keysym == 1)
-		mlx->plane.y_shift += (float)10;
+		mlx->plane.y_shift += 10;
 	else if (keysym == XK_equal || keysym == 24)
 		mlx->setty.mana += 0.1f;
 	else if (keysym == XK_minus || keysym == 27)

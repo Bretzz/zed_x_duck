@@ -33,7 +33,7 @@ SRCS_DIR		=
 SRC_FILES		= main.c input_handling.c \
 				easy_startup_functions.c \
 				parsing.c parse_minions.c \
-				get_zed_data.c \
+				get_zed_data.c get_fdf_data.c \
 				point_masters.c shapemakers.c \
 				thread_plotting.c base_plotting.c \
 				math_stuff.c math_utils.c math_sidekicks.c \
@@ -150,7 +150,7 @@ v2: $(MLX) $(LIBFT) $(OBJS)
 	&& echo "${LIGHT_GREEN}DONE${RESET}"
 
 rundata: $(NAME) data
-	@ARG="$(shell ls data | awk '{print "data/" $$0 }')"; ./$(NAME) "$$ARG"
+	@ARG="$(shell ls data | awk '{print "data/" $$0 }')"; ./$(NAME) zed "$$ARG"
 
 tar: UNAME
 	@ls | grep -q "$(NAME).tar" && rm -f $(NAME).tar || true
