@@ -38,7 +38,8 @@ SRC_FILES		= main.c input_handling.c \
 				thread_plotting.c base_plotting.c \
 				math_stuff.c math_utils.c math_sidekicks.c \
 				pid_lst_utils.c point_obj_list_utils.c \
-				checky_funtions.c
+				checky_funtions.c \
+				march_colors.c mercatore_projection.c
 SRCS			= $(addprefix $(SRCS_DIR), $(SRC_FILES))
 
 # Objects

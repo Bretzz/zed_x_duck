@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   get_zed_data.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 18:43:21 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/12 16:06:37 by totommi          ###   ########.fr       */
+/*   Updated: 2025/02/13 16:36:02 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "print_zed.h"
 
 int	get_zed_data(char **argv, int file, t_mlx *mlx);
+int	zed_data_birth(t_point_list *data, t_mlx *mlx);
 
 /* takes an array of points as parameter.
 fills the mlx->live points list with the shape you want to make from the point
@@ -43,12 +44,10 @@ int	zed_data_birth(t_point_list *data, t_mlx *mlx)
 reads the file passed (zed dataa formatted file expected)
 until the header is found.
 RETURNS: 1 all good, 0 on error. */
-int	skip_header(char *path)
+int	skip_header(int fd)
 {
-	int		fd;
 	char	*line;
 	
-	fd = open(path, O_RDONLY);
 	while ((line = get_next_line(fd)))
 	{
 		if (!ft_strncmp("#DATE      HOUR          EPOCH               \
@@ -74,9 +73,9 @@ int	read_zed_file(char *path, t_mlx *mlx)
 	t_point_list	*tail;
 	unsigned int	points;
 
-	if (!skip_header(path))
-		return (0);
 	fd = open(path, O_RDONLY);
+	if (!skip_header(fd))
+		return (0);
 	points = 0;
 	while ((line = get_next_line(fd)) != NULL)
 	{
@@ -92,6 +91,7 @@ int	read_zed_file(char *path, t_mlx *mlx)
 		free(line);
 		points++;
 	}
+	close(fd);
 	return (points);
 }
 

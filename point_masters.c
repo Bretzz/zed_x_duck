@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   point_masters.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 18:56:34 by topiana-          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/02/13 01:21:49 by totommi          ###   ########.fr       */
+=======
+/*   Updated: 2025/02/13 15:11:19 by topiana-         ###   ########.fr       */
+>>>>>>> f24878dd56734bae7bbf085f00add3833e6a1cb1
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +30,17 @@ t_point	fdf_norm(t_point p, t_mlx *mlx)
 	t_point	norm_p;
 
 	(void)mlx;
-	//ft_printf("x-ratio=%u\n", mlx->win_x / mlx->data.max_x);
+	//ft_printf("x-ratio=%u\n", (mlx->win_x - 100) / mlx->data.max_x);
+	/* ft_ *///printf("z-ratio=%f\n", 100 / mlx->data.max_z);
 	norm_p.x = p.x * ((mlx->win_x - 100) / mlx->data.max_x);
 	norm_p.y = p.y * ((mlx->win_y - 100) / mlx->data.max_y);
+<<<<<<< HEAD
 	norm_p.z = ((p.z + 10) / (15)) * -10;
+=======
+	float z_range = (p.z - mlx->data.min_z) / (mlx->data.max_z - mlx->data.min_z);
+    norm_p.z = (log(1 + z_range) * (mlx->win_y / 10)) * -1;	
+	//norm_p.z = ((p.z - 0) * ((50) / mlx->data.max_z)) * -1;
+>>>>>>> f24878dd56734bae7bbf085f00add3833e6a1cb1
 	return (norm_p);
 }
 
