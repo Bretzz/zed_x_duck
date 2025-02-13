@@ -6,7 +6,7 @@
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 18:56:34 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/12 18:04:40 by totommi          ###   ########.fr       */
+/*   Updated: 2025/02/13 01:21:49 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ t_point	fdf_norm(t_point p, t_mlx *mlx)
 	//ft_printf("x-ratio=%u\n", mlx->win_x / mlx->data.max_x);
 	norm_p.x = p.x * ((mlx->win_x - 100) / mlx->data.max_x);
 	norm_p.y = p.y * ((mlx->win_y - 100) / mlx->data.max_y);
-	norm_p.z = ((p.z - 0) / (5)) * -1;
+	norm_p.z = ((p.z + 10) / (15)) * -10;
 	return (norm_p);
 }
 
