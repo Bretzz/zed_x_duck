@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   point_masters.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 18:56:34 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/12 23:54:44 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/12 18:04:40 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,18 @@ t_point	get_centre(t_point *data, int pt_num);
 t_point	get_list_centre(t_point_list *data, int pt_num);
 
 t_point	zed_norm(t_point p);
-t_point	fdf_norm(t_point p);
+t_point	fdf_norm(t_point p, t_mlx *mlx);
 
-t_point	fdf_norm(t_point p)
+/* resizing based on map size and screen size. */
+t_point	fdf_norm(t_point p, t_mlx *mlx)
 {
 	t_point	norm_p;
 
-	norm_p.x = p.x * 5;
-	norm_p.y = p.y * 5;
-	norm_p.z = p.z * 5;
+	(void)mlx;
+	//ft_printf("x-ratio=%u\n", mlx->win_x / mlx->data.max_x);
+	norm_p.x = p.x * ((mlx->win_x - 100) / mlx->data.max_x);
+	norm_p.y = p.y * ((mlx->win_y - 100) / mlx->data.max_y);
+	norm_p.z = ((p.z - 0) / (5)) * -1;
 	return (norm_p);
 }
 
@@ -112,21 +115,21 @@ t_point	get_centre(t_point *data, int pt_num)
 	int		i;
 	t_point	centre;
 
-	centre.z = 0;
 	centre.x = 0;
 	centre.y = 0;
+	centre.z = 0;
 
 	i = 0;
 	while (i < pt_num)
 	{
-		centre.z += data[i].z;
 		centre.x += data[i].x;
 		centre.y += data[i].y;
+		centre.z += data[i].z;
 		i++;
 	}
-	centre.z /= pt_num;
 	centre.x /= pt_num;
 	centre.y /= pt_num;
+	centre.z /= pt_num;
 	return (centre);
 }
 
@@ -136,21 +139,21 @@ t_point	get_list_centre(t_point_list *data, int pt_num)
 	int		i;
 	t_point	centre;
 
-	centre.z = 0;
 	centre.x = 0;
 	centre.y = 0;
+	centre.z = 0;
 
 	i = 0;
 	while (data && i < pt_num)
 	{
-		centre.z += data->point.z;
 		centre.x += data->point.x;
 		centre.y += data->point.y;
+		centre.z += data->point.z;
 		data = data->next;
 		i++;
 	}
-	centre.z /= pt_num;
 	centre.x /= pt_num;
 	centre.y /= pt_num;
+	centre.z /= pt_num;
 	return (centre);
 }

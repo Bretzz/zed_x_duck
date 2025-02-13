@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   math_sidekicks.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 17:41:35 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/12 18:36:21 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/12 17:05:39 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,9 @@
 int		ft_isuint(const char *s);
 int		ft_isfloat(const char *s);
 int		ft_isfloat_space(const char *s);
-float	ft_get_decimals(const char *nptr);
 float	ft_atof(const char *nptr);
+
+int		ft_atohexi(const char *nptr);
 
 /* checks weather the value written in the string
 can be converted in uint, pattern="[+][0-9]", with no whitespaces.
@@ -146,4 +147,24 @@ float	ft_atof(const char *nptr)
 	if (*nptr == '.')
 		nb += ft_get_decimals(nptr);
 	return (nb * sign);
+}
+
+int		ft_atohexi(const char *nptr)
+{
+	int	nb;
+
+	if (nptr == NULL)
+		return (0);
+	while (ft_strchr(" \f\n\r\t\v", (char)*nptr) && *nptr)
+		nptr++;
+	if (ft_strncmp("0x", nptr, 2) != 0)
+		return (ft_atoi(nptr));
+	nptr++;
+	nb = 0;
+	while (*nptr >= '0' && *nptr <= '9')
+	{
+		nb = nb * 16 + (*nptr - '0');
+		nptr++;
+	}
+	return (nb);
 }

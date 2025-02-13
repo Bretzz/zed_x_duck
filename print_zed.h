@@ -13,6 +13,10 @@
 #ifndef PRINT_ZED_H
 # define PRINT_ZED_H
 
+# ifndef MAX_THREADS
+#  define MAX_THREADS 4
+# endif
+
 # define AXIS 0 /* Axis object tag */
 # define DATA 1 /* Data plot tag */
 # define ZED 122 /* ZED program behaviour flag */
@@ -22,12 +26,12 @@
 #  define ESC_KEY 65307
 # endif
 
-# ifndef MAX_WIN_X
-#  define MAX_WIN_X 1920
+# ifndef MLX_WIN_X
+#  define MLX_WIN_X 1920
 # endif
 
-# ifndef MAX_WIN_Y
-#  define MAX_WIN_Y 1080
+# ifndef MLX_WIN_Y
+#  define MLX_WIN_Y 1080
 # endif
 
 # define UNUSED(x) (void)(x)
@@ -93,9 +97,9 @@ typedef struct s_plane
 
 typedef struct s_data
 {
-	float			max_z;
 	float			max_x;
 	float			max_y;
+	float			max_z;
 	unsigned int	obj_nb;
 	t_point			centre;
 	t_point			**arr;
@@ -122,7 +126,6 @@ typedef struct s_settings
 
 typedef struct s_mlx
 {
-	unsigned int	max_threads;
 	int				win_x;
 	int				win_y;
 	t_data			data;
@@ -217,8 +220,9 @@ t_point	minor_y(t_point a, t_point b);
 int		ft_isuint(const char *s);
 int		ft_isfloat(const char *s);
 int		ft_isfloat_space(const char *s);
-float	ft_get_decimals(const char *nptr);
 float	ft_atof(const char *nptr);
+
+int		ft_atohexi(const char *nptr);
 
 //shapemakers.c
 
@@ -238,17 +242,14 @@ t_point	get_centre(t_point *data, int pt_num);
 t_point	get_list_centre(t_point_list *data, int pt_num);
 
 t_point	zed_norm(t_point p);
-t_point	fdf_norm(t_point p);
+t_point	fdf_norm(t_point p, t_mlx *mlx);
 
 /* t_point_list    *z_quick_sort(float min_z, float max_z, t_point_list *list);
 void				print_z_list(t_point_list *list); */
 
 //pid_lst_utils.c
 
-int			ft_pid_lst_addback_tail(t_pid_lst **list, t_pid_lst **tail,
-	t_pid_lst *node);
-t_pid_lst	*ft_pthread_lstnew(pthread_t pid);
-int			ft_pid_lst_append(t_pid_lst **list, t_pid_lst **tail, int pid);
+int			ft_pid_lst_append(t_pid_lst **list, t_pid_lst **tail, pthread_t pid);
 void		ft_print_pid_lst(t_pid_lst *list);
 
 //point_obj_list_utils.c

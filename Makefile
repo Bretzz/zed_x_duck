@@ -50,11 +50,11 @@ OBJS			= $(addprefix $(OBJS_DIR), $(OBJ_FILES))
 
 ifeq ($(UNAME),Darwin)
 	MLX_DIR		= minilibx_opengl
-	MLX			= $(MLX_DIR)/libmlx_$(UNAME).a
+	MLX			= $(MLX_DIR)/libmlx.a
 	URL			= https://cdn.intra.42.fr/document/document/28086/minilibx_opengl.tgz
-	DEFS		= -D ESC_KEY=53 -D MAX_WIN_X=1440 -D MAX_WIN_Y=840
+	DEFS		= -D MAX_THREADS=8 -D ESC_KEY=53 -D MLX_WIN_X=1440 -D MLX_WIN_Y=840
 	INKS		+= -I/usr/X11/include
-	LINKS		+= I/opt/homebrew/include -I/usr/X11/include -L/usr/X11/lib -framework OpenGL -framework AppKit
+	LINKS		+= -I/opt/homebrew/include -I/usr/X11/include -L/usr/X11/lib -framework OpenGL -framework AppKit
 	STAT		= stat -f %m
 	DATE		= date +%Y-%m-%d\ %H:%M:%S
 else ifeq ($(UNAME),Linux)
@@ -64,7 +64,6 @@ else ifeq ($(UNAME),Linux)
 	DEFS		=
 	INKS		+= -I/usr/include
 	LINKS		+= -lmlx_Linux -I$(MLX_DIR)
-#	LINKS		= -L$(MLX_DIR) -lmlx_Linux -L/usr/lib -I$(MLX_DIR) -lXext -lX11 -lm -lz
 	STAT		= stat -c %Z
 	DATE		= date +%Y-%m-%d\ %H:%M:%S
 else

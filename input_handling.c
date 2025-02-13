@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   input_handling.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 14:47:59 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/12 23:11:13 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/12 15:40:50 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ mlx->win and mlx->mlx are cleaned with built-in functions
 int	clean_exit(t_mlx *mlx)
 {
 	mlx_destroy_window(mlx->mlx, mlx->win);
-	mlx_destroy_display(mlx->mlx);
+	//mlx_destroy_display(mlx->mlx);
 	if (mlx->img)
 		free(mlx->img);
 	if (mlx->z_img)

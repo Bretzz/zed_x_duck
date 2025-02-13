@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_zed_data.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 18:43:21 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/12 20:29:49 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/12 16:06:37 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,9 @@ RETURNS: the number of points added, -1 on error*/
 int	zed_data_birth(t_point_list *data, t_mlx *mlx)
 {
 	int	points;
-	int	i;
 
-	(void)i; (void)data;
 	points = 0;
-	i = 0;
+	mlx->data.obj_nb = 0;
 	while (data != NULL)
 	{
 //		printf("bbb[%i]=(%f, %f, %f)\n", i, data->point.x, data->point.y, data->point.z);
@@ -32,7 +30,7 @@ int	zed_data_birth(t_point_list *data, t_mlx *mlx)
 		//points += point_to_cross(data->point, data->value, data->color, mlx);
 //		ft_printf("ccc\n");
 		data = data->next;
-		i++;
+		mlx->data.obj_nb++;
 	}
 	points += place_axis(555.0f, 555.0f, -600.0f, mlx);
 //	rotate_list(mlx->live_points, mlx->data.centre, mlx);
@@ -41,17 +39,15 @@ int	zed_data_birth(t_point_list *data, t_mlx *mlx)
 
 /* Funcions that fills the mlx->data list. */
 
-/* Takes a path-string and mlx as parameters.
-reads the file and appens a point with the coordinates
-found in  "X       Y       Z" to mlx->data.list.*/
-int	read_zed_file(char *path, t_mlx *mlx)
+/* takes a path string as parameter.
+reads the file passed (zed dataa formatted file expected)
+until the header is found.
+RETURNS: 1 all good, 0 on error. */
+int	skip_header(char *path)
 {
 	int		fd;
 	char	*line;
-	char	**split;
-	t_point	p;
-	t_point_list	*tail;
-
+	
 	fd = open(path, O_RDONLY);
 	while ((line = get_next_line(fd)))
 	{
@@ -63,8 +59,26 @@ X       Y       Z         Vp     dVp     VpVs    dVpVs ", line, 100))
 		}
 		free(line);
 	}
-	mlx->data.obj_nb = 0;
-	while (mlx->data.obj_nb <= 11000 && (line = get_next_line(fd)))
+	return (1);
+}
+
+/* Takes a path-string and mlx as parameters.
+reads the file and appens a point with the coordinates
+found in  "X       Y       Z" to mlx->data.list.*/
+int	read_zed_file(char *path, t_mlx *mlx)
+{
+	int		fd;
+	char	*line;
+	char	**split;
+	t_point	p;
+	t_point_list	*tail;
+	unsigned int	points;
+
+	if (!skip_header(path))
+		return (0);
+	fd = open(path, O_RDONLY);
+	points = 0;
+	while ((line = get_next_line(fd)) != NULL)
 	{
 		split = ft_split(line, ' ');
 		if (split == NULL)
@@ -76,9 +90,9 @@ X       Y       Z         Vp     dVp     VpVs    dVpVs ", line, 100))
 		//printf("adding: (%f, %f, %f)\n", p.x, p.y, p.z);
 		ft_free_arr(split);
 		free(line);
-		mlx->data.obj_nb++;
+		points++;
 	}
-	return (mlx->data.obj_nb);
+	return (points);
 }
 
 int	get_zed_data(char **argv, int file, t_mlx *mlx)

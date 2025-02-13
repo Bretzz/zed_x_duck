@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pid_lst_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 14:39:59 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/12 18:39:18 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/12 15:42:39 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int				ft_pid_lst_addback_tail(t_pid_lst **list, t_pid_lst **tail,
 		t_pid_lst *node);
 t_pid_lst		*ft_pthread_lstnew(pthread_t pid);
-int				ft_pid_lst_append(t_pid_lst **list, t_pid_lst **tail, int pid);
+int				ft_pid_lst_append(t_pid_lst **list, t_pid_lst **tail, pthread_t pid);
 void			ft_pid_lst_destroy(t_pid_lst **list);
 void			ft_print_pid_lst(t_pid_lst *list);
 
@@ -67,7 +67,7 @@ t_pid_lst	*ft_pthread_lstnew(pthread_t pid)
 
 /* create a new node with the pid and appens it to the list.
 RETURNS 1 if all went good, 0 on error. */
-int	ft_pid_lst_append(t_pid_lst **list, t_pid_lst **tail, int pid)
+int	ft_pid_lst_append(t_pid_lst **list, t_pid_lst **tail, pthread_t pid)
 {
 	t_pid_lst	*node;
 
