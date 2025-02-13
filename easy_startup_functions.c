@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   easy_startup_functions.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 18:32:01 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/12 16:12:46 by totommi          ###   ########.fr       */
+/*   Updated: 2025/02/13 13:18:34 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ void	fdf_startup_settings(char **argv, t_mlx *mlx)
 	mlx->data.obj_nb = 0;
 	mlx->data.max_x = 0;
 	mlx->data.max_y = 0;
+	mlx->data.max_z = 0;
+	mlx->data.min_z = 0;
 	mlx->setty.sel_x = 1;
 	mlx->setty.sel_y = 1;
 	mlx->setty.sel_z = 1;

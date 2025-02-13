@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   input_handling.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/20 14:47:59 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/12 15:40:50 by totommi          ###   ########.fr       */
+/*   Updated: 2025/02/13 16:45:03 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,21 @@ int	handle_keypress(int keysym, t_mlx *mlx)
 		mlx->data.list = NULL;
 		file += 1;
 		get_zed_data(mlx->argv, file, mlx);
+	}
+	else if (keysym == XK_space)
+	{
+		t_point maximus;
+		
+		maximus.x = mlx->data.max_x;
+		maximus.y = mlx->data.max_y;
+		maximus = fdf_norm(maximus, mlx);
+		merca_obj_list(mlx->live_objs, mlx->win_x / 4 , maximus.x, maximus.y);
+		//zed_data_birth(mlx->data.list, mlx);
+		//free old mlx->data.arr
+		//mlx->data.arr = list_to_arr(mlx->data.list, mlx->data.max_x, mlx->data.max_y);
+		//mlx->data.centre = fdf_norm(get_list_centre(mlx->data.list, points), mlx);
+		//fdf_data_birth(mlx->data.arr, mlx);
+		//get_zed_data(mlx->argv, file, mlx);
 	}
 	else if (keysym == ESC_KEY)
 	{

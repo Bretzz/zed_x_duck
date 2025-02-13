@@ -3,16 +3,57 @@
 /*                                                        :::      ::::::::   */
 /*   get_fdf_data.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 20:13:56 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/12 17:57:22 by totommi          ###   ########.fr       */
+/*   Updated: 2025/02/13 16:29:05 by topiana-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "print_zed.h"
 
 int	get_fdf_data(char **argv, t_mlx *mlx);
+int	fdf_data_birth(t_point **data, t_mlx *mlx);
+t_point	**list_to_arr(t_point_list *list, size_t max_x, size_t max_y);
+
+/* RED=0xff0000, BLUE=0x0000ff. white=0xffffff*/
+unsigned int	fdf_color(t_point p, float min_z, float max_z)
+{
+	//float			scaled_z;
+	float			hue;
+	float			sat;
+	float			value;
+	unsigned int	color;
+	unsigned int	plane_layer;
+
+	(void)min_z; (void)max_z; (void)p;
+	color = 0x000000;
+	plane_layer = max_z / 3.75;
+	sat = 1.0f;
+	if (p.z < 0) //mare
+	{
+		hue = 240;  //blueish
+		//scale on hsv blue
+		sat = 0.75 + (float)(p.z / min_z) * 0.25;
+		value = 1 - ((float)(p.z / min_z));
+		color = hsv_to_rgb(hue, sat, value);
+	}	
+	else if (p.z < plane_layer) //pianura
+	{
+		hue = 80;  //greenish
+		sat = 0.5 + (float)(p.z / (plane_layer)) * 0.5;
+		value = (1 - (float)(p.z / (plane_layer)));
+		color = hsv_to_rgb(hue, sat, value);
+	}
+	else //montagna
+	{
+		hue = 30;  //brownish
+		sat = 0.25 + (float)(p.z / max_z) * 0.75;
+		value = (1 - (float)(p.z / max_z));
+		color = hsv_to_rgb(hue, sat, value);
+	}
+	return ((unsigned int)(color));
+}
 
 void	get_friends(t_point *friend, int x, int y, t_mlx *mlx)
 {
@@ -45,7 +86,7 @@ int	link_friends(t_point point, t_point *friends, t_mlx *mlx)
 			/* if (!ft_lstnew_obj(&mlx->live_objs))
 				return (-1);
 			mlx->data.obj_nb++; */
-			points += fill_line(fdf_norm(point, mlx), fdf_norm(friends[i], mlx), 0xcc0001, mlx);
+			points += fill_line(fdf_norm(point, mlx), fdf_norm(friends[i], mlx), /* 0xcc0001 *//* trippy_gradient(point.z) */fdf_color(point, mlx->data.min_z, mlx->data.max_z), mlx);
 		}
 		i++;
 	}
@@ -68,7 +109,7 @@ int	fdf_data_birth(t_point **data, t_mlx *mlx)
 		return (0);
 	mlx->data.obj_nb = 0;
 	points = 0;
-	printf("max_x=%f, max_y=%f\n", mlx->data.max_x, mlx->data.max_y);
+	printf("max_x=%f, max_y=%f, max_z=%f, min_z=%f\n", mlx->data.max_x, mlx->data.max_y, mlx->data.max_z, mlx->data.min_z);
 	y = 0;
 	while (y <= mlx->data.max_y)
 	{
@@ -120,7 +161,9 @@ int	read_fdf_file(char *path, t_mlx *mlx)
 			if (p.y > mlx->data.max_y)
 				mlx->data.max_y = p.y;
 			if (p.z > mlx->data.max_z)
-				mlx->data.max_y = p.y;
+				mlx->data.max_z = p.z;
+			if (p.z < mlx->data.min_z)
+				mlx->data.min_z = p.z;
 			line_x++;
 			points++;
 		}
@@ -129,15 +172,54 @@ int	read_fdf_file(char *path, t_mlx *mlx)
 		free(line);
 		line_y++;
 	}
+	close(fd);
 	return (points);
+}
+
+/* takes a list pointer, length of x, length of y as arameters.
+RETURNS a mallocated int array with the element [y][x] has the value of
+the z-value of the y * length_of_y + x element of the list. */
+t_point	**list_to_arr(t_point_list *list, size_t max_x, size_t max_y)
+{
+	size_t	x;
+	size_t	y;
+	t_point	**arr;
+
+	arr = (t_point **)malloc((max_y + 2) * sizeof(t_point *));
+	if (!arr)
+	{
+		//free mlx->data->list
+		return (NULL);
+	}
+	arr[(int)max_y + 1] = NULL;
+	y = 0;
+	while (list != NULL)
+	{
+		arr[y] = (t_point *)malloc((max_x + 1) * sizeof(t_point));
+		if (!arr[y])
+		{
+			//free_arr up to y
+			return (0);
+		}
+		x = 0;
+		while (list && x < max_x + 1)
+		{
+			arr[y][x] = list->point;
+			//printf("[%f, %f, %f]\n", arr[y][x].x, arr[y][x].y, arr[y][x].z);
+			list = list->next;
+			x++;
+		}
+		y++;
+	}
+	return (arr);
 }
 
 int	get_fdf_data(char **argv, t_mlx *mlx)
 {
-	int		x;
-	int		y;
+	// int		x;
+	// int		y;
 	int		points;
-	t_point_list	*data_list;
+	// t_point_list	*data_list;
 	
 	ft_printf("fdf data found??\npath=%s\n", argv[1]);
 	points = read_fdf_file(argv[1], mlx);
@@ -147,7 +229,10 @@ int	get_fdf_data(char **argv, t_mlx *mlx)
 		return (0);
 	}
 	ft_printf("got data\n");
-	mlx->data.arr = (t_point **)malloc((mlx->data.max_y + 2) * sizeof(t_point *));
+	mlx->data.arr = list_to_arr(mlx->data.list, mlx->data.max_x, mlx->data.max_y);
+	if (!mlx->data.arr)
+		return (0);
+	/* mlx->data.arr = (t_point **)malloc((mlx->data.max_y + 2) * sizeof(t_point *));
 	if (!mlx->data.arr)
 	{
 		//free mlx->data->list
@@ -173,7 +258,7 @@ int	get_fdf_data(char **argv, t_mlx *mlx)
 			x++;
 		}
 		y++;
-	}
+	} */
 	printf("max_x=%f, max_y=%f\n", mlx->data.max_x, mlx->data.max_y);
 	ft_print_point_arr(mlx->data.arr, mlx->data.max_x + 1);
 	mlx->data.centre = fdf_norm(get_list_centre(mlx->data.list, points), mlx);

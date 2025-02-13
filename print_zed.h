@@ -100,6 +100,7 @@ typedef struct s_data
 	float			max_x;
 	float			max_y;
 	float			max_z;
+	float			min_z;
 	unsigned int	obj_nb;
 	t_point			centre;
 	t_point			**arr;
@@ -148,6 +149,34 @@ typedef struct s_pid_lst
 	struct s_pid_lst	*next;
 }				t_pid_lst;
 
+
+typedef struct s_hsv
+{
+	float	p;
+	float	q;
+	float	t;
+	float	r;
+	float	g;
+	float	b;
+	float	hue;
+	float	sat;
+	float	lux;
+	float	rgb_range;
+	float	max_rgb;
+	float	min_rgb;
+	float	hue_progress;
+	float	growing_rgb;
+	float	dying_rgb;	
+	float	f;
+}	t_hsv;
+
+//march_colors.c
+
+unsigned int	hsv_to_rgb(float hue, float sat, float val);
+unsigned int	rainbow_gradient(int iteration);
+unsigned int	trippy_gradient(int iteration);
+unsigned int	teal_palette(int iteration);
+
 //main.c
 
 void	my_pixel_put(t_mlx *mlx, int x, int y, float z, int color);
@@ -180,10 +209,13 @@ int		is_time(char *line);
 //get_zed_data.c
 
 int		get_zed_data(char **argv, int file, t_mlx *mlx);
+int		zed_data_birth(t_point_list *data, t_mlx *mlx);
 
 //get_fdf_data.c
 
 int		get_fdf_data(char **argv, t_mlx *mlx);
+int		fdf_data_birth(t_point **data, t_mlx *mlx);
+t_point	**list_to_arr(t_point_list *list, size_t max_x, size_t max_y);
 
 //checky_functions.c
 
@@ -195,6 +227,7 @@ void	ft_free_pid_lst(t_pid_lst **list);
 void	ft_print_point_arr(t_point **arr, int max_x);
 
 //math_stuff.c
+
 float	ft_anglef(t_point a, t_point o, t_point b);
 float	ft_areaf(t_point a, t_point b, t_point c);
 int	    is_inside(t_point p, t_point a, t_point b, t_point c);
@@ -233,6 +266,10 @@ int		point_to_rombus(t_point p, float value, int color, t_mlx *mlx);
 int		point_to_cross(t_point p, float value, int color , t_mlx *mlx);
 
 unsigned int blend_colors(unsigned int src, unsigned int dest, unsigned char alpha);
+
+//mercatore_projection.c
+
+int		merca_obj_list(t_obj_list *list, size_t radius, int max_x, int max_y);
 
 //point_masters.c
 
