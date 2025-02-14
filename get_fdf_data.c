@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_fdf_data.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 20:13:56 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/13 16:29:05 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/13 15:34:49 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int	fdf_data_birth(t_point **data, t_mlx *mlx);
 t_point	**list_to_arr(t_point_list *list, size_t max_x, size_t max_y);
 
 /* RED=0xff0000, BLUE=0x0000ff. white=0xffffff*/
-unsigned int	fdf_color(t_point p, float min_z, float max_z)
+unsigned int	fdf_color(t_point p, float min_z, float max_z, int max_y)
 {
 	//float			scaled_z;
 	float			hue;
@@ -25,11 +25,17 @@ unsigned int	fdf_color(t_point p, float min_z, float max_z)
 	float			value;
 	unsigned int	color;
 	unsigned int	plane_layer;
+	float	artic_circle;
+	unsigned int	antartic_circle;
 
-	(void)min_z; (void)max_z; (void)p;
+	(void)min_z; (void)max_z; (void)p; (void)antartic_circle;
 	color = 0x000000;
+
 	plane_layer = max_z / 3.75;
-	sat = 1.0f;
+	artic_circle = (2 * max_y) * 0.065377417342483;
+	antartic_circle = (2 * max_y) * 0.183661521204891;
+	//printf("artic_circle=%f\n", artic_circle);
+
 	if (p.z < 0) //mare
 	{
 		hue = 240;  //blueish
@@ -47,9 +53,19 @@ unsigned int	fdf_color(t_point p, float min_z, float max_z)
 	}
 	else //montagna
 	{
-		hue = 30;  //brownish
-		sat = 0.25 + (float)(p.z / max_z) * 0.75;
-		value = (1 - (float)(p.z / max_z));
+		if ((p.y < artic_circle || p.y > max_y - antartic_circle)
+			|| p.z > (8 * max_z) / 10)
+		{
+			hue = 195; //snowish
+			sat = 0/* 0.80 + (float)(p.z / max_z) * 0.20 */;
+			value = 0.95 + (float)(p.z / max_z) * 0.05;
+		}
+		else
+		{
+			hue = 30;  //brownish
+			sat = 0.25 + (float)(p.z / max_z) * 0.75;
+			value = (1 - (float)(p.z / max_z));
+		}
 		color = hsv_to_rgb(hue, sat, value);
 	}
 	return ((unsigned int)(color));
@@ -86,7 +102,7 @@ int	link_friends(t_point point, t_point *friends, t_mlx *mlx)
 			/* if (!ft_lstnew_obj(&mlx->live_objs))
 				return (-1);
 			mlx->data.obj_nb++; */
-			points += fill_line(fdf_norm(point, mlx), fdf_norm(friends[i], mlx), /* 0xcc0001 *//* trippy_gradient(point.z) */fdf_color(point, mlx->data.min_z, mlx->data.max_z), mlx);
+			points += fill_line(fdf_norm(point, mlx), fdf_norm(friends[i], mlx), fdf_color(point, mlx->data.min_z, mlx->data.max_z, mlx->data.max_y), mlx);
 		}
 		i++;
 	}
@@ -232,33 +248,6 @@ int	get_fdf_data(char **argv, t_mlx *mlx)
 	mlx->data.arr = list_to_arr(mlx->data.list, mlx->data.max_x, mlx->data.max_y);
 	if (!mlx->data.arr)
 		return (0);
-	/* mlx->data.arr = (t_point **)malloc((mlx->data.max_y + 2) * sizeof(t_point *));
-	if (!mlx->data.arr)
-	{
-		//free mlx->data->list
-		return (0);
-	}
-	mlx->data.arr[(int)mlx->data.max_y + 1] = NULL;
-	data_list = mlx->data.list;
-	y = 0;
-	while (data_list != NULL)
-	{
-		mlx->data.arr[y] = (t_point *)malloc((mlx->data.max_x + 1) * sizeof(t_point));
-		if (!mlx->data.arr[y])
-		{
-			//free_arr up to y
-			return (0);
-		}
-		x = 0;
-		while (data_list && x < mlx->data.max_x + 1)
-		{
-			mlx->data.arr[y][x] = data_list->point;
-			//printf("[%f, %f, %f]\n", mlx->data.arr[y][x].x, mlx->data.arr[y][x].y, mlx->data.arr[y][x].z);
-			data_list = data_list->next;
-			x++;
-		}
-		y++;
-	} */
 	printf("max_x=%f, max_y=%f\n", mlx->data.max_x, mlx->data.max_y);
 	ft_print_point_arr(mlx->data.arr, mlx->data.max_x + 1);
 	mlx->data.centre = fdf_norm(get_list_centre(mlx->data.list, points), mlx);

@@ -6,7 +6,7 @@
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 18:40:34 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/12 16:56:40 by totommi          ###   ########.fr       */
+/*   Updated: 2025/02/13 09:27:15 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,21 +185,14 @@ int	point_to_rombus(t_point p, float value, int color , t_mlx *mlx)
 	vertex[5].y -= value;
 	i = 0;
 	i += fill_area(vertex[5], vertex[2], vertex[0], color, mlx);
-	color += 10000;
 	i += fill_area(vertex[5], vertex[2], vertex[1], color, mlx);
-	color += 10000;
 	i += fill_area(vertex[5], vertex[3], vertex[0], color, mlx);
-	color += 10000;
 	i += fill_area(vertex[5], vertex[3], vertex[1], color, mlx);
 	color += 10000;
 	i += fill_area(vertex[4], vertex[2], vertex[0], color, mlx);
-	color += 10000;
 	i += fill_area(vertex[4], vertex[2], vertex[1], color, mlx);
-	color += 10000;
 	i += fill_area(vertex[4], vertex[3], vertex[0], color, mlx);
-	color += 10000;
 	i += fill_area(vertex[4], vertex[3], vertex[1], color, mlx);
-	color += 10000;
 	/* i += fill_area(vertex[0], vertex[2], vertex[5], 0xFF00Fc, mlx);
 	i += fill_area(vertex[0], vertex[2], vertex[4], 0x2FFFA2, mlx);
 	i += fill_area(vertex[0], vertex[3], vertex[5], 0x00a2FF, mlx);

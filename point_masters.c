@@ -6,7 +6,7 @@
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 18:56:34 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/13 09:02:25 by totommi          ###   ########.fr       */
+/*   Updated: 2025/02/13 16:24:53 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,8 @@ t_point	zed_norm(t_point p)
 {
 	t_point	norm_p;
 
-	norm_p.x = p.x - 6000;
+	//norm_p.x = ((p.x - 6000) / 800) * mlx->win_x - 100;
+	norm_p.x = (p.x - 6000);
 	norm_p.y = (p.y + 1400) * -1;
 	norm_p.z = p.z - 2800;
 	return (norm_p);
@@ -55,22 +56,24 @@ t_point	zed_norm(t_point p)
 /* Takes a t_point as a parameter and plots it to the image */
 void	put_point(t_point p, int color, t_mlx *mlx)
 {
-	float	z;
-	int		x;
-	int		y;
+	float		x;
+	float		y;
+	float		z;
 	t_point	plot;
 	
 	plot = rotate_point(p, mlx->data.centre, mlx);
-
-	// Apply the projection and translation to screen coordinates
+	
+	//printf("new-zoom-x=%f, new-zoom-y=%f\n", mlx->plane.zoom_x, mlx->plane.zoom_y);
+	x = (plot.x + mlx->plane.origin.x + mlx->plane.x_shift) * mlx->plane.scale;
+	y = (plot.y + mlx->plane.origin.y + mlx->plane.y_shift) * mlx->plane.scale;
 	z = mlx->plane.origin.z + plot.z;
-	x = mlx->plane.origin.x + plot.x + mlx->plane.x_shift;
-	y = mlx->plane.origin.y + plot.y + mlx->plane.y_shift;
 	
 	// If the point is off-screen, do not draw it
 	if (x < 0 || y < 0 || /* z > 0 || */ x >= mlx->win_x || y >= mlx->win_y)
 		return ;
-	my_pixel_put(mlx, x, y, z, color);
+	/* if (x > 1400.8f)
+		printf("putting (%f, %f, %f)\n", x, y, z); */
+	my_pixel_put(mlx, (int)x, (int)y, z, color);
 }
 
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_zed_data.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 18:43:21 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/13 16:36:02 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/13 09:46:19 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int	read_zed_file(char *path, t_mlx *mlx)
 		p.x = ft_atoi(split[3]);
 		p.y = ft_atoi(split[5]);
 		p.z = ft_atoi(split[4]);
-		ft_lstadd_point_tail(&mlx->data.list, &tail, 0xcc0001, (ft_atof(split[7]) / 100), zed_norm(p));
+		ft_lstadd_point_tail(&mlx->data.list, &tail, 0xcc0001, (ft_atof(split[6]) / 1000), zed_norm(p));
 		//printf("adding: (%f, %f, %f)\n", p.x, p.y, p.z);
 		ft_free_arr(split);
 		free(line);

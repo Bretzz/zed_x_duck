@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   easy_startup_functions.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 18:32:01 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/13 13:18:34 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/13 15:59:38 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,19 @@ int	juice_the_pc(char flag, char **argv, t_mlx *mlx);
 /* default settings for mlx variables */
 void	zed_startup_settings(char **argv, t_mlx *mlx)
 {
+	mlx->right_click = 0;
 	mlx->plane.r_z = 0 * MY_PI / 180;
 	mlx->plane.r_x = 0 * MY_PI / 180;
 	mlx->plane.r_y = 50 * MY_PI / 180;
 	mlx->plane.origin.z = -100.0f;
 	mlx->plane.origin.x = (MLX_WIN_X / 4.0f);
 	mlx->plane.origin.y = (MLX_WIN_Y / 1.5f);
+	mlx->plane.x_shift = 0;
 	mlx->plane.y_shift = 0;
-	mlx->plane.fov = 1.0f;
+	mlx->plane.scale = 1.0f;
+	mlx->plane.zoom = 1.0f;
+	mlx->plane.xmouse = 0;
+	mlx->plane.ymouse = 0;
 	mlx->live_objs = NULL;
 	mlx->data.list = NULL;
 	mlx->data.obj_nb = 0;
@@ -37,14 +42,19 @@ void	zed_startup_settings(char **argv, t_mlx *mlx)
 
 void	fdf_startup_settings(char **argv, t_mlx *mlx)
 {
+	mlx->right_click = 0;
 	mlx->plane.r_z = 0 * MY_PI / 180;
 	mlx->plane.r_x = 0 * MY_PI / 180;
 	mlx->plane.r_y = 0 * MY_PI / 180;
-	mlx->plane.origin.z = 0.0f;
 	mlx->plane.origin.x = 30.0f;
 	mlx->plane.origin.y = 30.0f;
+	mlx->plane.origin.z = 0.0f;
+	mlx->plane.x_shift = 0;
 	mlx->plane.y_shift = 0;
-	mlx->plane.fov = 1.0f;
+	mlx->plane.scale = 1.0f;
+	mlx->plane.zoom = 1.0f;
+	mlx->plane.xmouse = 0;
+	mlx->plane.ymouse = 0;
 	mlx->live_objs = NULL;
 	mlx->data.list = NULL;
 	mlx->data.obj_nb = 0;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: topiana- <topiana-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 14:54:50 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/12 23:51:36 by topiana-         ###   ########.fr       */
+/*   Updated: 2025/02/13 16:58:58 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,42 @@
 
 void	my_pixel_put(t_mlx *mlx, int x, int y, float z, int color);
 void	plot_data(t_mlx *mlx);
+
+int	release(int keysym, t_mlx *mlx)
+{
+	(void)mlx;
+	if (keysym == 7)
+	{
+		mlx->right_click = 0;
+	}
+	//ft_printf("released: %i\n", keysym);
+	return (0);
+}
+
+int	mouse_drag(t_mlx *mlx)
+{
+	static unsigned int frame;
+	int	x;
+	int	y;
+
+	if (mlx->right_click != 0)
+	{
+		//ft_printf("pressed!!!\n");
+		mlx_mouse_get_pos(mlx->win, &x, &y);
+		mlx->plane.origin.x += (x - mlx->pan_x);
+		mlx->plane.origin.y += (y - mlx->pan_y);
+
+		mlx->pan_x = x / mlx->plane.scale;
+		mlx->pan_y = y / mlx->plane.scale;
+		if (frame % 100 == 0)
+		{
+			//printf("frame[%u]=(%f, %f)\n", frame, mlx->plane.origin.x, mlx->plane.origin.y);
+			plot_data(mlx);
+		}
+		frame++;
+	}
+	return (0);
+}
 
 int	show_cool_data(t_mlx *mlx)
 {
@@ -55,11 +91,11 @@ void	plot_data(t_mlx *mlx)
 	//put_data(mlx);
 	put_data_thread(mlx);
 	my_pixel_put(mlx, 100, 100, 10000, 0xff00ff);
-	
+	//ft_printf("daata put!\n");
 	//printf("ORIGIN: (%f, %f, %f)\n", mlx->plane.origin.x, mlx->plane.origin.y, mlx->plane.origin.z);
 	to_zero(&a);
 	put_point(a, 0x00FFFF, mlx);
-	my_pixel_put(mlx, mlx->plane.origin.x, mlx->plane.origin.y, mlx->plane.origin.z, 0xFF0000); //RED
+	//my_pixel_put(mlx, mlx->plane.origin.x, mlx->plane.origin.y, mlx->plane.origin.z, 0xFF0000); //RED
 	//	put_point(a, 0x00FFFF, mlx); //YELLOW?
 	//	put_point(b, 0x00FFFF, mlx); //YELLOW?
 	//	put_point(c, 0x00FFFF, mlx); //YELLOW?
@@ -89,18 +125,13 @@ int	fdf_main(int argc, char *argv[])
 	if (!get_fdf_data(argv, mlx))
 		return (1);
 	plot_data(mlx);
-	// if (!get_zed_data(argv, 0, mlx))
-	// 	return (1);
-	// clock_t t; 
-	// t = clock(); 
-	// plot_data(mlx);
-	// t = clock() - t; 
-	// double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds 
-	// printf("PLOT_DATA took %f seconds to execute \n", time_taken); 
 	mlx_mouse_hook(mlx->win, &handle_mouse, mlx);
 	mlx_hook(mlx->win, KeyPress, KeyPressMask, &handle_keypress, mlx);
 	mlx_hook(mlx->win, DestroyNotify, StructureNotifyMask, &clean_exit, mlx);
-	//mlx_loop_hook(mlx->win, &show_cool_data, mlx);
+
+	mlx_hook(mlx->win, KeyRelease, KeyReleaseMask, &release, mlx);
+	mlx_loop_hook(mlx->mlx, &mouse_drag, mlx);
+
 	mlx_loop(mlx->mlx);
 	return (0);
 }
@@ -137,7 +168,10 @@ int	zed_main(int argc, char *argv[])
 	mlx_mouse_hook(mlx->win, &handle_mouse, mlx);
 	mlx_hook(mlx->win, KeyPress, KeyPressMask, &handle_keypress, mlx);
 	mlx_hook(mlx->win, DestroyNotify, StructureNotifyMask, &clean_exit, mlx);
-	//mlx_loop_hook(mlx->win, &show_cool_data, mlx);
+
+	mlx_hook(mlx->win, KeyRelease, KeyReleaseMask, &release, mlx);
+	mlx_loop_hook(mlx->mlx, &mouse_drag, mlx);
+	
 	mlx_loop(mlx->mlx);
 	return (0);
 }

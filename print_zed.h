@@ -89,7 +89,10 @@ typedef struct s_plane
 	float		r_z;
 	float		r_x;
 	float		r_y;
-	float		fov;
+	float		zoom;
+	float		scale;
+	float		xmouse;	//mouse x world coordinate
+	float		ymouse;	//mouse y world coordinate
 	int			y_shift;
 	int			x_shift;
 	t_point		origin;
@@ -129,6 +132,9 @@ typedef struct s_mlx
 {
 	int				win_x;
 	int				win_y;
+	int				pan_x;
+	int				pan_y;
+	unsigned char	right_click;		
 	t_data			data;
 	t_plane			plane;
 	t_obj_list		*live_objs;
