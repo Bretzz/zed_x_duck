@@ -21,25 +21,25 @@ CFLAGS			:= -Wall -Wextra -Werror
 # Libs
 LIBFT_DIR		:= libft
 LIBFT			= $(LIBFT_DIR)/libft.a
+DUCK_DIR		:= duck_engine
+DUCK			= $(DUCK_DIR)/ducklib.a
 
 #Linkers
 LINKS 	 	   = -L/usr/lib -L$(MLX_DIR) -lXext -lX11 -lm -lz -lpthread
 
 # Includes
-INKS			= -I$(LIBFT_DIR) -I$(MLX_DIR) -O3
+INKS			= -I$(DUCK_DIR) -I$(DUCK_DIR)/minilibft -I$(LIBFT_DIR) -I$(MLX_DIR) -O3
 
 #source files (expected in the root folder)
 SRCS_DIR		=
 SRC_FILES		= main.c input_handling.c \
 				easy_startup_functions.c \
 				parsing.c parse_minions.c \
-				get_zed_data.c get_fdf_data.c \
-				point_masters.c shapemakers.c \
-				thread_plotting.c base_plotting.c \
-				math_stuff.c math_utils.c math_sidekicks.c \
-				pid_lst_utils.c point_obj_list_utils.c \
-				checky_funtions.c \
-				march_colors.c mercatore_projection.c
+				\
+				get_zed_data.c \
+				\
+				checky_funtions.c data_list.c \
+				march_colors.c my_shapemakers.c
 SRCS			= $(addprefix $(SRCS_DIR), $(SRC_FILES))
 
 # Objects
@@ -52,9 +52,9 @@ OBJS			= $(addprefix $(OBJS_DIR), $(OBJ_FILES))
 ifeq ($(UNAME),Darwin)
 	MLX_DIR		= minilibx_opengl
 	MLX			= $(MLX_DIR)/libmlx.a
-	URL			= https://cdn.intra.42.fr/document/document/28086/minilibx_opengl.tgz
+	URL			= https://cdn.intra.42.fr/document/document/36821/minilibx_macos_opengl.tgz
 	DEFS		= -D MAX_THREADS=8 -D ESC_KEY=53 -D MLX_WIN_X=1440 -D MLX_WIN_Y=840
-	INKS		+= -I/usr/X11/include
+	INKS		+= -I/usr/X11/include -I$(MLX_DIR)
 	LINKS		+= -I/opt/homebrew/include -I/usr/X11/include -L/usr/X11/lib -framework OpenGL -framework AppKit
 	STAT		= stat -f %m
 	DATE		= date +%Y-%m-%d\ %H:%M:%S
@@ -129,28 +129,17 @@ $(LIBFT):
 	@echo "${BOLD}creating libft...${RESET}"
 	@$(MAKE) -C $(LIBFT_DIR) --quiet
 
-$(NAME): $(MLX) $(LIBFT) $(OBJS)
+$(DUCK):
+	@echo "${BOLD}creating ducklib...${RESET}"
+	@$(MAKE) -C $(DUCK_DIR) --quiet
+
+$(NAME): $(LIBFT) $(DUCK) $(MLX) $(OBJS)
 	@echo "${BOLD}compiling $(NAME)...${RESET}"
-#	=========== just for sowing different versions
-	@rm -f $(OBJS_DIR)main_*
-#	===========
-	@$(CC) $(CFLAGS) $(OBJS_DIR)* $(MLX) $(LIBFT) $(LINKS) -o $(NAME) \
-	&& echo "${LIGHT_GREEN}DONE${RESET}"
-
-v1: $(MLX) $(LIBFT) $(OBJS)
-	@echo "${BOLD}compiling $(NAME)_v1...${RESET}"
-	@rm -f $(OBJS_DIR)main*
-	@$(CC) $(CFLAGS) main_v1.c -I$(LIBFT_DIR) $(OBJS_DIR)* $(ARS) $(LINKS) -o $(NAME)_v1 \
-	&& echo "${LIGHT_GREEN}DONE${RESET}"
-
-v2: $(MLX) $(LIBFT) $(OBJS)
-	@echo "${BOLD}compiling $(NAME)_v2...${RESET}"
-	@rm -f $(OBJS_DIR)main*
-	@$(CC) $(CFLAGS) main_v2.c -I$(LIBFT_DIR) $(OBJS_DIR)* $(ARS) $(LINKS) -o $(NAME)_v2 \
+	@$(CC) $(CFLAGS) $(OBJS_DIR)* $(LIBFT) $(DUCK) $(MLX) $(LINKS) -o $(NAME) \
 	&& echo "${LIGHT_GREEN}DONE${RESET}"
 
 rundata: $(NAME) data
-	@ARG="$(shell ls data | awk '{print "data/" $$0 }')"; ./$(NAME) zed "$$ARG"
+	@ARG="$(shell ls data | awk '{print "data/" $$0 }')"; ./$(NAME) "$$ARG"
 
 tar: UNAME
 	@ls | grep -q "$(NAME).tar" && rm -f $(NAME).tar || true
@@ -168,8 +157,9 @@ tar: UNAME
 show:
 	@printf "NAME  		: $(NAME)\n"
 	@printf "UNAME		: $(UNAME)\n"
-	@printf "LIBFT		: $(LIBFT)\n"
 	@printf "MINILIBX	: $(MLX)\n"
+	@printf "LIBFT		: $(LIBFT)\n"
+	@printf "DUCK		: $(DUCK)\n"
 	@printf "CC		: $(CC)\n"
 	@printf "CFLAGS		: $(CFLAGS)\n"
 	@printf "LINKS		: $(LINKS)\n"
@@ -180,11 +170,13 @@ show:
 clean:
 	@rm -rf $(OBJS_DIR) $(NAME).tar $(MLX_DIR).tgz
 	@$(MAKE) clean -C $(LIBFT_DIR) --quiet
+	@$(MAKE) clean -C $(DUCK_DIR) --quiet
 	@echo "${BOLD}removed:${RESET}\vobjects (.o) and archives (.tar, .tgz)"
 
 fclean: clean
 	@rm -rf $(NAME) $(MLX_DIR) data
 	@$(MAKE) fclean -C $(LIBFT_DIR) --quiet
+	@$(MAKE) fclean -C $(DUCK_DIR) --quiet
 	@echo "\texecutable ($(NAME)),\n\t$(MLX_DIR),\n\tdata extracted,\n\tarchives (.a)"
 
 lre: clean all

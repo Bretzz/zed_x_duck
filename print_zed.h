@@ -13,12 +13,6 @@
 #ifndef PRINT_ZED_H
 # define PRINT_ZED_H
 
-# ifndef MAX_THREADS
-#  define MAX_THREADS 4
-# endif
-
-# define AXIS 0 /* Axis object tag */
-# define DATA 1 /* Data plot tag */
 # define ZED 122 /* ZED program behaviour flag */
 # define FDF 102 /* FDF program behaviour flag */
 
@@ -34,83 +28,50 @@
 #  define MLX_WIN_Y 1080
 # endif
 
-# define UNUSED(x) (void)(x)
 # define MY_PI 3.14159265359
 
 # include "mlx.h"
 # include "libft.h"
+# include "duck_engine.h"
 # include <X11/X.h>
 # include <X11/keysym.h>
 # include <math.h>
-//# include <sys/stat.h>
 # include <fcntl.h>
-# include <pthread.h>
+# include <float.h>
 
 # include <stdio.h>
 # include <time.h> 
 
 
-typedef struct s_pixel
+typedef struct s_values
 {
-	int		z;
-	int		x;
-	int		y;
-}				t_pixel;
+	float	measrd;
+	float	error;
+}				t_values;
 
-typedef struct s_point
+typedef struct s_data_list
 {
-	float	z;
-	float	x;
-	float	y;
-}				t_point;
+	t_point				point;
+	void				*values;
+	struct s_data_list *next;
+}				t_data_list;
 
-typedef struct s_point_list
-{
-	t_point 		point;
-	unsigned int	color;
-	float			value;
-	//struct s_point_list	close[4];
-	struct s_point_list	*next;
-}				t_point_list;
-
-typedef struct s_obj_list
-{
-	unsigned int	tag;
-	float			obj_value;
-	t_point			origin;
-	t_point_list	*points;
-	t_point_list	*points_tail;
-	struct s_obj_list	*obj_tail;
-	struct s_obj_list	*next_obj;
-}				t_obj_list;
-
-typedef struct s_plane
-{
-	float		r_z;
-	float		r_x;
-	float		r_y;
-	float		zoom;
-	float		scale;
-	float		xmouse;	//mouse x world coordinate
-	float		ymouse;	//mouse y world coordinate
-	int			y_shift;
-	int			x_shift;
-	t_point		origin;
-}				t_plane;
-
+//stats of the input data (aka world space point)
+//we're jsut using centre and obj_nb
 typedef struct s_data
 {
-	float			max_x;
-	float			max_y;
-	float			max_z;
-	float			min_z;
-	unsigned int	obj_nb;
+	float			limx[2];	//xmax [0] and xmin [1]
+	float			limy[2];	//ymax [0] and ymin [1]
+	float			limz[2];	//zmax [0] and zmin [1]
+	float			val_lim[2];	//analized value max [0] and min [1]
+	float			err_lim[2]; //analized value's error max [0] and min [1]
 	t_point			centre;
-	t_point			**arr;
-	t_point_list	*list;
-	t_point_list	*tail;
+	t_point			**arr;		//useful way to store grid data
+	t_data_list		*list;		//just unrelated data storing
+	t_data_list		*tail;
 }				t_data;
 
+//mlx img variables
 typedef struct s_img
 {
 	void	*img;
@@ -120,24 +81,25 @@ typedef struct s_img
 	int		endian;
 }				t_img;
 
+//user settings
 typedef struct s_settings
 {
-	int		sel_x;
-	int		sel_y;
-	int		sel_z;
-	float	mana;
+	int				sel_x;	//user selected x-layer
+	int				sel_y;	//user selected y-layer
+	int				sel_z;	//user selected z-layer
+	unsigned char	right_click;		
+	float			mana;
 }				t_settings;
 
+//mlx big struct
 typedef struct s_mlx
 {
 	int				win_x;
 	int				win_y;
-	int				pan_x;
-	int				pan_y;
-	unsigned char	right_click;		
+	int				xmouse_s;
+	int				ymouse_s;
 	t_data			data;
-	t_plane			plane;
-	t_obj_list		*live_objs;
+	t_duck			duck;
 	void			*mlx;
 	void			*win;
 	t_img			*img;
@@ -145,16 +107,6 @@ typedef struct s_mlx
 	t_settings		setty;
 	char			**argv;
 }				t_mlx;
-
-typedef struct s_pid_lst
-{
-	pthread_t			pid;
-	unsigned int		layer;
-	t_obj_list			*obj;
-	t_mlx				*mlx;
-	struct s_pid_lst	*next;
-}				t_pid_lst;
-
 
 typedef struct s_hsv
 {
@@ -183,13 +135,15 @@ unsigned int	rainbow_gradient(int iteration);
 unsigned int	trippy_gradient(int iteration);
 unsigned int	teal_palette(int iteration);
 
-//main.c
+//my_shapemakers.c
 
-void	my_pixel_put(t_mlx *mlx, int x, int y, float z, int color);
+int		my_point_to_rombus(t_point p, void *data, int color, t_duck *duck);
+int		my_point_to_cross(t_point p, void *data, int color , t_duck *duck);
+int		my_point_to_sphere(t_point p, void *data, int color, t_duck *duck);
 
 //easy_startup_functions.c
 
-int		juice_the_pc(char flag, char **argv, t_mlx *mlx);
+int		juice_the_pc(char **argv, t_mlx *mlx);
 
 //input_handling.c
 
@@ -215,103 +169,18 @@ int		is_time(char *line);
 //get_zed_data.c
 
 int		get_zed_data(char **argv, int file, t_mlx *mlx);
-int		zed_data_birth(t_point_list *data, t_mlx *mlx);
+//int		zed_data_birth(t_data_list *data, int file_num, t_mlx *mlx);
+t_point	zed_norm(t_point p);
 
-//get_fdf_data.c
+//data_list.c
 
-int		get_fdf_data(char **argv, t_mlx *mlx);
-int		fdf_data_birth(t_point **data, t_mlx *mlx);
-t_point	**list_to_arr(t_point_list *list, size_t max_x, size_t max_y);
+int		ft_datalst_add_tail(t_data_list **list, t_data_list **tail,
+			void *values, t_point point);
+t_point	get_data_list_centre(t_data_list *list, int pt_num);
+void	ft_free_data_list(t_data_list *list, void (*del)(void *));
 
 //checky_functions.c
 
-void	ft_free_arr(char **arr);
-void	ft_free_point_list(t_point_list *list);
-void	ft_free_obj_list(t_obj_list *obj);
-void	ft_free_pid_lst(t_pid_lst **list);
-
 void	ft_print_point_arr(t_point **arr, int max_x);
-
-//math_stuff.c
-
-float	ft_anglef(t_point a, t_point o, t_point b);
-float	ft_areaf(t_point a, t_point b, t_point c);
-int	    is_inside(t_point p, t_point a, t_point b, t_point c);
-
-//math_utils.c
-
-int	    point_equal(t_point a, t_point b);
-t_point	any_not_obtuse(t_point a, t_point b, t_point c);
-float	ft_distf(t_point a, t_point b);
-float	ft_absf(float f);
-t_point	*to_zero(t_point *p);
-t_point	*to_one(t_point *p);
-
-t_point	major_z(t_point a, t_point b);
-t_point	major_x(t_point a, t_point b);
-t_point	major_y(t_point a, t_point b);
-t_point	minor_z(t_point a, t_point b);
-t_point	minor_x(t_point a, t_point b);
-t_point	minor_y(t_point a, t_point b);
-
-//math_sidekicks.c
-
-int		ft_isuint(const char *s);
-int		ft_isfloat(const char *s);
-int		ft_isfloat_space(const char *s);
-float	ft_atof(const char *nptr);
-
-int		ft_atohexi(const char *nptr);
-
-//shapemakers.c
-
-int		fill_area(t_point a, t_point b, t_point c, int color, t_mlx *mlx);
-int		fill_line(t_point a, t_point b, int color, t_mlx *mlx);
-int		place_axis(float max_z, float max_x, float max_y, t_mlx *mlx);
-int		point_to_rombus(t_point p, float value, int color, t_mlx *mlx);
-int		point_to_cross(t_point p, float value, int color , t_mlx *mlx);
-
-unsigned int blend_colors(unsigned int src, unsigned int dest, unsigned char alpha);
-
-//mercatore_projection.c
-
-int		merca_obj_list(t_obj_list *list, size_t radius, int max_x, int max_y);
-
-//point_masters.c
-
-void	put_point(t_point p, int color, t_mlx *mlx);
-t_point	rotate_point(t_point p, t_point c, t_mlx *mlx);
-t_point	get_centre(t_point *data, int pt_num);
-t_point	get_list_centre(t_point_list *data, int pt_num);
-
-t_point	zed_norm(t_point p);
-t_point	fdf_norm(t_point p, t_mlx *mlx);
-
-/* t_point_list    *z_quick_sort(float min_z, float max_z, t_point_list *list);
-void				print_z_list(t_point_list *list); */
-
-//pid_lst_utils.c
-
-int			ft_pid_lst_append(t_pid_lst **list, t_pid_lst **tail, pthread_t pid);
-void		ft_print_pid_lst(t_pid_lst *list);
-
-//point_obj_list_utils.c
-
-void	ft_free_obj_list(t_obj_list *obj);
-int		ft_lstadd_point_tail(t_point_list **list, t_point_list **tail,
-			int color, float value, t_point point);
-int		ft_lstadd_obj_tail(t_obj_list *obj_tail, t_point_list **points,
-			int color, int value, t_point point);
-int		ft_lstnew_obj(t_obj_list **obj);
-
-//base_plotting.c
-
-void	put_obj(t_obj_list *obj, t_mlx *mlx);
-void	put_data(t_mlx *mlx);
-
-//thread_plotting.c
-
-void	*put_layer_thread(void *arg);
-void	put_data_thread(t_mlx *mlx);
 
 #endif
