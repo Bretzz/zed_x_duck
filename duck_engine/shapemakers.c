@@ -1,0 +1,184 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   shapemakers.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/31 18:40:34 by topiana-          #+#    #+#             */
+/*   Updated: 2025/02/18 03:08:06 by totommi          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "duck_engine.h"
+
+int	fill_line(t_point a, t_point b, int color, t_duck *duck);
+int	fill_area(t_point a, t_point b, t_point c, int color, t_duck *duck);
+int	point_to_rombus(t_point p, void *data, int color, t_duck *duck);
+int	point_to_cross(t_point p, void *data, int color , t_duck *duck);
+
+/* takes 2 3D points as parameters.
+works just like fill_area() but there's just one point moving from one
+of the parameter points to the other.*/
+int	fill_line(t_point a, t_point b, int color, t_duck *duck)
+{
+	int		ret;
+	float	incr;
+	float	dist;
+
+	dist = ft_distf(a, b);
+	incr = dist / (1 * dist);
+	ret = 0;
+	while (dist >= 0.0f)
+	{
+		if (!(duck_point_to_obj_tail(duck->live_objs->obj_tail, color, 0x0, a)))
+			return (-1);
+		ret++;
+		a.z += incr * ((b.z - a.z) / dist);
+		a.x += incr * ((b.x - a.x) / dist);
+		a.y += incr * ((b.y - a.y) / dist);
+		dist -= incr;
+	}
+	return (ret);
+}
+
+/* takes 3 3D points as parameters and fill the area inbetween them
+(appending each element to duck->live_points, with the color given).
+The idea is that a point (p) moves allong a side of the triangle
+(never one near an angle grater than 90 degrees), with increments of 1.
+At the same time a point (temp_c) moves from the startin point towards the other vertex.
+For each increment of the 2 points another point (temp_p)
+travels from one (p) to another (temp_c).
+The varous values of temp_p are the ones we append to the list.
+RETURNS: the number of points added, -1 on error. */
+int	fill_area(t_point a, t_point b, t_point c, int color, t_duck *duck)
+{
+	int				ret;
+	float			incr[2];
+	float			dist[2];
+	t_point			p;
+	t_point			d;
+	t_point			s;
+	t_point			temp_p;
+	t_point			temp_s;
+
+	p = any_not_obtuse(a, b, c);	//point that moves along a side
+	d = any_not_obtuse(c, b, a);	//point p move towards
+	s = a;							//point that is neither p nor d
+	if (point_equal(s, p) || point_equal(s, d))
+		s = b;
+	if (point_equal(s, p) || point_equal(s, d))
+		s = c;
+	dist[0] = ft_distf(p, d);
+	incr[0] = dist[0] / (1 * dist[0]);
+	dist[1] = ft_distf(p, s);
+	incr[1] = dist[1] / (1 * dist[1]);
+	temp_s = p;
+	ret = 0;
+	while (dist[1] >= 0.0f)
+	{
+		temp_p = p;
+		ret += fill_line(temp_p, temp_s, color, duck);
+		temp_s.z += incr[1] * ((s.z - temp_s.z) / dist[1]);
+		temp_s.x += incr[1] * ((s.x - temp_s.x) / dist[1]);
+		temp_s.y += incr[1] * ((s.y - temp_s.y) / dist[1]);
+		p.z += incr[0] * ((d.z - p.z) / dist[0]);
+		p.x += incr[0] * ((d.x - p.x) / dist[0]);
+		p.y += incr[0] * ((d.y - p.y) / dist[0]);
+		dist[0] -= incr[0];
+		dist[1] -= incr[1];
+	}
+	return (ret);
+}
+
+/* take a point, an int and duck as parameters.
+takes all the 6 points obtained by increasing or decreasing
+individually each coordinate of the point by the int passed as parameter.
+then fills al the areas forming the prysm.
+RETURNS: the number of points forming the areas, -1 on error.
+NOTE: the data pointer is expected as a float ptr to the rombus diagonal value. */
+int	point_to_rombus(t_point p, void *data, int color , t_duck *duck)
+{
+	float 	*value;
+	int		points;
+	t_point vertex[6];
+
+	//obj creation and value assignment
+	if (!duck_objnew(&duck->live_objs))
+		return (-1);
+	duck->live_objs->obj_tail->data = data;
+	duck->live_objs->obj_tail->origin = p;
+	duck->live_objs->obj_tail->tag = DATA;
+	points = 0;
+	while (points < 6)
+	{
+		vertex[points] = p;
+		points++;
+	}
+	value = (float *)data;
+	vertex[0].z += *value;
+	vertex[1].z -= *value;
+	vertex[2].x += *value;
+	vertex[3].x -= *value;
+	vertex[4].y += *value;
+	vertex[5].y -= *value;
+	//rombus
+	points = 0;
+	points += fill_area(vertex[5], vertex[2], vertex[0], color, duck);
+	points += fill_area(vertex[5], vertex[2], vertex[1], color, duck);
+	points += fill_area(vertex[5], vertex[3], vertex[0], color, duck);
+	points += fill_area(vertex[5], vertex[3], vertex[1], color, duck);
+	color += 10000;
+	points += fill_area(vertex[4], vertex[2], vertex[0], color, duck);
+	points += fill_area(vertex[4], vertex[2], vertex[1], color, duck);
+	points += fill_area(vertex[4], vertex[3], vertex[0], color, duck);
+	points += fill_area(vertex[4], vertex[3], vertex[1], color, duck);
+	/* points += fill_area(vertex[0], vertex[2], vertex[5], 0xFF00Fc, duck);
+	points += fill_area(vertex[0], vertex[2], vertex[4], 0x2FFFA2, duck);
+	points += fill_area(vertex[0], vertex[3], vertex[5], 0x00a2FF, duck);
+	points += fill_area(vertex[0], vertex[3], vertex[4], 0x00FFFF, duck);
+	points += fill_area(vertex[1], vertex[2], vertex[5], 0xFF0F01, duck);
+	points += fill_area(vertex[1], vertex[2], vertex[4], 0xcdcd01, duck);
+	points += fill_area(vertex[1], vertex[3], vertex[5], 0x0000FF, duck);
+	points += fill_area(vertex[1], vertex[3], vertex[4], 0xD6108F, duck); */
+	return (points);
+}
+
+/* take a point, an int and duck as parameters.
+takes all the 6 points obtained by increasing or decreasing
+individually each coordinate of the point by the int passed as parameter.
+then fills al the areas forming the prysm.
+RETURNS: the number of points forming the areas, -1 on error.
+NOTE: the data pointer is expected as a float ptr to the cross diagonal value. */
+int	point_to_cross(t_point p, void *data, int color , t_duck *duck)
+{
+	float	*value;
+	int		points;
+	t_point vertex[6];
+
+	//obj creation and value assignment
+	if (!duck_objnew(&duck->live_objs))
+		return (-1);
+	duck->live_objs->obj_tail->data = data;
+	duck->live_objs->obj_tail->origin = p;
+	duck->live_objs->obj_tail->tag = DATA;
+	points = 0;
+	while (points < 6)
+	{
+		vertex[points] = p;
+		points++;
+	}
+	value = (float *)data;
+	vertex[0].z += *value;
+	vertex[1].z -= *value;
+	vertex[2].x += *value;
+	vertex[3].x -= *value;
+	vertex[4].y += *value;
+	vertex[5].y -= *value;
+	points = 0;
+	//cross
+	points += fill_line(vertex[0], vertex[1], color, duck);
+	points += fill_line(vertex[2], vertex[3], color, duck);
+	points += fill_line(vertex[4], vertex[5], color, duck);
+	return (points);
+}
