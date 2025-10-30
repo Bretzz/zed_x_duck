@@ -6,7 +6,7 @@
 /*   By: totommi <totommi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 18:43:21 by topiana-          #+#    #+#             */
-/*   Updated: 2025/02/18 15:39:42 by totommi          ###   ########.fr       */
+/*   Updated: 2025/10/30 22:00:36 by totommi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,10 @@ unsigned int zed_color(float measrd, float error, float *val_lim, float *err_lim
 	float			value;
 	unsigned int	hue;
 	
-	(void)error; (void)err_lim;
+	(void)error; (void)err_lim; (void)val_lim;
 	val_mid = 2.5f/* (val_lim[1] + (val_lim[0] - val_lim[1]) / 2) / 1000 */;
 	range = 5/* (val_lim[0] - val_lim[1]) / 1000 */;
-	printf("mid=%f, val=%f, [1]=%f, range=%f\n", val_mid, measrd, val_lim[1], range);
+	// printf("mid=%f, val=%f, [1]=%f, range=%f\n", val_mid, measrd, val_lim[1], range);
 	if (measrd < val_mid - (range / 4))
 		hue = 240/* + (float)(measrd / ( val_lim[0] - val_lim[1])) * 60 */;	//blue
 	else if (measrd < val_mid)
